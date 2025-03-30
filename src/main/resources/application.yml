@@ -1,0 +1,62 @@
+server:
+  port: 9090
+  ### Swagger-ui
+doc:
+  show-actuator: true
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    csrf:
+      enabled: true
+    enabled: true
+openapi:
+  service:
+    api-docs: api-service
+    server: http://localhost:9090
+    title: Gentle Monster API
+    version: 1.0.1
+spring:
+    application:
+        name: GentleMonsterBE
+    datasource:
+        url: ${DB_URL}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+    config:
+      import: "classpath:env.yml"
+    jpa:
+        show-sql: true
+        properties:
+          hibernate:
+              dialect: org.hibernate.dialect.PostgreSQLDialect
+              format_sql: true
+        hibernate:
+          ddl-auto: ${DB_DDL_AUTO}
+#    security:
+#        name: admin
+#        password: admin123
+#        roles: USER
+    messages:
+        basename: messages
+    servlet:
+        enabled: true
+        max-file-size: 10MB
+        max-request-size: 10MB
+    session:
+        cookie:
+        name: JSESSIONID
+        http-only: true
+        secure: false
+        timeout: 30m
+        persistent: true
+        tracking-modes: cookie
+cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}
+jwt:
+  expiration: ${JWT_EXPIRATION}  # 30 ngày = 30 * 24h * 60p * 60s
+  jwtRefreshExpiration: ${JWT_REFRESH_EXPIRATION}
+  secretKey: ${JWT_SECRET_KEY}
