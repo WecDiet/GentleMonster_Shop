@@ -75,6 +75,11 @@ public class Product {
             fetch = FetchType.LAZY)
     private ProductDetail productDetail;
 
+//    @ManyToOne
+//    @JoinColumn(name = "category_id")
+//    @JsonIgnoreProperties("products")
+//    private Category category;
+
 //    @OneToMany(mappedBy = "products",cascade = CascadeType.ALL,
 //            fetch = FetchType.LAZY)
 //    private List<WarehouseProduct> warehouseProducts;

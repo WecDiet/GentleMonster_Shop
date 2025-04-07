@@ -21,6 +21,7 @@ public class ProductResponse {
     private String thumbnail;
     private boolean status;
     private String slug;
+    private String category;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDateTime createdDate;
     @JsonFormat(pattern = "dd-MM-yyyy")

@@ -8,11 +8,9 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.BaseProductResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.ProductResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.ProductDetailPublicResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.*;
-import com.gentlemonster.GentleMonsterBE.Repositories.IProductDetailRepository;
-import com.gentlemonster.GentleMonsterBE.Repositories.IProductRepository;
-import com.gentlemonster.GentleMonsterBE.Repositories.IProductTypeRepository;
-import com.gentlemonster.GentleMonsterBE.Repositories.IWarehouseProductRepository;
+import com.gentlemonster.GentleMonsterBE.Repositories.*;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -47,7 +44,9 @@ public class ProductService implements IProductService {
     @Autowired
     private IWarehouseProductRepository iWarehouseProductRepository;
     @Autowired
-    private IProductDetailRepository productDetailRepository;
+    private ICategoryRepository iCategoryRepository;
+    @Autowired
+    private ISliderRepository iSliderRepository;
 
     @Override
     public PagingResponse<List<BaseProductResponse>> getAllProduct(ProductRequest productRequest) {
@@ -219,4 +218,24 @@ public class ProductService implements IProductService {
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_DELETE_SUCCESS));
         return new APIResponse<>(true, messages);
     }
+
+    @Override
+    public APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String productTypeName, String productID) {
+        Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
+        if (product == null){
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+            return new APIResponse<>(null, messages);
+        }
+        if (!product.getProductType().getName().equals(productTypeName)){
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
+            return new APIResponse<>(null, messages);
+        }
+        ProductDetailPublicResponse productDetailPublicResponse = modelMapper.map(product, ProductDetailPublicResponse.class);
+        ArrayList <String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_GET_SUCCESS));
+        return new APIResponse<>(productDetailPublicResponse, messages);
+    }
+
 }

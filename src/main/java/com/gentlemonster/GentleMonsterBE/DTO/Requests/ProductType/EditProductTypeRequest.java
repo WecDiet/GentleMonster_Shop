@@ -14,4 +14,5 @@ public class EditProductTypeRequest {
     private String description;
     private boolean status;
     private String slider;
+    private String category;
 }

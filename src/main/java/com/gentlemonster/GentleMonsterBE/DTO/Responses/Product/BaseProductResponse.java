@@ -13,5 +13,4 @@ public class BaseProductResponse {
     private String name;
     private String thumbnail;
     private boolean status;
-    private boolean warehouseActive;
 }

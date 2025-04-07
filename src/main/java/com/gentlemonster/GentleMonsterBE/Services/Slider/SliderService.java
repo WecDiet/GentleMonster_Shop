@@ -176,13 +176,13 @@ public class SliderService implements ISliderService {
         return new APIResponse<>(sliderResponse, messages);
     }
 
+
     @Override
     public APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String slug) {
         List<SliderPublicResponse> sliderPublicResponseList;
         List<Slider> sliderList;
         Category categoryRepo = iCategoryRepository.findBySlug(slug).orElse(null);
         Specification<Slider> sliderPublic = SliderSpecification.getListSlider(categoryRepo.getSlug());
-        System.out.println(sliderPublic);
         if (sliderPublic == null){
             return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
         }

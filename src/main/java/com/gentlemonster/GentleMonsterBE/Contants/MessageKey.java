@@ -81,6 +81,7 @@ public class MessageKey {
     public static final String PRODUCT_REQUIRED = "product.required";
     public static final String PRODUCT_EMPTY = "product.empty";
     public static final String PRODUCT_EXISTED = "product.existed";
+    public static final String FIND_PRODUCT_CATEGORY_SLIDER_NULL = "product.category_slider_is_null";
 
     // PRODUCT TYPE
     public static final String PRODUCT_TYPE_CREATE_SUCCESS = "product_type.create_success";
@@ -91,6 +92,7 @@ public class MessageKey {
     public static final String PRODUCT_TYPE_EXISTED = "product_type.existed";
     public static final String PRODUCT_TYPE_REQUIRED = "product_type.required";
     public static final String PRODUCT_TYPE_EMPTY = "product_type.empty";
+    public static final String SLIDER_NOT_IN_CATEGORY = "product_type.slider_not_in_category";
 
     // SLIDER
     public static final String SLIDER_CREATE_SUCCESS = "slider.create_success";

@@ -1,6 +1,9 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.ProductType;
 
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.BaseProductPublicResponse;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,4 +16,5 @@ public class BaseProductTypeResponse {
     private String slug;
     private boolean status;
     private String linkURL;
+//    private List<BaseProductPublicResponse> products;
 }

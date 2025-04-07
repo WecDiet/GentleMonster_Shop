@@ -17,4 +17,5 @@ public class AddProductTypeRequest {
     private boolean status;
     private String slider;
     private BigInteger maxQuantity;
+    private String category;
 }

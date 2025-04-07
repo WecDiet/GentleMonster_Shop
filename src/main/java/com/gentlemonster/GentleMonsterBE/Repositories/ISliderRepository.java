@@ -13,4 +13,5 @@ public interface ISliderRepository extends JpaRepository<Slider, UUID>, JpaSpeci
     boolean existsByName(String name);
     boolean existsByHighlighted(boolean highlighted);
     Optional<Slider> findByName(String name);
+    Optional<Slider> findBySlug(String slug);
 }

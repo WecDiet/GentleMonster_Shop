@@ -63,7 +63,8 @@ public class WebSecurityConfig {
 
 
                         // Shop API USER
-                    String.format("%s/list/*", Enpoint.API_PREFIX_SHOP)
+                    String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
+                        String.format("%s/item/**",Enpoint.API_PREFIX_SHOP)
                 ).permitAll()
 
 

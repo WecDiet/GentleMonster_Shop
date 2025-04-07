@@ -22,5 +22,5 @@ public class AddProductRequest {
     private String country;
     private String manufacturer;
     private String productType;
-    private boolean warehouseActive;
+    private String categoryName;
 }

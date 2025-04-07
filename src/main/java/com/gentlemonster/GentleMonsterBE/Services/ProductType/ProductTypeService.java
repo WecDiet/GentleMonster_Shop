@@ -8,9 +8,12 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.ProductType.BaseProductTypeResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.ProductType.ProductTypeResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.ProductType.Public.ProductPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.BaseSliderResponse;
+import com.gentlemonster.GentleMonsterBE.Entities.Category;
 import com.gentlemonster.GentleMonsterBE.Entities.ProductType;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
+import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IProductTypeRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
@@ -45,6 +48,8 @@ public class ProductTypeService implements IProductTypeService {
     private LocalizationUtil localizationUtil;
     @Autowired
     private VietnameseStringUtils vietnameseStringUtils;
+    @Autowired
+    private ICategoryRepository iCategoryRepository;
 
 //    @Override
 //    public PagingResponse<List<BaseProductTypeResponse>> getAllProductType(ProductTypeRequest productTypeRequest) {
@@ -111,6 +116,14 @@ public class ProductTypeService implements IProductTypeService {
         if (slider == null) {
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
         }
+        Category category = iCategoryRepository.findByName(addProductTypeRequest.getCategory()).orElse(null);
+        if (category == null) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+        }
+        if(!slider.getCategory().equals(category)){
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_IN_CATEGORY)));
+        }
+        productType.setCategory(category);
         productType.setSlider(slider);
         iProductTypeRepository.save(productType);
         List<String> messages = new ArrayList<>();
@@ -132,6 +145,11 @@ public class ProductTypeService implements IProductTypeService {
         if (slider == null) {
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
         }
+        Category category = iCategoryRepository.findByName(editProductTypeRequest.getCategory()).orElse(null);
+        if (category == null) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+        }
+        productType.setCategory(category);
         productType.setSlider(slider);
         productType.setModifiedDate(LocalDateTime.now());
         iProductTypeRepository.save(productType);
@@ -162,5 +180,34 @@ public class ProductTypeService implements IProductTypeService {
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_GET_SUCCESS));
         return new APIResponse<>(productTypeResponse, messages);
+    }
+
+    @Override
+    public APIResponse<List<ProductPublicResponse>> getAllProductTypePublic(String categorySlug,String sliderSlug) {
+        List<ProductPublicResponse> productPublicResponseList;
+        List<ProductType> productTypeList;
+        Category category = iCategoryRepository.findBySlug(categorySlug).orElse(null);
+        if (category == null) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+        }
+        if ("view-all".equals(sliderSlug) && category.getSlug().equals(categorySlug)) {
+            productTypeList = iProductTypeRepository.findAllByCategory_Slug(categorySlug);
+            productPublicResponseList = productTypeList.stream()
+                    .map(productType -> modelMapper.map(productType, ProductPublicResponse.class))
+                    .toList();
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_GET_SUCCESS));
+            return new APIResponse<>(productPublicResponseList, messages);
+        }
+        productTypeList = iProductTypeRepository.findAllByCategorySlugAndSliderSlug(categorySlug,sliderSlug);
+        productPublicResponseList = productTypeList.stream()
+                .map(productType -> modelMapper.map(productType, ProductPublicResponse.class))
+                .toList();
+        if (productPublicResponseList.isEmpty()) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_EMPTY)));
+        }
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_GET_SUCCESS));
+        return new APIResponse<>(productPublicResponseList, messages);
     }
 }

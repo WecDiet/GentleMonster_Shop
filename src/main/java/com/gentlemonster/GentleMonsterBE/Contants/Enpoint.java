@@ -57,6 +57,7 @@ public class Enpoint {
         public static final String EDIT = "/product_type_detail/{productTypeID}";
         public static final String DELETE = "/product_type_detail/{productTypeID}";
         public static final String ID = "/product_type_detail/{productTypeID}";
+        public static final String PUBLIC_PRODUCT_TYPE = "/list/{categorySlug}/{sliderSlug}";
     }
 
     public static final class Collaboration{
@@ -84,6 +85,7 @@ public class Enpoint {
         public static final String ID = "/product_detail/{productID}";
         public static final String SEARCH_PRODUCT = "/search";
         public static final String DELETE_MANY = "/delete-many";
+        public static final String ID_PRODUCT = "/item/{productTypeName}/{productID}";
     }
 
     public static final class Warehouse{

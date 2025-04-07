@@ -35,9 +35,6 @@ public class ProductType {
     @Column(name = "description", length = 5000)
     private String description;
 
-//    @Column(name = "max_quantity", nullable = false)
-//    private BigInteger maxQuantity;
-
     @Column(name = "status", nullable = false)
     private boolean status;
 
@@ -60,6 +57,8 @@ public class ProductType {
     @JsonIgnoreProperties("productType")
     private List<Product> products = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "productType")
-//    private List<WarehouseProductType> warehouseProductTypes;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnoreProperties("productTypes")
+    private Category category;
 }
