@@ -26,7 +26,6 @@ public class UserSpecification {
                         criteriaBuilder.like(criteriaBuilder.lower(root.get("slug")), "%" + slugStandardization + "%"));
             }
             if (employeeCode != null && !employeeCode.isEmpty()) {
-                System.out.println("employeeCode: " + employeeCode);
                 predicate = criteriaBuilder.and(predicate,
                         criteriaBuilder.like(criteriaBuilder.lower(root.get("employeeCode")), "%" + employeeCode + "%"));
             }

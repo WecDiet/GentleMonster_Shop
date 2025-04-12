@@ -63,6 +63,7 @@ public class WebSecurityConfig {
 
 
                         // Shop API USER
+                        "/us", // Hiển thị toàn bộ banner ở trang chủ
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
                         String.format("%s/item/**",Enpoint.API_PREFIX_SHOP)
                 ).permitAll()

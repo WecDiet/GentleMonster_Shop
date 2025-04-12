@@ -12,8 +12,6 @@ import java.util.UUID;
 
 public interface ICollaborationRepository extends JpaRepository<Collaboration, UUID>, JpaSpecificationExecutor<Collaboration> {
     @Transactional
-//    @Modifying
-//    @Query("DELETE FROM Collaboration c WHERE c.slider = :slider")
     void deleteBySlider(Slider slider);
 
 }

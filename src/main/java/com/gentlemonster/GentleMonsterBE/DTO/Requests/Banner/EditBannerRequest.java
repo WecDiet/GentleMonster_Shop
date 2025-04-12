@@ -17,4 +17,5 @@ public class EditBannerRequest {
     private int seq;
     private int serial;
     private String category;
+    private String slider;
 }

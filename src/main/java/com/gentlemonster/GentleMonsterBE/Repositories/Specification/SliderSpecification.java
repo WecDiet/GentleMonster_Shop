@@ -15,7 +15,7 @@ public class SliderSpecification {
                 // So sánh slug của trường category trong Slider
                 return criteriaBuilder.equal( // So sánh bằng giá trị của trường slug trong đối tượng Category của Slider với giá trị truyền vào từ client
                         criteriaBuilder.lower(root.get("category").get("slug")), // Truy cập trường slug trong đối tượng Category của Slider
-                        categorySlug.toLowerCase().trim()
+                        categorySlug.toLowerCase().trim() // Chuyển đổi giá trị truyền vào thành chữ thường và loại bỏ khoảng trắng
                 );
             }
             return criteriaBuilder.conjunction();

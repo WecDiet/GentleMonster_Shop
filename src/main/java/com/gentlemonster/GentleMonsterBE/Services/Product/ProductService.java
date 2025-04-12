@@ -238,4 +238,50 @@ public class ProductService implements IProductService {
         return new APIResponse<>(productDetailPublicResponse, messages);
     }
 
+//    @Override
+//    public APIResponse<List<ProductPublicResponse>> getAllProductTypePublic(String categorySlug, String sliderSlug) {
+//        List<ProductPublicResponse> productPublicResponseList;
+//        List<Product> productList;
+//        Category category = iCategoryRepository.findBySlug(categorySlug).orElse(null);
+//        if (category == null){
+//            List<String> messages = new ArrayList<>();
+//            messages.add(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
+//            return new APIResponse<>(null, messages);
+//        }
+//        if ("view-all".equals(sliderSlug) && category.getSlug().equals(categorySlug)){
+//            Specification<Product> specification = ProductSpecification.getListProductByCategorySlug(categorySlug);
+//            productList = iProductRepository.findAll(specification);
+//            productPublicResponseList = productList.stream()
+//                    .map(product -> modelMapper.map(product, ProductPublicResponse.class))
+//                    .toList();
+//            if (productPublicResponseList.isEmpty()){
+//                List<String> messages = new ArrayList<>();
+//                messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_EMPTY));
+//                return new APIResponse<>(productPublicResponseList, messages);
+//            }
+//            List<String> messages = new ArrayList<>();
+//            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_GET_SUCCESS));
+//            return new APIResponse<>(productPublicResponseList, messages);
+//        }
+//        Slider slider = iSliderRepository.findBySlug(sliderSlug).orElse(null);
+//        if (slider == null){
+//            List<String> messages = new ArrayList<>();
+//            messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+//            return new APIResponse<>(null, messages);
+//        }
+//        Specification<Product> specification = ProductSpecification.getListProduct(categorySlug, sliderSlug);
+//        productList = iProductRepository.findAll(specification);
+//        productPublicResponseList = productList.stream()
+//                .map(product -> modelMapper.map(product, ProductPublicResponse.class))
+//                .toList();
+//        if (productPublicResponseList.isEmpty()){
+//            List<String> messages = new ArrayList<>();
+//            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_EMPTY));
+//            return new APIResponse<>(productPublicResponseList, messages);
+//        }
+//        List<String> messages = new ArrayList<>();
+//        messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_GET_SUCCESS));
+//        return new APIResponse<>(productPublicResponseList, messages);
+//    }
+
 }

@@ -12,7 +12,4 @@ public interface IProductTypeRepository extends JpaRepository<ProductType, UUID>
     boolean existsByName(String name);
     boolean existsBySlug(String slug);
     Optional<ProductType> findByName(String name);
-//    List<ProductType> findBySliderSlug(String sliderSlug);
-    List<ProductType> findAllByCategory_Slug(String categorySlug);
-    List<ProductType> findAllByCategorySlugAndSliderSlug(String categorySlug, String sliderSlug);
 }

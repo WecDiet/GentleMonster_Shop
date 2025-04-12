@@ -37,7 +37,7 @@ public class Slider {
     private String sliderBanner; // Ảnh banner slider
 
     @Column(name = "is_highlighted", nullable = false)
-    private boolean highlighted;
+    private boolean highlighted; // Trạng thái hiển thị slider thêm vào bộ sưu tập
 
     @Column(name = "description", length = 2000)
     private String description;

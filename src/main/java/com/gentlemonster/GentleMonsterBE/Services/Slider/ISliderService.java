@@ -21,5 +21,5 @@ public interface ISliderService {
     APIResponse<Boolean> editSlider(String sliderID, EditSliderRequest editSliderRequest);
     APIResponse<Boolean> deleteSlider(String sliderID);
     APIResponse<SliderResponse> getOneSlider(String sliderID);
-    APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String slug);
+    APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String categorySlug);
 }

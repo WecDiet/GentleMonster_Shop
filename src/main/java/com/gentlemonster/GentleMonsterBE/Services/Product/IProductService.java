@@ -8,6 +8,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.BaseProductResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.ProductResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.ProductDetailPublicResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.ProductType.Public.ProductPublicResponse;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface IProductService {
     APIResponse<Boolean> deleteProduct(String productID);
 
     APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String productTypeName, String productID);
+//    APIResponse<List<ProductPublicResponse>> getAllProductTypePublic(String categorySlug, String sliderSlug);
 }

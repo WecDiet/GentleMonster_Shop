@@ -7,6 +7,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Banner.EditBannerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.BannerResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.BaseBannerResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.Public.BannerPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Banner;
 import com.gentlemonster.GentleMonsterBE.Entities.Category;
@@ -94,8 +95,9 @@ public class BannerService implements IBannerService {
         }
         Banner banner = modelMapper.map(addBannerRequest, Banner.class);
         banner.setSeq(addBannerRequest.getSeq());
-        String slugStandardization = vietnameseStringUtils.removeAccents(addBannerRequest.getTitle()).toLowerCase().replaceAll("\\s+", "-").trim();
-        banner.setSlug(slugStandardization);
+        String categoryStandardization = vietnameseStringUtils.removeAccents(addBannerRequest.getCategory()).toLowerCase().replaceAll("\\s+", "-").trim();
+        String sliderStandardization = vietnameseStringUtils.removeAccents(addBannerRequest.getSlider()).toLowerCase().replaceAll("\\s+", "-").trim();
+        banner.setLink("/" + categoryStandardization + "/" + sliderStandardization);
         Category category = iCategoryRepository.findByName(addBannerRequest.getCategory()).orElse(null);
         if (category == null) {
             List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
@@ -116,8 +118,9 @@ public class BannerService implements IBannerService {
         }
         modelMapper.map(editBannerRequest, banner);
         banner.setSeq(editBannerRequest.getSeq());
-        String slugStandardization = vietnameseStringUtils.removeAccents(editBannerRequest.getTitle()).toLowerCase().replaceAll("\\s+", "-").trim();
-        banner.setSlug(slugStandardization);
+        String categoryStandardization = vietnameseStringUtils.removeAccents(editBannerRequest.getCategory()).toLowerCase().replaceAll("\\s+", "-").trim();
+        String sliderStandardization = vietnameseStringUtils.removeAccents(editBannerRequest.getSlider()).toLowerCase().replaceAll("\\s+", "-").trim();
+        banner.setLink("/" + categoryStandardization + "/" + sliderStandardization);
         Category category = iCategoryRepository.findByName(editBannerRequest.getCategory()).orElse(null);
         if (category == null) {
             List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
@@ -139,6 +142,29 @@ public class BannerService implements IBannerService {
         iBannerRepository.delete(banner);
         List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_DELETE_SUCCESS));
         return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<List<BannerPublicResponse>> getAllBannersPublic() {
+        int limit = 4;
+        List<BannerPublicResponse> bannerPublicResponseList;
+        List<Banner> bannerList;
+        Pageable pageable;
+
+        pageable = PageRequest.of(0, limit, Sort.by("seq").descending());
+        Page<Banner> bannerPage = iBannerRepository.findAll(pageable);
+        bannerList =  bannerPage.getContent();
+        bannerPublicResponseList = bannerList.stream()
+                .map(banner -> modelMapper.map(banner , BannerPublicResponse.class))
+                .toList();
+        if (bannerPublicResponseList.isEmpty()){
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.BANNER_EMPTY));
+            return new APIResponse<>(null, messages);
+        }
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.BANNER_GET_SUCCESS));
+        return new APIResponse<>(bannerPublicResponseList, messages);
     }
 
 

@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(Enpoint.API_PREFIX_SHOP)
+@RequestMapping
 public class ProductPublicController {
-    @Autowired
-    private ProductTypeService productTypeService;
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductTypeService productTypeService;
 
     @GetMapping(Enpoint.Product_Type.PUBLIC_PRODUCT_TYPE)
     public ResponseEntity<APIResponse<?>> getAllProductTypePublic(@PathVariable String categorySlug, @PathVariable String sliderSlug) {

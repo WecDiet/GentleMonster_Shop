@@ -6,6 +6,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Banner.EditBannerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.BannerResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.BaseBannerResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.Public.BannerPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -17,4 +18,6 @@ public interface IBannerService {
     APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest);
     APIResponse<Boolean> updateBanner(String bannerID, EditBannerRequest editBannerRequest);
     APIResponse<Boolean> deleteBanner(String bannerID);
+    APIResponse<List<BannerPublicResponse>> getAllBannersPublic();
+
 }

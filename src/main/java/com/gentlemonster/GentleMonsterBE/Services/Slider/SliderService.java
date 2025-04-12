@@ -178,10 +178,10 @@ public class SliderService implements ISliderService {
 
 
     @Override
-    public APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String slug) {
+    public APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String categorySlug) {
         List<SliderPublicResponse> sliderPublicResponseList;
         List<Slider> sliderList;
-        Category categoryRepo = iCategoryRepository.findBySlug(slug).orElse(null);
+        Category categoryRepo = iCategoryRepository.findBySlug(categorySlug).orElse(null);
         Specification<Slider> sliderPublic = SliderSpecification.getListSlider(categoryRepo.getSlug());
         if (sliderPublic == null){
             return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));

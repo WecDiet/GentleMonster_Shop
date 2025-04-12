@@ -29,11 +29,11 @@ public class Banner {
     @Column(name = "image", length = 500)
     private String image;  // Đường dẫn ảnh banner
 
-    @Column(name = "slug", length = 100, nullable = false)
-    private String slug;  // Đường dẫn URL của banner
+    @Column(name = "link", length = 100, nullable = false)
+    private String link;
 
     @Column(name = "status", nullable = false)
-    private boolean status = true;  // Trạng thái hiển thị banner
+    private boolean status;  // Trạng thái hiển thị banner
 
     @Column(name = "seq", nullable = false)
     private int seq;  // Số thứ tự của banner từ 1 -> 4

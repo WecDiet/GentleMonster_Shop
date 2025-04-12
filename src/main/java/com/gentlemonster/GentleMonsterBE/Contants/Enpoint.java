@@ -3,8 +3,8 @@ package com.gentlemonster.GentleMonsterBE.Contants;
 public class Enpoint {
 
     public static final String API_PREFIX_ADMIN = "/pri/gentlemonster/manage";
-    public static final String API_PREFIX_SHOP = "/int/gentlemonster/shop";
-    public static final String API_PREFIX_DETAIL = "us/shop/item";
+    public static final String API_PREFIX_SHOP = "/us/int/shop";
+//    public static final String API_PREFIX_DETAIL = "/us//shop";
 
     public static final class Auth{
         public static final String BASE = API_PREFIX_SHOP + "/customer";
@@ -57,7 +57,7 @@ public class Enpoint {
         public static final String EDIT = "/product_type_detail/{productTypeID}";
         public static final String DELETE = "/product_type_detail/{productTypeID}";
         public static final String ID = "/product_type_detail/{productTypeID}";
-        public static final String PUBLIC_PRODUCT_TYPE = "/list/{categorySlug}/{sliderSlug}";
+        public static final String PUBLIC_PRODUCT_TYPE = API_PREFIX_SHOP + "/list/{categorySlug}/{sliderSlug}";
     }
 
     public static final class Collaboration{
@@ -75,6 +75,7 @@ public class Enpoint {
         public static final String EDIT = "/{bannerID}";
         public static final String DELETE = "/{bannerID}";
         public static final String ID = "/{bannerID}";
+        public static final String PUBLIC_BANNER = "/us";
     }
 
     public static final class Product{
@@ -85,7 +86,7 @@ public class Enpoint {
         public static final String ID = "/product_detail/{productID}";
         public static final String SEARCH_PRODUCT = "/search";
         public static final String DELETE_MANY = "/delete-many";
-        public static final String ID_PRODUCT = "/item/{productTypeName}/{productID}";
+        public static final String ID_PRODUCT = API_PREFIX_SHOP + "/item/{productTypeName}/{productID}";
     }
 
     public static final class Warehouse{

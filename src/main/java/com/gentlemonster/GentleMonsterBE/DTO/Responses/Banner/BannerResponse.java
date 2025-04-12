@@ -25,5 +25,6 @@ public class BannerResponse {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDateTime modifiedDate; // Ngày sửa
     private CategoryResponse category;
+    private String link; // Đường dẫn đến trang chi tiết sản phẩm
 
 }
