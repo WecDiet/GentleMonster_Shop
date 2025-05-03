@@ -8,7 +8,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class CategoryResponse {
     private UUID id;
     private String name;
@@ -16,5 +15,4 @@ public class CategoryResponse {
     private String linkURL;
     private String slug;
     private boolean status;
-
 }

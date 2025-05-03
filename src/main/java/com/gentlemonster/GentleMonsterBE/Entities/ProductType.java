@@ -9,10 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "product_type")
@@ -61,4 +58,13 @@ public class ProductType {
     @JoinColumn(name = "category_id", nullable = false)
     @JsonIgnoreProperties("productTypes")
     private Category category;
+
+    @ManyToMany
+    @JoinTable(
+            name = "producttype_subsidiary",
+            joinColumns = @JoinColumn(name = "product_type_id"),
+            inverseJoinColumns = @JoinColumn(name = "subsidiary_id")
+    )
+    private Set<Subsidiary> subsidiaries;
+
 }

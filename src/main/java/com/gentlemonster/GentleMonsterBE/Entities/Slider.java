@@ -57,9 +57,8 @@ public class Slider {
     @JoinColumn(name = "category_id")
     private Category category;
 
-//    @OneToMany(mappedBy = "slider")
-//    @JsonManagedReference
-//    @JsonIgnoreProperties("slider")
-//    private Set<ProductType> productType = new HashSet<>();
+    @OneToOne
+    @JoinColumn(name = "stories_id")
+    private Stories stories;
 
 }

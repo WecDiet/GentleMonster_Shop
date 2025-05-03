@@ -82,6 +82,7 @@ public class SliderService implements ISliderService {
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_GET_SUCCESS));
         return new PagingResponse<>(sliderResponseList, messages, sliderPage.getTotalPages(), sliderPage.getTotalElements());
     }
+
     @Override
     public APIResponse<Boolean> addSlider(AddSliderRequest addSliderRequest) {
         if (iSliderRepository.existsByName(addSliderRequest.getName())) {

@@ -108,9 +108,8 @@ public class ProductService implements IProductService {
         }
         Product product = modelMapper.map(addProductRequest, Product.class);
         product.setName(addProductRequest.getProductName());
-        String slugStandardization = vietnameseStringUtils.removeAccents(addProductRequest.getProductName()).trim().toLowerCase().replaceAll("\\s+", "-");
+        String slugStandardization = vietnameseStringUtils.removeAccents(addProductRequest.getProductName());
         product.setSlug(slugStandardization);
-//        product.setWarehouseActive(addProductRequest.isWarehouseActive());
         ProductDetail productDetail = ProductDetail.builder()
                 .frame(addProductRequest.getFrame())
                 .lens(addProductRequest.getLens())
@@ -151,6 +150,7 @@ public class ProductService implements IProductService {
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_DONT_PUBLIC));
             return new APIResponse<>(false, messages);
         }
+        modelMapper.map(editProductRequest, productEdit);
         // Cập nhật các trường của Product
         productEdit.setName(editProductRequest.getProductName());
         String slugStandardization = vietnameseStringUtils.removeAccents(editProductRequest.getProductName())

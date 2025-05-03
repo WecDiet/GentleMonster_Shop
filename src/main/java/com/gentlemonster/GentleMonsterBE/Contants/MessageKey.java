@@ -148,5 +148,15 @@ public class MessageKey {
     public static final String PRODUCT_WAREHOUSE_EMPTY = "product_warehouse.empty";
     public static final String PRODUCT_WAREHOUSE_QUANTITY_INVALID = "product_warehouse.quantity.invalid";
     public static final String PRODUCT_WAREHOUSE_DONT_PUBLIC = "product_warehouse.dont_public";
+
+    // CITY
+    public static final String CITY_CREATE_SUCCESS = "city.create_success";
+    public static final String CITY_UPDATE_SUCCESS = "city.update_success";
+    public static final String CITY_DELETE_SUCCESS = "city.delete_success";
+    public static final String CITY_GET_SUCCESS = "city.get_success";
+    public static final String CITY_NOT_FOUND = "city.not_found";
+    public static final String CITY_EXISTED = "city.existed";
+    public static final String CITY_REQUIRED = "city.required";
+    public static final String CITY_EMPTY = "city.empty";
 }
 

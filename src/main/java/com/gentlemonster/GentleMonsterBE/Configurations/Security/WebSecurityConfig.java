@@ -60,6 +60,7 @@ public class WebSecurityConfig {
                         String.format("%s/warehouses/*",Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/warehouse_detail/*", Enpoint.Warehouse.BASE),
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
+                        String.format("%s/cities/*",Enpoint.API_PREFIX_ADMIN),
 
 
                         // Shop API USER
@@ -79,6 +80,7 @@ public class WebSecurityConfig {
                         String.format("%s/new", Enpoint.Product.BASE),
                         String.format("%s/new",Enpoint.Warehouse.BASE),
                         String.format("%s/new",Enpoint.Banner.BASE),
+                        String.format("%s/new",Enpoint.City.BASE),
                         String.format("%s/ware_product/new",Enpoint.Warehouse.BASE)
                 ).permitAll()
 
@@ -93,7 +95,8 @@ public class WebSecurityConfig {
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
                         String.format("%s/product_detail/*",Enpoint.Product.BASE),
-                        String.format("%s/*", Enpoint.Banner.BASE)
+                        String.format("%s/*", Enpoint.Banner.BASE),
+                        String.format("%s/*", Enpoint.City.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.DELETE,
@@ -105,7 +108,8 @@ public class WebSecurityConfig {
                         String.format("%s/warehouse_detail/*",Enpoint.Warehouse.BASE),
                         String.format("%s/product_detail/*",Enpoint.Product.BASE),
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
-                        String.format("%s/*", Enpoint.Banner.BASE)
+                        String.format("%s/*", Enpoint.Banner.BASE),
+                        String.format("%s/*", Enpoint.City.BASE)
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

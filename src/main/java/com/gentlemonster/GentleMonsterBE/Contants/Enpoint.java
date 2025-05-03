@@ -105,5 +105,12 @@ public class Enpoint {
         public static final String ID_PRODUCT = "/ware_product/{productWarehouseID}";
     }
 
+    public static final class City{
+        public static final String BASE = API_PREFIX_ADMIN + "/cities";
+        public static final String NEW = "/new";
+        public static final String EDIT = "/{cityID}";
+        public static final String DELETE = "/{cityID}";
+    }
+
 
 }
