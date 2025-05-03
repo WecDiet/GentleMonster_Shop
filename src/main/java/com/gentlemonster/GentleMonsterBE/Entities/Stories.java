@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -34,7 +35,7 @@ public class Stories {
     @Column(name = "updatedAt")
     private LocalDateTime  updatedAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "slider_id")
     private Slider slider;
 

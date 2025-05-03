@@ -169,4 +169,8 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SocialAccount> socialAccounts;
+
+    @ManyToOne
+    @JoinColumn(name = "subsidiary_id")
+    private Subsidiary subsidiary;
 }

@@ -61,7 +61,7 @@ public class ProductType {
 
     @ManyToMany
     @JoinTable(
-            name = "producttype_subsidiary",
+            name = "distribution",
             joinColumns = @JoinColumn(name = "product_type_id"),
             inverseJoinColumns = @JoinColumn(name = "subsidiary_id")
     )

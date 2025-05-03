@@ -39,6 +39,7 @@ public class MessageKey {
     public static final String USER_EMAIL_INVALID = "user.email_invalid";
     public static final String USER_NOT_EXIST = "user.not_exist";
     public static final String USER_ROLE_NULL = "user.role_null";
+    public static final String USER_WRONG_ROLE = "user.wrong_role";
 
     // PAYMENT TYPE
     public static final String PAYMENT_TYPE_CREATE_SUCCESS = "payment_type.create_success";

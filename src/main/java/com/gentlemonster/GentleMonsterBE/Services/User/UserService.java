@@ -10,9 +10,11 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Address;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
+import com.gentlemonster.GentleMonsterBE.Entities.Subsidiary;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
 import com.gentlemonster.GentleMonsterBE.Repositories.IAddressRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IRoleRepository;
+import com.gentlemonster.GentleMonsterBE.Repositories.ISubsidiaryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IUserRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.UserSpecification;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
@@ -42,6 +44,8 @@ public class UserService implements IUserService {
     private IUserRepository iUserRepository;
     @Autowired
     private IRoleRepository iRoleRepository;
+    @Autowired
+    private ISubsidiaryRepository iSubsidiaryRepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -198,7 +202,15 @@ public class UserService implements IUserService {
         if (role == null) {
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage("Role not found")));
         }
-
+        if(addUserRequest.getRole().equals("STORE_MANAGER") || addUserRequest.getRole().equals("EMPLOYEE")){
+            Subsidiary userSubsidiary = iSubsidiaryRepository.findByCompanyName(addUserRequest.getSubsidiary()).orElse(null);
+            if (userSubsidiary == null) {
+                return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage("Subsidiary not found")));
+            }
+            user.setSubsidiary(userSubsidiary);
+        }else {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.USER_WRONG_ROLE)));
+        }
         // Tạo mã code dựa trên role
         user.setCode(generateCode(role));
 
@@ -263,6 +275,15 @@ public class UserService implements IUserService {
                 .build();
         user.getAddresses().add(address);
         user.setModifiedDate(LocalDateTime.now());
+        if(editUserRequest.getRole().equals("STORE_MANAGER") || editUserRequest.getRole().equals("EMPLOYEE")){
+            Subsidiary userSubsidiary = iSubsidiaryRepository.findByCompanyName(editUserRequest.getSubsidiary()).orElse(null);
+            if (userSubsidiary == null) {
+                return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage("Subsidiary not found")));
+            }
+            user.setSubsidiary(userSubsidiary);
+        }else {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.USER_WRONG_ROLE)));
+        }
         iUserRepository.save(user);
 //        UserResponse userResponse = modelMapper.map(user,UserResponse.class);
         List<String> messages = new ArrayList<>();

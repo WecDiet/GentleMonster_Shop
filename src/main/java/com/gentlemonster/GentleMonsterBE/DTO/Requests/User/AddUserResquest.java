@@ -35,4 +35,6 @@ public class AddUserResquest extends AddressUserRequest {
     private boolean status;
     @NotEmpty(message = "role is required not empty !")
     private String role;
+    @NotEmpty(message = "subsidiary is required not empty !")
+    private String subsidiary;
 }

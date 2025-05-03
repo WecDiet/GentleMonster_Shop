@@ -62,4 +62,6 @@ public class Subsidiary {
     @ManyToMany(mappedBy = "subsidiaries")
     private Set<ProductType> productTypes;
 
+    @OneToMany(mappedBy = "subsidiary",cascade = CascadeType.ALL)
+    private Set<User> users;
 }

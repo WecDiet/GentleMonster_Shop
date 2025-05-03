@@ -57,8 +57,7 @@ public class Slider {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToOne
-    @JoinColumn(name = "stories_id")
-    private Stories stories;
+    @OneToMany(mappedBy = "slider", cascade = CascadeType.ALL)
+    private Set<Stories> stories;
 
 }
