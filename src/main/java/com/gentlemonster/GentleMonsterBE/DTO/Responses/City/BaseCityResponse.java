@@ -1,6 +1,9 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.City;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -8,11 +11,8 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CityResponse {
+public class BaseCityResponse {
     private UUID id;
     private String name;
-    private String slug;
-    private String thumbnail;
-    private boolean status;
     private String country;
 }

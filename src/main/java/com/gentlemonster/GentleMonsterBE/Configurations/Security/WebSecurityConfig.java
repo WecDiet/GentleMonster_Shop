@@ -61,7 +61,8 @@ public class WebSecurityConfig {
                     String.format("%s/warehouse_detail/*", Enpoint.Warehouse.BASE),
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
                         String.format("%s/cities/*",Enpoint.API_PREFIX_ADMIN),
-
+                    String.format("%s/subsidiaries/*",Enpoint.API_PREFIX_ADMIN),
+                        String.format("%s/subsidiary_detail/*",Enpoint.Subsidiary.BASE),
 
                         // Shop API USER
                         "/us", // Hiển thị toàn bộ banner ở trang chủ
@@ -81,6 +82,7 @@ public class WebSecurityConfig {
                         String.format("%s/new",Enpoint.Warehouse.BASE),
                         String.format("%s/new",Enpoint.Banner.BASE),
                         String.format("%s/new",Enpoint.City.BASE),
+                        String.format("%s/new",Enpoint.Subsidiary.BASE),
                         String.format("%s/ware_product/new",Enpoint.Warehouse.BASE)
                 ).permitAll()
 
@@ -96,7 +98,8 @@ public class WebSecurityConfig {
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
                         String.format("%s/product_detail/*",Enpoint.Product.BASE),
                         String.format("%s/*", Enpoint.Banner.BASE),
-                        String.format("%s/*", Enpoint.City.BASE)
+                        String.format("%s/*", Enpoint.City.BASE),
+                        String.format("%s/subsidiary_detail/*",Enpoint.Subsidiary.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.DELETE,
@@ -109,7 +112,8 @@ public class WebSecurityConfig {
                         String.format("%s/product_detail/*",Enpoint.Product.BASE),
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
                         String.format("%s/*", Enpoint.Banner.BASE),
-                        String.format("%s/*", Enpoint.City.BASE)
+                        String.format("%s/*", Enpoint.City.BASE),
+                        String.format("%s/subsidiary_detail/*",Enpoint.Subsidiary.BASE)
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -72,7 +73,7 @@ public class CityService implements ICityService{
 
     @Override
     public APIResponse<Boolean> addCity(AddCityRequest addCityRequest) {
-        if (iCityRepository.existsByCityName(addCityRequest.getCityName())){
+        if (iCityRepository.existsByName(addCityRequest.getCityName())){
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_EXISTED)));
         }
         City city = modelMapper.map(addCityRequest, City.class);
@@ -96,6 +97,7 @@ public class CityService implements ICityService{
         String citySlug = vietnameseStringUtils.removeAccents(editCityRequest.getCityName()).trim().toLowerCase().replaceAll("\\s+", "-");
         city.setSlug(citySlug);
         city.setStatus(editCityRequest.isStatus());
+        city.setUpdatedAt(LocalDateTime.now());
         iCityRepository.save(city);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_UPDATE_SUCCESS));

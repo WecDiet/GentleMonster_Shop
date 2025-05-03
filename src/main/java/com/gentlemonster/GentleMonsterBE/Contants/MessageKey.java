@@ -158,5 +158,19 @@ public class MessageKey {
     public static final String CITY_EXISTED = "city.existed";
     public static final String CITY_REQUIRED = "city.required";
     public static final String CITY_EMPTY = "city.empty";
+
+    // SUBSIDIARY
+    public static final String SUBSIDIARY_CREATE_SUCCESS = "subsidiary.create_success";
+    public static final String SUBSIDIARY_UPDATE_SUCCESS = "subsidiary.update_success";
+    public static final String SUBSIDIARY_DELETE_SUCCESS = "subsidiary.delete_success";
+    public static final String SUBSIDIARY_GET_SUCCESS = "subsidiary.get_success";
+    public static final String SUBSIDIARY_NOT_FOUND = "subsidiary.not_found";
+    public static final String SUBSIDIARY_EXISTED = "subsidiary.existed";
+    public static final String SUBSIDIARY_REQUIRED = "subsidiary.required";
+    public static final String SUBSIDIARY_EMPTY = "subsidiary.empty";
+    public static final String SUBSIDIARY_CITY_NOT_FOUND = "subsidiary.city_not_found";
+    public static final String SUBSIDIARY_CITY_REQUIRED = "subsidiary.city_not_required";
+    public static final String SUBSIDIARY_CITY_EMPTY = "subsidiary.city_not_empty";
+    public static final String SUBSIDIARY_CITY_NOT_EXIST = "subsidiary.city_not_existed";
 }
 

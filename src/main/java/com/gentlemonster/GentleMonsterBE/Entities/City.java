@@ -21,7 +21,7 @@ public class City {
     private UUID id;
 
     @Column(name = "name", length = 500, nullable = false)
-    private String cityName;
+    private String name;
 
     @Column(name = "slug", length = 500, nullable = false)
     private String slug;
