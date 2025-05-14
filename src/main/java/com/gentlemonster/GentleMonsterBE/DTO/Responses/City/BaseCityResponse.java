@@ -15,4 +15,5 @@ public class BaseCityResponse {
     private UUID id;
     private String name;
     private String country;
+    private String countrySlug;
 }

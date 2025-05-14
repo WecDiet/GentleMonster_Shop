@@ -1,8 +1,6 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.User;
 
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Role.RoleResponse;
-import com.gentlemonster.GentleMonsterBE.DTO.Responses.Subsidiary.SubsidiaryResponse;
-import com.gentlemonster.GentleMonsterBE.Entities.Role;
 import lombok.*;
 
 import java.util.List;
@@ -32,5 +30,4 @@ public class UserResponse {
     private String photoUrl;
     private boolean status;
     private RoleResponse role;
-    private SubsidiaryResponse subsidiary;
 }

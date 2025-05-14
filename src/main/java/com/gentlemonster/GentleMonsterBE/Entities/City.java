@@ -35,6 +35,9 @@ public class City {
     @Column(name = "country", length = 200)
     private String country; // Tên quốc gia của thành phố
 
+    @Column(name = "country_slug", length = 200)
+    private String countrySlug;
+
     @CreationTimestamp
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
@@ -43,6 +46,4 @@ public class City {
     @Column(name = "updatedAt")
     private LocalDateTime  updatedAt;
 
-//    @OneToMany(mappedBy = "city")
-//    private List<Subsidiary> subsidiaries;
 }

@@ -16,7 +16,4 @@ public class BaseSliderResponse {
     private String image;
     private String linkURL;
     private String slug;
-//    private boolean status;
-//    private boolean highlighted;
-//    private CategoryResponse category;
 }

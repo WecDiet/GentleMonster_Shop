@@ -159,19 +159,18 @@ public class MessageKey {
     public static final String CITY_EXISTED = "city.existed";
     public static final String CITY_REQUIRED = "city.required";
     public static final String CITY_EMPTY = "city.empty";
+    public static final String COUNTRY_NOT_FOUND = "city.country";
 
-    // SUBSIDIARY
-    public static final String SUBSIDIARY_CREATE_SUCCESS = "subsidiary.create_success";
-    public static final String SUBSIDIARY_UPDATE_SUCCESS = "subsidiary.update_success";
-    public static final String SUBSIDIARY_DELETE_SUCCESS = "subsidiary.delete_success";
-    public static final String SUBSIDIARY_GET_SUCCESS = "subsidiary.get_success";
-    public static final String SUBSIDIARY_NOT_FOUND = "subsidiary.not_found";
-    public static final String SUBSIDIARY_EXISTED = "subsidiary.existed";
-    public static final String SUBSIDIARY_REQUIRED = "subsidiary.required";
-    public static final String SUBSIDIARY_EMPTY = "subsidiary.empty";
-    public static final String SUBSIDIARY_CITY_NOT_FOUND = "subsidiary.city_not_found";
-    public static final String SUBSIDIARY_CITY_REQUIRED = "subsidiary.city_not_required";
-    public static final String SUBSIDIARY_CITY_EMPTY = "subsidiary.city_not_empty";
-    public static final String SUBSIDIARY_CITY_NOT_EXIST = "subsidiary.city_not_existed";
+    // STORE
+    public static final String STORE_CREATE_SUCCESS = "store.create_success";
+    public static final String STORE_UPDATE_SUCCESS = "store.update_success";
+    public static final String STORE_DELETE_SUCCESS = "store.delete_success";
+    public static final String STORE_GET_SUCCESS = "store.get_success";
+    public static final String STORE_NOT_FOUND = "store.not_found";
+    public static final String STORE_EXISTED = "store.existed";
+    public static final String STORE_REQUIRED = "store.required";
+    public static final String STORE_EMPTY = "store.empty";
+    public static final String STORE_WRONG_ROLE = "store.wrong.role";
+
 }
 

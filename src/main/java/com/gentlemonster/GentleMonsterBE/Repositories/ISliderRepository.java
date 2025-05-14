@@ -1,5 +1,6 @@
 package com.gentlemonster.GentleMonsterBE.Repositories;
 
+import com.gentlemonster.GentleMonsterBE.Entities.Category;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,5 +16,5 @@ public interface ISliderRepository extends JpaRepository<Slider, UUID>, JpaSpeci
     boolean existsByHighlighted(boolean highlighted);
     Optional<Slider> findByName(String name);
     Optional<Slider> findBySlug(String slug);
-    List<Slider> findAllByStatusTrue();
+    List<Slider> findByCategory(Category category);
 }

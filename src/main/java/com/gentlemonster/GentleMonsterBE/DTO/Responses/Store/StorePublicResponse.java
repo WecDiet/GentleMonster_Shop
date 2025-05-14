@@ -1,4 +1,4 @@
-package com.gentlemonster.GentleMonsterBE.DTO.Requests.Subsidiary;
+package com.gentlemonster.GentleMonsterBE.DTO.Responses.Store;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,16 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class AddSubsidiaryRequest {
-    private String companyName;
+@NoArgsConstructor
+public class StorePublicResponse {
+    private String storeName;
     private String street;
     private String ward;
     private String district;
     private String hotLine;
     private String email;
-    private boolean status;
     private String description;
-    private String city;
 }

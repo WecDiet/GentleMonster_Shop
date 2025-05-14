@@ -24,7 +24,6 @@ public class SliderSpecification {
             if (categorySlug != null && !categorySlug.isEmpty()) {
                 // Kiểm tra status là true
                 Predicate statusPredicate = criteriaBuilder.isTrue(root.get("status"));
-                System.out.println("statusPredicate: " + statusPredicate);
                 // So sánh slug của trường category trong Slider
                 Predicate categoryPredicate = criteriaBuilder.equal( // So sánh bằng giá trị của trường slug trong đối tượng Category của Slider với giá trị truyền vào từ client
                         criteriaBuilder.lower(root.get("category").get("slug")), // Truy cập trường slug trong đối tượng Category của Slider

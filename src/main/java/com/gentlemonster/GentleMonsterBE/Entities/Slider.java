@@ -1,7 +1,5 @@
 package com.gentlemonster.GentleMonsterBE.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,13 +34,13 @@ public class Slider {
     @Column(name = "slider_banner", length = 500)
     private String sliderBanner; // Ảnh banner slider
 
-    @Column(name = "is_highlighted", nullable = false)
+    @Column(name = "is_highlighted")
     private boolean highlighted; // Trạng thái hiển thị slider thêm vào bộ sưu tập
 
     @Column(name = "description", length = 2000)
     private String description;
 
-    @Column(name = "slug", length=100, nullable = false)
+    @Column(name = "slug", length=100)
     private String slug;
 
     @CreationTimestamp
@@ -56,8 +54,4 @@ public class Slider {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-
-    @OneToMany(mappedBy = "slider", cascade = CascadeType.ALL)
-    private Set<Stories> stories;
-
 }

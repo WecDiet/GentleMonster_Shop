@@ -9,6 +9,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.City.CityResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.City;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
+import com.gentlemonster.GentleMonsterBE.Enums.StoreEnum;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICityRepository;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
@@ -73,13 +74,16 @@ public class CityService implements ICityService{
 
     @Override
     public APIResponse<Boolean> addCity(AddCityRequest addCityRequest) {
-        if (iCityRepository.existsByName(addCityRequest.getCityName())){
+        if (iCityRepository.existsByName(addCityRequest.getName())){
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_EXISTED)));
         }
         City city = modelMapper.map(addCityRequest, City.class);
-        String citySlug = vietnameseStringUtils.removeAccents(addCityRequest.getCityName()).trim().toLowerCase().replaceAll("\\s+", "-");
+        city.setName(addCityRequest.getName());
+        String citySlug = vietnameseStringUtils.removeAccents(addCityRequest.getName()).trim().toLowerCase().replaceAll("\\s+", "-");
         city.setSlug(citySlug);
         city.setStatus(addCityRequest.isStatus());
+        String countrySlug = StoreEnum.getCodeByCountry(addCityRequest.getCountry());
+        city.setCountrySlug(countrySlug);
         iCityRepository.save(city);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_CREATE_SUCCESS));
@@ -97,6 +101,8 @@ public class CityService implements ICityService{
         String citySlug = vietnameseStringUtils.removeAccents(editCityRequest.getCityName()).trim().toLowerCase().replaceAll("\\s+", "-");
         city.setSlug(citySlug);
         city.setStatus(editCityRequest.isStatus());
+        String countrySlug = StoreEnum.getCodeByCountry(editCityRequest.getCityName());
+        city.setCountrySlug(countrySlug);
         city.setUpdatedAt(LocalDateTime.now());
         iCityRepository.save(city);
         List<String> messages = new ArrayList<>();

@@ -91,8 +91,13 @@ public class WarehouseService implements  IWarehouseService {
             return new APIResponse<>(false, messages);
         }
         Warehouse warehouse = modelMapper.map(addWarehouseRequest, Warehouse.class);
-        warehouse.setUser(user);
         warehouse.setWarehouseLocation(addWarehouseRequest.getWarehouseLocation());
+        String prefixCodeUser = addWarehouseRequest.getCode().substring(0, addWarehouseRequest.getCode().indexOf("-"));
+        if (prefixCodeUser.equals("SRM")){
+            warehouse.setUser(user);
+        }else{
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_WRONG_ROLE)));
+        }
         iWarehouseRepository.save(warehouse);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_CREATE_SUCCESS));

@@ -30,7 +30,6 @@ public class UserController {
     private UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Operation(method = "GET", summary = "Get all user")
     @GetMapping
     public ResponseEntity<PagingResponse<?>> getAllUser(@ModelAttribute UserRequest userRequest,@Valid BindingResult result) {
         if (result.hasErrors()) {

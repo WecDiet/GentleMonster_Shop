@@ -29,5 +29,5 @@ public class EditUserRequest extends AddressUserRequest {
     @NotEmpty(message = "Role is required")
     private String role;
     @NotEmpty(message = "Subsidiary is required")
-    private String subsidiary;
+    private String store;
 }

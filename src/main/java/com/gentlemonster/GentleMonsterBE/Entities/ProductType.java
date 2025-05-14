@@ -1,13 +1,10 @@
 package com.gentlemonster.GentleMonsterBE.Entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -59,12 +56,13 @@ public class ProductType {
     @JsonIgnoreProperties("productTypes")
     private Category category;
 
-    @ManyToMany
-    @JoinTable(
-            name = "distribution",
-            joinColumns = @JoinColumn(name = "product_type_id"),
-            inverseJoinColumns = @JoinColumn(name = "subsidiary_id")
-    )
-    private Set<Subsidiary> subsidiaries;
+//    @ManyToOne
+//    @JoinColumn(name = "store_id")
+//    private Store store;
+
+//    @ManyToOne
+//    @JoinColumn(name = "collaboration_id", nullable = false)
+//    @JsonIgnoreProperties("productType")
+//    private Collaboration collaboration;
 
 }

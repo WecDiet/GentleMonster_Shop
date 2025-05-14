@@ -44,7 +44,7 @@ public class User implements UserDetails {
     @Column(name = "email", length = 200, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "code", length = 11, unique = true)
+    @Column(name = "code", length = 20, unique = true)
     private String code;
 
     @Column(name = "gender", length = 10)
@@ -171,6 +171,6 @@ public class User implements UserDetails {
     private List<SocialAccount> socialAccounts;
 
     @ManyToOne
-    @JoinColumn(name = "subsidiary_id")
-    private Subsidiary subsidiary;
+    @JoinColumn(name = "store_id")
+    private Store store;
 }

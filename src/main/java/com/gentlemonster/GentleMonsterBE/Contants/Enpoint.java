@@ -112,12 +112,14 @@ public class Enpoint {
         public static final String DELETE = "/{cityID}";
     }
 
-    public static final class Subsidiary{
-        public static final String BASE = API_PREFIX_ADMIN + "/subsidiaries";
+    public static final class Store{
+        public static final String BASE = API_PREFIX_ADMIN + "/stores";
         public static final String NEW = "/new";
-        public static final String EDIT = "/subsidiary_detail/{subsidiaryID}";
-        public static final String DELETE = "/subsidiary_detail/{subsidiaryID}";
-        public static final String ID = "/subsidiary_detail/{subsidiaryID}";
+        public static final String EDIT = "/store_detail/{storeID}";
+        public static final String DELETE = "/store_detail/{storeID}";
+        public static final String ID = "/store_detail/{storeID}";
+        public static final String STORE_PUBLIC = "/stores";
+        public static final String DELETE_MANY = "/delete-many";
     }
 
 }

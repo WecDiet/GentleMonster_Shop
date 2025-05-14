@@ -20,7 +20,6 @@ public interface IUserService {
     APIResponse<Boolean> updateUser(String userID, EditUserRequest editUserRequest);
     APIResponse<Boolean> deleteUser(String userID);
     APIResponse<List<BaseUserResponse>> searchUser(UserRequest userRequest);
-
     APIResponse<Boolean> deleteMutiUser(List<String> userIDs);
 
 }

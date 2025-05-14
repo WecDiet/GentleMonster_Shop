@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ICityRepository extends JpaRepository<City, UUID>, JpaSpecificationExecutor<City> {
-    boolean existsByName(String cityName);
-    Optional<City> findByName(String cityName);
+    boolean existsByName(String city);
+    boolean existsByCountrySlug(String country);
+    Optional<City> findByName(String city);
 }

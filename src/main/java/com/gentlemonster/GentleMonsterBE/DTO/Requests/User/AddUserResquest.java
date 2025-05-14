@@ -23,7 +23,7 @@ public class AddUserResquest extends AddressUserRequest {
     @NotEmpty(message = "Gender is required not empty !")
     private String gender;
     @NotEmpty(message = "phoneNumber is required not empty !")
-    @Size(min = 10, max = 10, message = "phoneNumber must be 10 characters")
+    @Size(min = 10, max = 12, message = "phoneNumber must be 10 characters")
     private String phoneNumber;
     private int day;
     private int month;
@@ -35,6 +35,6 @@ public class AddUserResquest extends AddressUserRequest {
     private boolean status;
     @NotEmpty(message = "role is required not empty !")
     private String role;
-    @NotEmpty(message = "subsidiary is required not empty !")
-    private String subsidiary;
+
+    private String store;
 }

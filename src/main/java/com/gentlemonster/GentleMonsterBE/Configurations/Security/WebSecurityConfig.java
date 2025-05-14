@@ -62,14 +62,15 @@ public class WebSecurityConfig {
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
                         String.format("%s/cities/*",Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/subsidiaries/*",Enpoint.API_PREFIX_ADMIN),
-                        String.format("%s/subsidiary_detail/*",Enpoint.Subsidiary.BASE),
-
+                    String.format("%s/stores/*",Enpoint.API_PREFIX_ADMIN),
+                    String.format("%s/store_detail/*",Enpoint.Store.BASE),
                         // Shop API USER
+//                        String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
+                        "/us/store",
                         "/us", // Hiển thị toàn bộ banner ở trang chủ
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
                         String.format("%s/item/**",Enpoint.API_PREFIX_SHOP)
                 ).permitAll()
-
 
                 .requestMatchers(HttpMethod.POST,
                     String.format("%s/new", Enpoint.User.BASE),
@@ -82,8 +83,8 @@ public class WebSecurityConfig {
                         String.format("%s/new",Enpoint.Warehouse.BASE),
                         String.format("%s/new",Enpoint.Banner.BASE),
                         String.format("%s/new",Enpoint.City.BASE),
-                        String.format("%s/new",Enpoint.Subsidiary.BASE),
-                        String.format("%s/ware_product/new",Enpoint.Warehouse.BASE)
+                        String.format("%s/ware_product/new",Enpoint.Warehouse.BASE),
+                        String.format("%s/new",Enpoint.Store.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.PUT,
@@ -98,8 +99,7 @@ public class WebSecurityConfig {
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
                         String.format("%s/product_detail/*",Enpoint.Product.BASE),
                         String.format("%s/*", Enpoint.Banner.BASE),
-                        String.format("%s/*", Enpoint.City.BASE),
-                        String.format("%s/subsidiary_detail/*",Enpoint.Subsidiary.BASE)
+                        String.format("%s/*", Enpoint.City.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.DELETE,
@@ -111,9 +111,9 @@ public class WebSecurityConfig {
                         String.format("%s/warehouse_detail/*",Enpoint.Warehouse.BASE),
                         String.format("%s/product_detail/*",Enpoint.Product.BASE),
                         String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
+                        String.format("%s/store_detail/*",Enpoint.Store.BASE),
                         String.format("%s/*", Enpoint.Banner.BASE),
-                        String.format("%s/*", Enpoint.City.BASE),
-                        String.format("%s/subsidiary_detail/*",Enpoint.Subsidiary.BASE)
+                        String.format("%s/*", Enpoint.City.BASE)
                 ).permitAll()
                 .anyRequest()
                 .authenticated()
