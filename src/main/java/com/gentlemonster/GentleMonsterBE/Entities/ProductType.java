@@ -56,6 +56,11 @@ public class ProductType {
     @JsonIgnoreProperties("productTypes")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "story_id", nullable = false)
+    @JsonIgnoreProperties("productTypes")
+    private Story story;
+
 //    @ManyToOne
 //    @JoinColumn(name = "store_id")
 //    private Store store;

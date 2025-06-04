@@ -20,7 +20,7 @@ public class Collaboration {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "slider_id", unique = true)
     private Slider slider;
 

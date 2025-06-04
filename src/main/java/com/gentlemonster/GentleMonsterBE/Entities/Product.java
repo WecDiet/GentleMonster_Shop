@@ -68,7 +68,7 @@ public class Product {
     @OneToMany(mappedBy = "product",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    private List<ProductImage> productImages;
+    private List<Media> media;
 
     @OneToOne(mappedBy = "product",
             cascade = CascadeType.ALL,

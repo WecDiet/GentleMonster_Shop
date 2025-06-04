@@ -49,4 +49,6 @@ public class OrderDetail {
     @CreationTimestamp
     @Column(name = "modified_date")
     private LocalDateTime  modifiedDate;
+
+
 }

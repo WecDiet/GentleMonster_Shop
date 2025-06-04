@@ -1,7 +1,6 @@
 package com.gentlemonster.GentleMonsterBE.Services.Slider;
 
 import com.gentlemonster.GentleMonsterBE.Contants.MessageKey;
-import com.gentlemonster.GentleMonsterBE.DTO.Requests.Category.AddCategoryRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.AddSliderRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.EditSliderRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.SliderRequest;
@@ -10,11 +9,9 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.BaseSliderResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderResponse;
-import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Category;
 import com.gentlemonster.GentleMonsterBE.Entities.Collaboration;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
-import com.gentlemonster.GentleMonsterBE.Entities.User;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICollaborationRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
@@ -35,7 +32,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

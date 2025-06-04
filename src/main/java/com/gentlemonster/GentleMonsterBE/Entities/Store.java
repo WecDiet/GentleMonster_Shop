@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,9 +58,6 @@ public class Store {
     @JoinColumn(name = "city_id")
     private City city;
 
-//    @OneToMany(mappedBy = "store")
-//    private Set<ProductType> productTypes;
-
     @OneToMany(mappedBy = "store",cascade = CascadeType.ALL)
     private Set<User> users;
 
@@ -67,5 +65,7 @@ public class Store {
     @JoinColumn(name = "slider_id")
     private Slider slider;
 
-
+    @OneToMany
+    @JoinColumn(name = "store_id")
+    private List<Media> mediaStore;
 }

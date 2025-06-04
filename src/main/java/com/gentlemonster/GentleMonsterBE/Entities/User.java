@@ -57,7 +57,7 @@ public class User implements UserDetails {
     private Date birthDay;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Address> addresses = new ArrayList<>();
+    private List<Address> addresses;
 
     @Column(name = "password", length = 64, nullable = false)
     private String password;
@@ -70,17 +70,17 @@ public class User implements UserDetails {
     @Column(name = "modified_date")
     private LocalDateTime  modifiedDate;
 
-    @Column(name = "photo", length = 150)
-    private String photoUrl;
+//    @Column(name = "photo", length = 150)
+//    private String photoUrl;
 
     @Column(name = "status")
-    private boolean status = true;
+    private boolean status;
 
     @Column(name = "userType")
     private int userType = 1; // 1: Google, 2: Facebook, 3: email
 
-    @Column(name = "cloudinaryImageId")
-    private String cloudinaryImageId;
+//    @Column(name = "cloudinaryImageId")
+//    private String cloudinaryImageId;
 
     @Column(name = "facebook_account_id")
     private String facebookAccountId;
@@ -91,6 +91,11 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
@@ -159,13 +164,13 @@ public class User implements UserDetails {
     private Product product;
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
-    private List<Token> tokenList = new ArrayList<>();
+    private List<Token> tokenList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Feedback> feedBackList = new ArrayList<>();
+    private List<Feedback> feedBackList;
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
-    private List<Order> orderList = new ArrayList<>();
+    private List<Order> orderList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SocialAccount> socialAccounts;
@@ -173,4 +178,8 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
+
+    @OneToOne
+    @JoinColumn(name = "media_id")
+    private Media media;
 }

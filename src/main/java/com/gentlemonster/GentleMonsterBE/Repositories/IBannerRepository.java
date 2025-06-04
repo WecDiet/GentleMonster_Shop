@@ -11,7 +11,6 @@ import java.util.UUID;
 
 public interface IBannerRepository extends JpaRepository<Banner, UUID>, JpaSpecificationExecutor<Banner> {
     boolean existsByTitle(String title);
-    boolean existsByImage (String image);
     Optional<Banner> findByTitle(String title);
     List<Banner> findByStatusTrue();
 }

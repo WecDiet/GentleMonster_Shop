@@ -28,7 +28,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +106,6 @@ public class StoreService implements IStoreService{
             // Nếu chưa có thì tạo mới
             slider = Slider.builder()
                     .name(sliderName)
-                    .image(city.getThumbnail())
                     .status(city.isStatus())
                     .slug(sliderSlug)
                     .category(category)
@@ -170,7 +168,6 @@ public class StoreService implements IStoreService{
                 return new APIResponse<>(null, messages);
             }
         }
-
         Specification<Store> specification = StoreSpecification.filterStore(storeRequest.getCountry(), storeRequest.getCity());
         listStore = iStoreRepository.findAll(specification);
         storePublicResponses = listStore.stream()

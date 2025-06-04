@@ -9,7 +9,6 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Auth.UserLoginResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
-import com.gentlemonster.GentleMonsterBE.Exception.DataNotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.IAuthRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IRoleRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IUserRepository;
@@ -21,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 
 @Service

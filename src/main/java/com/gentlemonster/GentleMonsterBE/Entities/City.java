@@ -26,9 +26,6 @@ public class City {
     @Column(name = "slug", length = 500, nullable = false)
     private String slug;
 
-    @Column(name = "thumbnail", length = 300)
-    private String thumbnail;
-
     @Column(name = "status", nullable = false)
     private boolean status;
 
@@ -45,5 +42,12 @@ public class City {
     @CreationTimestamp
     @Column(name = "updatedAt")
     private LocalDateTime  updatedAt;
+
+    @OneToMany
+    @JoinColumn(name = "city_id")
+    private List<Media> mediaCity;
+
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
+    private List<Store> stores; // Danh sách các cửa hàng trong thành phố
 
 }

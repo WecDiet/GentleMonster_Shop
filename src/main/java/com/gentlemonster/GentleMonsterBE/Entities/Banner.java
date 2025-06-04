@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,12 +24,6 @@ public class Banner {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "thumbnail", length = 500, nullable = false)
-    private String thumbnail;
-
-    @Column(name = "image", length = 500)
-    private String image;  // Đường dẫn ảnh banner
-
     @Column(name = "link", length = 100, nullable = false)
     private String link;
 
@@ -37,9 +32,6 @@ public class Banner {
 
     @Column(name = "seq", nullable = false)
     private int seq;  // Số thứ tự của banner từ 1 -> 4
-
-    @Column(name = "serial", nullable = false)
-    private int serial;  // Serial để phân biệt các banner, 0: image , 1: video
 
     @CreationTimestamp
     @Column(name = "created_date")
@@ -52,4 +44,8 @@ public class Banner {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany
+    @JoinColumn(name = "banner_id")
+    private List<Media> mediaBanner;  // Ảnh hoặc video của banner, nếu serial = 0 thì là ảnh, nếu serial = 1 thì là video
 }
