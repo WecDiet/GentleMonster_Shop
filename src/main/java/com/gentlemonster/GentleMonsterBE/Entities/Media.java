@@ -28,10 +28,17 @@ public class Media {
     @Column(name = "public_id", length = 500) // Trường public_id là ID công khai của ảnh trên Cloudinary
     private String publicId;
 
-
     // Trường alt_text là mô tả ảnh, thường dùng để cải thiện SEO và accessibility, Trợ năng (screen reader)
     @Column(name = "alt_text", length = 500)
     private String altText;
+
+    // ID của thực thể liên quan (User/Product/Story...)
+    @Column(name = "reference_id", length = 100)
+    private UUID referenceId;
+
+    // "USER", "PRODUCT", "STORY", "CITY", "SLIDER", "STORE"
+    @Column(name = "reference_type", length = 50)
+    private String referenceType;
 
     // THUMBNAIL: ảnh nhỏ (thumbnail) hiển thị trong danh sách.
     // GALLERY: ảnh chi tiết trong trang sản phẩm.
@@ -51,39 +58,5 @@ public class Media {
     @CreationTimestamp
     @Column(name = "modified_date")
     private LocalDateTime  modifiedDate;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    @JsonIgnore
-    private Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "story_id")
-    @JsonIgnore
-    private Story story;
-
-    @ManyToOne
-    @JoinColumn(name = "banner_id")
-    @JsonIgnore
-    private Slider banner;
-
-    @ManyToOne
-    @JoinColumn(name = "city_id")
-    @JsonIgnore
-    private City city;
-
-    @ManyToOne
-    @JoinColumn(name = "slider_id")
-    @JsonIgnore
-    private Slider slider;
-
-    @ManyToOne
-    @JoinColumn(name = "store_id")
-    @JsonIgnore
-    private Store store;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+    
 }

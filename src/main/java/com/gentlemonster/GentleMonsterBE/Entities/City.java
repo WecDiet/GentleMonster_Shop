@@ -43,10 +43,6 @@ public class City {
     @Column(name = "updatedAt")
     private LocalDateTime  updatedAt;
 
-    @OneToMany
-    @JoinColumn(name = "city_id")
-    private List<Media> mediaCity;
-
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private List<Store> stores; // Danh sách các cửa hàng trong thành phố
 

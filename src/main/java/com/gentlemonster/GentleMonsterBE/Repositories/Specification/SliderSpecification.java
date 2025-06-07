@@ -1,11 +1,9 @@
 package com.gentlemonster.GentleMonsterBE.Repositories.Specification;
 
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
-import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.UUID;
 
 public class SliderSpecification {
 

@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -66,6 +67,10 @@ public class Store {
     private Slider slider;
 
     @OneToMany
-    @JoinColumn(name = "store_id")
-    private List<Media> mediaStore;
+    @JoinTable(
+            name = "store_media",
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "meida_id")
+    )
+    private List<Media> medias = new ArrayList<>();
 }

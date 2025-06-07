@@ -1,7 +1,6 @@
 package com.gentlemonster.GentleMonsterBE.Repositories.Specification;
 
 import com.gentlemonster.GentleMonsterBE.Entities.Banner;
-import com.gentlemonster.GentleMonsterBE.Entities.User;
 import org.springframework.data.jpa.domain.Specification;
 
 public class BannerSpecification {

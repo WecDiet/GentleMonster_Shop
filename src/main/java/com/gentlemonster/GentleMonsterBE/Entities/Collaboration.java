@@ -1,6 +1,5 @@
 package com.gentlemonster.GentleMonsterBE.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,4 +33,7 @@ public class Collaboration {
 
     @Column(name = "status", nullable = false)
     private boolean status;
+
+    @OneToOne(mappedBy = "collaboration", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private Story story;
 }

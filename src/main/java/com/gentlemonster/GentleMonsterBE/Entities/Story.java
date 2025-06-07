@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,12 +41,19 @@ public class Story {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "story_id")
-    private List<ProductType> productTypes;
+    private ProductType productType;
 
     @OneToMany
-    @JoinColumn(name = "story_id")
-    private List<Media> mediaStory;
+    @JoinTable(
+            name = "story_media",
+            joinColumns = @JoinColumn(name = "story_id"),
+            inverseJoinColumns = @JoinColumn(name = "meida_id")
+    )
+    private List<Media> medias = new ArrayList<>();
 
+    @OneToOne
+    @JoinColumn(name = "collaboration_id", nullable = false, unique = true)
+    private Collaboration collaboration;
 }

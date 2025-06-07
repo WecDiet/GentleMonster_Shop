@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +48,10 @@ public class Banner {
     private Category category;
 
     @OneToMany
-    @JoinColumn(name = "banner_id")
-    private List<Media> mediaBanner;  // Ảnh hoặc video của banner, nếu serial = 0 thì là ảnh, nếu serial = 1 thì là video
+    @JoinTable(
+            name = "banner_media",
+            joinColumns = @JoinColumn(name = "banner_id"),
+            inverseJoinColumns = @JoinColumn(name = "meida_id")
+    )
+    private List<Media> medias = new ArrayList<>();
 }

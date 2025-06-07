@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class Product {
     private String thumbnail;
 
     @Column(name = "status", nullable = false)
-    private boolean status = false;
+    private boolean status;
 
     @Column(name = "slug", length = 500, nullable = false)
     private String slug;
@@ -65,14 +66,16 @@ public class Product {
 //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Feedback> feedBackList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private List<Media> media;
-
     @OneToOne(mappedBy = "product",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private ProductDetail productDetail;
 
+    @OneToMany
+    @JoinTable(
+            name = "product_media",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "meida_id")
+    )
+    private List<Media> medias = new ArrayList<>();
 }

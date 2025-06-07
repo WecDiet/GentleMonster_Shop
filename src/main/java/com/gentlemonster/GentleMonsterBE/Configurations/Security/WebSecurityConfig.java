@@ -57,63 +57,70 @@ public class WebSecurityConfig {
                     String.format("%s/banners/*", Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/products/*", Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/product_detail/*", Enpoint.Product.BASE),
-                        String.format("%s/warehouses/*",Enpoint.API_PREFIX_ADMIN),
+                    String.format("%s/warehouses/*",Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/warehouse_detail/*", Enpoint.Warehouse.BASE),
-                        String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
-                        String.format("%s/cities/*",Enpoint.API_PREFIX_ADMIN),
+                    String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
+                    String.format("%s/cities/*",Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/subsidiaries/*",Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/stores/*",Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/store_detail/*",Enpoint.Store.BASE),
+                    String.format("%s/stories/*", Enpoint.API_PREFIX_ADMIN),
+                    String.format("%s/story_detail/*", Enpoint.Story.BASE),
                         // Shop API USER
 //                        String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
                         "/us/store",
                         "/us", // Hiển thị toàn bộ banner ở trang chủ
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
-                        String.format("%s/item/**",Enpoint.API_PREFIX_SHOP)
+                    String.format("%s/item/**",Enpoint.API_PREFIX_SHOP),
+                    String.format("%s/stories/**", Enpoint.API_PREFIX_SHOP)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.POST,
                     String.format("%s/new", Enpoint.User.BASE),
                     String.format("%s/new", Enpoint.Role.BASE),
                     String.format("%s/new", Enpoint.Category.BASE),
-                        String.format("%s/account_register", Enpoint.Auth.BASE),
-                        String.format("%s/new", Enpoint.Slider.BASE),
-                        String.format("%s/new", Enpoint.Product_Type.BASE),
-                        String.format("%s/new", Enpoint.Product.BASE),
-                        String.format("%s/new",Enpoint.Warehouse.BASE),
-                        String.format("%s/new",Enpoint.Banner.BASE),
-                        String.format("%s/new",Enpoint.City.BASE),
-                        String.format("%s/ware_product/new",Enpoint.Warehouse.BASE),
-                        String.format("%s/new",Enpoint.Store.BASE)
+                    String.format("%s/account_register", Enpoint.Auth.BASE),
+                    String.format("%s/new", Enpoint.Slider.BASE),
+                    String.format("%s/new", Enpoint.Product_Type.BASE),
+                    String.format("%s/new", Enpoint.Product.BASE),
+                    String.format("%s/new",Enpoint.Warehouse.BASE),
+                    String.format("%s/new",Enpoint.Banner.BASE),
+                    String.format("%s/new",Enpoint.City.BASE),
+                    String.format("%s/ware_product/new",Enpoint.Warehouse.BASE),
+                    String.format("%s/new",Enpoint.Store.BASE),
+                    String.format("%s/new", Enpoint.Story.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.PUT,
                     String.format("%s/user_detail/*", Enpoint.User.BASE),
                     String.format("%s/role_detail/*", Enpoint.Role.BASE),
                     String.format("%s/category_detail/*", Enpoint.Category.BASE),
-                        String.format("%s/slider_detail/*", Enpoint.Slider.BASE),
-                        String.format("%s/product_type_detail/*", Enpoint.Product_Type.BASE),
-                        String.format("%s/collaboration_detail/*", Enpoint.Collaboration.BASEADMIN),
-                        String.format("%s/warehouse_detail/*",Enpoint.Warehouse.BASE),
-                        String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
-                        String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
-                        String.format("%s/product_detail/*",Enpoint.Product.BASE),
-                        String.format("%s/*", Enpoint.Banner.BASE),
-                        String.format("%s/*", Enpoint.City.BASE)
+                    String.format("%s/slider_detail/*", Enpoint.Slider.BASE),
+                    String.format("%s/product_type_detail/*", Enpoint.Product_Type.BASE),
+                    String.format("%s/collaboration_detail/*", Enpoint.Collaboration.BASEADMIN),
+                    String.format("%s/warehouse_detail/*",Enpoint.Warehouse.BASE),
+                    String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
+                    String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
+                    String.format("%s/product_detail/*",Enpoint.Product.BASE),
+                    String.format("%s/*", Enpoint.Banner.BASE),
+                    String.format("%s/*", Enpoint.City.BASE),
+                    String.format("%s/story_detail/*", Enpoint.Story.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.DELETE,
                     String.format("%s/user_detail/*", Enpoint.User.BASE),
                     String.format("%s/role_detail/*", Enpoint.Role.BASE),
                     String.format("%s/category_detail/*", Enpoint.Category.BASE),
-                        String.format("%s/slider_detail/*", Enpoint.Slider.BASE),
-                        String.format("%s/product_type_detail/*", Enpoint.Product_Type.BASE),
-                        String.format("%s/warehouse_detail/*",Enpoint.Warehouse.BASE),
-                        String.format("%s/product_detail/*",Enpoint.Product.BASE),
-                        String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
-                        String.format("%s/store_detail/*",Enpoint.Store.BASE),
-                        String.format("%s/*", Enpoint.Banner.BASE),
-                        String.format("%s/*", Enpoint.City.BASE)
+                    String.format("%s/slider_detail/*", Enpoint.Slider.BASE),
+                    String.format("%s/product_type_detail/*", Enpoint.Product_Type.BASE),
+                    String.format("%s/warehouse_detail/*",Enpoint.Warehouse.BASE),
+                    String.format("%s/product_detail/*",Enpoint.Product.BASE),
+                    String.format("%s/ware_product/*",Enpoint.Warehouse.BASE),
+                    String.format("%s/store_detail/*",Enpoint.Store.BASE),
+                    String.format("%s/*", Enpoint.Banner.BASE),
+                    String.format("%s/*", Enpoint.City.BASE),
+                    String.format("%s/story_detail/*", Enpoint.Story.BASE),
+                    String.format("%s/*", Enpoint.Story.BASE)
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

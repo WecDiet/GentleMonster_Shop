@@ -2,7 +2,6 @@ package com.gentlemonster.GentleMonsterBE.DTO.Requests.Store;
 
 import lombok.*;
 
-import java.util.List;
 
 @Getter
 @Setter

@@ -6,7 +6,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -28,7 +27,7 @@ public class Feedback {
     private String photo; // Hình ảnh đính kèm
 
     @Column(name = "status", nullable = false)
-    private boolean status = true; // Trạng thái
+    private boolean status; // Trạng thái
 
     @CreationTimestamp
     @Column(name = "created_date")

@@ -6,7 +6,6 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Role.RoleRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Role.RoleResponse;
-import com.gentlemonster.GentleMonsterBE.Entities.Role;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;

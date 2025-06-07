@@ -59,8 +59,10 @@ public class Slider {
     private List<Collaboration> collaborations = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "slider_id")
-    private List<Media> mediaSlider;
-
-
+    @JoinTable(
+            name = "slider_media",
+            joinColumns = @JoinColumn(name = "slider_id"),
+            inverseJoinColumns = @JoinColumn(name = "meida_id")
+    )
+    private List<Media> media = new ArrayList<>();
 }

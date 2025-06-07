@@ -80,6 +80,6 @@ public class Order {
     private Date deliveryAt;
 
     @Column(name = "status")
-    private boolean status = true;
+    private boolean status;
 
 }

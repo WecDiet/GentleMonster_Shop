@@ -7,7 +7,6 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserResponse;
-import com.gentlemonster.GentleMonsterBE.Entities.User;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;

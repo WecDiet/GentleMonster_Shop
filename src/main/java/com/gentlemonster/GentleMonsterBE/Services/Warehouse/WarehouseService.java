@@ -10,7 +10,6 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Warehouse.BaseWarehouseRe
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Warehouse.WarehouseResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
 import com.gentlemonster.GentleMonsterBE.Entities.Warehouse;
-import com.gentlemonster.GentleMonsterBE.Repositories.IRoleRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IUserRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IWarehouseRepository;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;

@@ -1,0 +1,29 @@
+package com.gentlemonster.GentleMonsterBE.DTO.Requests.Story;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.BaseProductPublicResponse;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class EditStoryRequest {
+    //@NotEmpty(message = "Name cannot be empty !")
+    private String name;
+    //@NotEmpty(message = "Description cannot be empty !")
+    private String description;
+    private boolean status;
+    //@NotEmpty(message = "Product Type cannot be empty !")
+    private String productType;
+    // @NotEmpty(message = "Media story cannot be empty !")
+    private List<String> mediaStory;
+    //@NotEmpty(message = "Collaboration name cannot be empty !")
+    private String collaboration;
+}

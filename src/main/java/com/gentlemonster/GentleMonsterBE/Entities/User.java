@@ -57,7 +57,7 @@ public class User implements UserDetails {
     private Date birthDay;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Address> addresses;
+    private List<Address> addresses = new ArrayList<>();
 
     @Column(name = "password", length = 64, nullable = false)
     private String password;
@@ -180,6 +180,11 @@ public class User implements UserDetails {
     private Store store;
 
     @OneToOne
-    @JoinColumn(name = "media_id")
-    private Media media;
+    @JoinTable(
+            name = "avatar",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "media_id")
+    )
+    private Media avatar;
+
 }

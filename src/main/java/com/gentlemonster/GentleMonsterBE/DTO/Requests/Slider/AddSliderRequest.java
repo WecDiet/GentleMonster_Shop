@@ -11,8 +11,8 @@ import lombok.*;
 public class AddSliderRequest {
     @NotEmpty(message = "Slider name is required")
     private String name;
-    @NotEmpty(message = "Slider image is required")
-    private String image;
+    // @NotEmpty(message = "Slider image is required")
+    // private String image;
     private boolean status;
     private boolean highlighted;
     private String category;

@@ -185,14 +185,18 @@ public class UserService implements IUserService {
         user.setSlug(slugStandardization);
         // Xử lý danh sách địa chỉ
         Address address = Address.builder()
-                .street(addUserRequest.getStreet() + ",")
-                .ward(addUserRequest.getWard() + ",")
-                .district(addUserRequest.getDistrict() + ",")
-                .city(addUserRequest.getCity() + ",")
+                .street(addUserRequest.getStreet())
+                .ward(addUserRequest.getWard())
+                .district(addUserRequest.getDistrict())
+                .city(addUserRequest.getCity())
                 .country(addUserRequest.getCountry())
                 .user(user)
                 .build();
 
+        // Kiểm tra xem người dùng có địa chỉ hay không
+        if(address == null) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage("Address is required")));
+        }
         // Thêm địa chỉ vào danh sách của người dùng
         user.getAddresses().add(address);
 

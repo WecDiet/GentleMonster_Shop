@@ -30,8 +30,8 @@ public class AddUserResquest extends AddressUserRequest {
     private int year;
     @NotEmpty(message = "password is required not empty !")
     private String password;
-    @NotEmpty(message = "photos is required not empty !")
-    private String photoUrl;
+    // @NotEmpty(message = "photos is required not empty !")
+    // private String photoUrl;
     private boolean status;
     @NotEmpty(message = "role is required not empty !")
     private String role;

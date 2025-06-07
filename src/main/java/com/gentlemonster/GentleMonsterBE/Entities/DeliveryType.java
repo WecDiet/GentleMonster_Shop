@@ -6,7 +6,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,5 +41,5 @@ public class DeliveryType {
     private LocalDateTime  modifiedDate;
 
     @Column(name = "status")
-    private Boolean status = true; // Trạng thái
+    private Boolean status; // Trạng thái
 }

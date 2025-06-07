@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -65,5 +66,13 @@ public class Warehouse {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user; // Người quản lý kho hàng này (User)
+
+    @OneToMany
+    @JoinTable(
+            name = "warehouse_media",
+            joinColumns = @JoinColumn(name = "warehouse_id"),
+            inverseJoinColumns = @JoinColumn(name = "meida_id")
+    )
+    private List<Media> medias = new ArrayList<>();
 
 }

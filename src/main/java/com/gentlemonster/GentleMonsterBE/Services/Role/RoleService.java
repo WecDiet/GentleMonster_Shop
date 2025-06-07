@@ -8,7 +8,6 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Role.RoleResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
-import com.gentlemonster.GentleMonsterBE.Exception.DataExistedException;
 import com.gentlemonster.GentleMonsterBE.Repositories.IRoleRepository;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import jakarta.transaction.Transactional;
@@ -18,12 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

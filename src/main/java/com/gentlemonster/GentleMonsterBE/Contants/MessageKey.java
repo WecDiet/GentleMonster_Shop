@@ -115,6 +115,7 @@ public class MessageKey {
     public static final String COLLABORATION_EXISTED = "collaboration.existed";
     public static final String COLLABORATION_REQUIRED = "collaboration.required";
     public static final String COLLABORATION_EMPTY = "collaboration.empty";
+    public static final String COLLABORATION_INVALID = "collaboration.invalid";
 
     // WAREHOUSE
     public static final String WAREHOUSE_CREATE_SUCCESS = "warehouse.create_success";
@@ -171,6 +172,18 @@ public class MessageKey {
     public static final String STORE_REQUIRED = "store.required";
     public static final String STORE_EMPTY = "store.empty";
     public static final String STORE_WRONG_ROLE = "store.wrong.role";
+
+    // STORY
+    public static final String STORY_CREATE_SUCCESS = "story.create_success";
+    public static final String STORY_UPDATE_SUCCESS = "story.update_success";
+    public static final String STORY_DELETE_SUCCESS = "story.delete_success";
+    public static final String STORY_GET_SUCCESS = "story.get_success";
+    public static final String STORY_NOT_FOUND = "story.not_found";
+    public static final String STORY_EXISTED = "story.existed";
+    public static final String STORY_NOT_EXISTS = "story.not_exist";
+    public static final String STORY_REQUIRED = "story.required";
+    public static final String STORY_EMPTY = "story.empty";
+    public static final String STORY_GET_PUBLIC_SUCCESS = "story.get_public_success";
 
 }
 

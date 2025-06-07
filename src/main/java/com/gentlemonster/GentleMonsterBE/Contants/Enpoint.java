@@ -23,7 +23,6 @@ public class Enpoint {
         public static final String SEARCH_USER = "/search";
         public static final String DELETE_MANY = "/delete-many";
     }
-
     public static final class Role{
         public static final String BASE = API_PREFIX_ADMIN + "/roles";
         public static final String NEW = "/new";
@@ -88,7 +87,6 @@ public class Enpoint {
         public static final String DELETE_MANY = "/delete-many";
         public static final String ID_PRODUCT = API_PREFIX_SHOP + "/item/{productTypeName}/{productID}";
     }
-
     public static final class Warehouse{
         public static final String BASE = API_PREFIX_ADMIN + "/warehouses";
         public static final String NEW = "/new";
@@ -120,6 +118,15 @@ public class Enpoint {
         public static final String ID = "/store_detail/{storeID}";
         public static final String STORE_PUBLIC = "/stores";
         public static final String DELETE_MANY = "/delete-many";
+    }
+    public static final class Story{
+        public static final String BASE = API_PREFIX_ADMIN + "/stories";
+        public static final String NEW = "/new";
+        public static final String EDIT = "/story_detail/{storyID}";
+        public static final String DELETE = "/story_detail/{storyID}";
+        public static final String ID = "/story_detail/{storyID}";
+        public static final String PUBLIC_STORY = API_PREFIX_SHOP + "/stories";
+        public static final String PUBLIC_STORY_DETAIL = API_PREFIX_SHOP + "/stories/{slug}";
     }
 
 }

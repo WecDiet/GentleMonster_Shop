@@ -1,6 +1,5 @@
 package com.gentlemonster.GentleMonsterBE.Services.Slider;
 
-import com.gentlemonster.GentleMonsterBE.DTO.Requests.Category.AddCategoryRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.AddSliderRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.EditSliderRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.SliderRequest;
@@ -9,7 +8,6 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.BaseSliderResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderResponse;
-import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 

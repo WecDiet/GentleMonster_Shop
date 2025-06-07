@@ -1,6 +1,5 @@
 package com.gentlemonster.GentleMonsterBE.Entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
