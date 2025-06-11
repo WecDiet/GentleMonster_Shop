@@ -45,7 +45,7 @@ public class Story {
     @JoinColumn(name = "story_id")
     private ProductType productType;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "story_media",
             joinColumns = @JoinColumn(name = "story_id"),

@@ -9,9 +9,12 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface ICityService {
     PagingResponse<List<CityResponse>> getAllCities(CityRequest cityRequest);
     APIResponse<Boolean> addCity(AddCityRequest addCityRequest);
     APIResponse<Boolean> editCity(String cityID, EditCityRequest editCityRequest);
     APIResponse<Boolean> deleteCity(String cityID);
+    APIResponse<Boolean> uploadMedia(String cityID, MultipartFile file);
 }

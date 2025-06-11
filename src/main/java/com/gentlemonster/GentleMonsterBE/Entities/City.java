@@ -46,4 +46,11 @@ public class City {
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private List<Store> stores; // Danh sách các cửa hàng trong thành phố
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "city_media",
+            joinColumns = @JoinColumn(name = "city_id"),
+            inverseJoinColumns = @JoinColumn(name = "media_id")
+    )
+    private Media media;
 }

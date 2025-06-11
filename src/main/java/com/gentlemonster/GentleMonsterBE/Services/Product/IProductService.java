@@ -11,6 +11,8 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.ProductDet
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface IProductService {
     PagingResponse<List<BaseProductResponse>> getAllProduct(ProductRequest productRequest);
     APIResponse<ProductResponse> getOneProduct(String productID);
@@ -20,4 +22,6 @@ public interface IProductService {
 
     APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String productTypeName, String productID);
 //    APIResponse<List<ProductPublicResponse>> getAllProductTypePublic(String categorySlug, String sliderSlug);
+
+    APIResponse<Boolean> uploadProductImage(String productID, MultipartFile file);
 }

@@ -11,6 +11,8 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.ProductResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.ProductDetailPublicResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.*;
 import com.gentlemonster.GentleMonsterBE.Repositories.*;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
+import com.gentlemonster.GentleMonsterBE.Utils.FileUploadUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -47,6 +51,9 @@ public class ProductService implements IProductService {
     private ICategoryRepository iCategoryRepository;
     @Autowired
     private ISliderRepository iSliderRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public PagingResponse<List<BaseProductResponse>> getAllProduct(ProductRequest productRequest) {
@@ -238,6 +245,41 @@ public class ProductService implements IProductService {
         return new APIResponse<>(productDetailPublicResponse, messages);
     }
 
+    @Override
+    public APIResponse<Boolean> uploadProductImage(String productID, MultipartFile image) {
+        Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
+        if (product == null) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+            return new APIResponse<>(false, messages);
+        }
+            try {
+                Map uploadResult = cloudinaryService.uploadMedia(image, "products");
+                String imageUrl = (String) uploadResult.get("secure_url");
+                System.out.println("Image URL: " + imageUrl);
+                Media media = Media.builder()
+                        .imageUrl(imageUrl)
+                        .publicId((String) uploadResult.get("public_id"))
+                        .referenceId(product.getId())
+                        .referenceType("PRODUCT")
+                        .altText("Product detail photo: " + product.getName())
+                        .type("GALLERY")
+                        .build();
+                product.getMedias().add(media);
+                iProductRepository.save(product);
+
+                System.out.println("Product image uploaded successfully: " + imageUrl);
+                List<String> messages = new ArrayList<>();
+                messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_MEDIA_SUCCESS));
+                return new APIResponse<>(true, messages);
+            } catch (Exception e) {
+                e.printStackTrace();
+                List<String> messages = new ArrayList<>();
+                messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_MEDIA_FAILED));
+                return new APIResponse<>(false, messages);
+            }
+            
+    }
 //    @Override
 //    public APIResponse<List<ProductPublicResponse>> getAllProductTypePublic(String categorySlug, String sliderSlug) {
 //        List<ProductPublicResponse> productPublicResponseList;

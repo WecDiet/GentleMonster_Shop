@@ -11,8 +11,10 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.Public.BannerPubli
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Banner;
 import com.gentlemonster.GentleMonsterBE.Entities.Category;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Repositories.IBannerRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import lombok.NoArgsConstructor;
@@ -23,9 +25,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -42,6 +46,8 @@ public class BannerService implements IBannerService {
     private VietnameseStringUtils vietnameseStringUtils;
     @Autowired
     private ICategoryRepository iCategoryRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public PagingResponse<List<BaseBannerResponse>> getAllBanners(BannerRequest bannerRequest) {
@@ -165,6 +171,35 @@ public class BannerService implements IBannerService {
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.BANNER_GET_SUCCESS));
         return new APIResponse<>(bannerPublicResponseList, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadMedia(String bannerID, MultipartFile file) {
+        Banner banner = iBannerRepository.findById(UUID.fromString(bannerID)).orElse(null);
+        if (banner == null) {
+            List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_NOT_FOUND));
+            return new APIResponse<>(false, messages);
+        }
+        try {
+            Map uploadResult = cloudinaryService.uploadMedia(file, "banners");
+            String imageURL = (String) uploadResult.get("secure_url");
+            banner.getMedias().add(Media.builder()
+                    .imageUrl(imageURL)
+                    .publicId((String) uploadResult.get("public_id"))
+                    .referenceId(banner.getId())
+                    .referenceType("BANNER")
+                    .altText("Banner photo: " + banner.getTitle())
+                    .type("BANNER")
+                    .build());
+            banner.setMedias(banner.getMedias());
+            iBannerRepository.save(banner);
+            List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_UPLOAD_MEDIA_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_UPLOAD_MEDIA_FAILED));
+            return new APIResponse<>(false, messages);
+        }
     }
 
 

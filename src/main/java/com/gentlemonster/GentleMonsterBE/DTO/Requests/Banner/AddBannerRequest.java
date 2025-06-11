@@ -11,7 +11,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class AddBannerRequest {
     private String title;
-    private String thumbnail;
     private boolean status;
     private String image;
     private int seq;

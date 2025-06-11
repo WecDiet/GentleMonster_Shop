@@ -47,7 +47,7 @@ public class Banner {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "banner_media",
             joinColumns = @JoinColumn(name = "banner_id"),

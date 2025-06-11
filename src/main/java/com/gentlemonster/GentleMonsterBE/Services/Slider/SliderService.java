@@ -11,11 +11,13 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderPublicRespon
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Category;
 import com.gentlemonster.GentleMonsterBE.Entities.Collaboration;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICollaborationRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.SliderSpecification;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import lombok.NoArgsConstructor;
@@ -29,10 +31,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -51,6 +55,8 @@ public class SliderService implements ISliderService {
     private VietnameseStringUtils vietnameseStringUtils;
     @Autowired
     private ICollaborationRepository ICollaborationRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public PagingResponse<List<BaseSliderResponse>> getAllSlider(@ModelAttribute SliderRequest sliderRequest) {
@@ -193,5 +199,37 @@ public class SliderService implements ISliderService {
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_GET_SUCCESS));
         return new APIResponse<>(sliderPublicResponseList, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadMedia(String sliderID, MultipartFile file) {
+        Slider slider = iSliderRepository.findById(UUID.fromString(sliderID)).orElse(null);
+        if (slider == null) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+        }
+        try {
+            Map uploadResult = cloudinaryService.uploadMedia(file, "sliders");
+            String imageUrl = (String) uploadResult.get("secure_url");
+            slider.getMedia().add(Media.builder()
+                    .imageUrl(imageUrl)
+                    .publicId((String) uploadResult.get("public_id"))
+                    .referenceId(slider.getId())
+                    .referenceType("SLIDER")
+                    .altText("Slider photo: " + slider.getName())
+                    .type("SLIDER")
+                    .build());
+
+            slider.setMedia(slider.getMedia());
+            iSliderRepository.save(slider);
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_FAILED));
+            return new APIResponse<>(false, messages);
+        }
+
     }
 }

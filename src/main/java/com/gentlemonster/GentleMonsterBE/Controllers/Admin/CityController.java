@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -54,5 +55,10 @@ public class CityController {
     @DeleteMapping(Enpoint.City.DELETE)
     public ResponseEntity<APIResponse<Boolean>> deleteCity(@PathVariable String cityID) {
         return ResponseEntity.ok(cityService.deleteCity(cityID));
+    }
+
+    @PostMapping(Enpoint.City.MEDIA)
+    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String cityID, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(cityService.uploadMedia(cityID, file));
     }
 }

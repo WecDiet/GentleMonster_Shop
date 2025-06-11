@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -72,5 +73,10 @@ public class SliderController {
     @DeleteMapping(Enpoint.Slider.DELETE)
     public ResponseEntity<APIResponse<Boolean>> deleteSlider(@PathVariable String sliderID) {
         return ResponseEntity.ok(sliderService.deleteSlider(sliderID));
+    }
+
+    @PostMapping(Enpoint.Slider.MEDIA)
+    public ResponseEntity<APIResponse<Boolean>> uploadMediaSlider(@PathVariable String sliderID, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(sliderService.uploadMedia(sliderID, file));
     }
 }

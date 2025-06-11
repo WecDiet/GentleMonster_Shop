@@ -2,6 +2,7 @@ package com.gentlemonster.GentleMonsterBE.Services.Story;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import com.gentlemonster.GentleMonsterBE.Contants.MessageKey;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Story.AddStoryRequest;
@@ -22,6 +24,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Story.StoryResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Story.Public.BaseStoryPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Story.Public.StoryPublicResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Collaboration;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.ProductType;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import com.gentlemonster.GentleMonsterBE.Entities.Story;
@@ -29,6 +32,7 @@ import com.gentlemonster.GentleMonsterBE.Repositories.ICollaborationRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IProductTypeRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IStoryRepository;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 
@@ -58,6 +62,9 @@ public class StoryService implements IStoryService {
 
     @Autowired
     private ISliderRepository iSliderRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
 
     @Override
@@ -236,5 +243,36 @@ public class StoryService implements IStoryService {
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_GET_SUCCESS));
         return new APIResponse<>(storyResponse, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadMedia(String storyId, MultipartFile file) {
+        Story story = iStoryRepository.findById(UUID.fromString(storyId)).orElse(null);
+        if (story == null) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
+            return new APIResponse<>(false, messages);
+        }
+        try {
+            Map uploadResult = cloudinaryService.uploadMedia(file, "stories");
+            String imageURL = (String) uploadResult.get("secure_url");
+            story.getMedias().add(Media.builder()
+                        .imageUrl(imageURL)
+                        .publicId((String) uploadResult.get("public_id"))
+                        .altText("Story photo: " + story.getName())
+                        .referenceId(story.getId())
+                        .referenceType("STORY")
+                        .type("STORY")
+                        .build());
+            story.setMedias(story.getMedias());
+            iStoryRepository.save(story);
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_MEDIA_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_MEDIA_FAILED));
+            return new APIResponse<>(false, messages);
+        }
     }
 }

@@ -66,6 +66,8 @@ public class MessageKey {
     public static final String BANNER_IMAGE_UPDATE_SUCCESS = "banner.image.update_success";
     public static final String BANNER_REQUIRED = "banner.required";
     public static final String BANNER_EMPTY = "banner.empty";
+    public static final String BANNER_UPLOAD_MEDIA_SUCCESS = "banner.upload_media_success";
+    public static final String BANNER_UPLOAD_MEDIA_FAILED = "banner.upload_media_failed";
 
     // PRODUCT
     public static final String PRODUCT_CREATE_SUCCESS = "product.create_success";
@@ -83,6 +85,8 @@ public class MessageKey {
     public static final String PRODUCT_EMPTY = "product.empty";
     public static final String PRODUCT_EXISTED = "product.existed";
     public static final String FIND_PRODUCT_CATEGORY_SLIDER_NULL = "product.category_slider_is_null";
+    public static final String PRODUCT_UPLOAD_MEDIA_SUCCESS = "product.upload_media_success";
+    public static final String PRODUCT_UPLOAD_MEDIA_FAILED = "product.upload_media_failed";
 
     // PRODUCT TYPE
     public static final String PRODUCT_TYPE_CREATE_SUCCESS = "product_type.create_success";
@@ -105,6 +109,8 @@ public class MessageKey {
     public static final String SLIDER_REQUIRED = "slider.required";
     public static final String SLIDER_EMPTY = "slider.empty";
     public static final String SLIDER_HIGHLIGHTED_EXISTED = "slider.highlighted_existed";
+    public static final String SLIDER_UPLOAD_MEDIA_SUCCESS = "slider.upload_media_success";
+    public static final String SLIDER_UPLOAD_MEDIA_FAILED = "slider.upload_media_failed";
 
     // COLLABORATION
     public static final String COLLABORATION_CREATE_SUCCESS = "collaboration.create_success";
@@ -161,6 +167,8 @@ public class MessageKey {
     public static final String CITY_REQUIRED = "city.required";
     public static final String CITY_EMPTY = "city.empty";
     public static final String COUNTRY_NOT_FOUND = "city.country";
+    public static final String CITY_MEDIA_UPLOAD_SUCCESS = "city.upload_media_success";
+    public static final String CITY_MEDIA_UPLOAD_FAILED = "city.upload_media_failed";
 
     // STORE
     public static final String STORE_CREATE_SUCCESS = "store.create_success";
@@ -172,6 +180,8 @@ public class MessageKey {
     public static final String STORE_REQUIRED = "store.required";
     public static final String STORE_EMPTY = "store.empty";
     public static final String STORE_WRONG_ROLE = "store.wrong.role";
+    public static final String STORE_UPLOAD_MEDIA_SUCCESS = "store.upload_media_success";
+    public static final String STORE_UPLOAD_MEDIA_FAILED = "store.upload_media_failed";
 
     // STORY
     public static final String STORY_CREATE_SUCCESS = "story.create_success";
@@ -184,6 +194,8 @@ public class MessageKey {
     public static final String STORY_REQUIRED = "story.required";
     public static final String STORY_EMPTY = "story.empty";
     public static final String STORY_GET_PUBLIC_SUCCESS = "story.get_public_success";
+    public static final String STORY_UPLOAD_MEDIA_SUCCESS = "story.upload_media_success";
+    public static final String STORY_UPLOAD_MEDIA_FAILED = "story.upload_media_failed";
 
 }
 

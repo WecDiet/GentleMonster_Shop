@@ -66,10 +66,10 @@ public class WebSecurityConfig {
                     String.format("%s/store_detail/*",Enpoint.Store.BASE),
                     String.format("%s/stories/*", Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/story_detail/*", Enpoint.Story.BASE),
-                        // Shop API USER
-//                        String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
-                        "/us/store",
-                        "/us", // Hiển thị toàn bộ banner ở trang chủ
+                    // Shop API USER
+//                  String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
+                    "/us/store",
+                    "/us", // Hiển thị toàn bộ banner ở trang chủ
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
                     String.format("%s/item/**",Enpoint.API_PREFIX_SHOP),
                     String.format("%s/stories/**", Enpoint.API_PREFIX_SHOP)
@@ -88,7 +88,14 @@ public class WebSecurityConfig {
                     String.format("%s/new",Enpoint.City.BASE),
                     String.format("%s/ware_product/new",Enpoint.Warehouse.BASE),
                     String.format("%s/new",Enpoint.Store.BASE),
-                    String.format("%s/new", Enpoint.Story.BASE)
+                    String.format("%s/new", Enpoint.Story.BASE),
+                    String.format("%s/product_detail/{productID}/upload", Enpoint.Product.BASE),
+                    String.format("%s/{bannerID}/upload", Enpoint.Banner.BASE),
+                    String.format("%s/slider_detail/{sliderID}/upload", Enpoint.Slider.BASE),
+                    String.format("%s/store_detail/{storeID}/upload", Enpoint.Store.BASE),
+                    String.format("%s/{cityID}/upload", Enpoint.City.BASE),
+                    String.format("%s/story_detail/{storyID}/upload", Enpoint.Story.BASE)
+
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.PUT,

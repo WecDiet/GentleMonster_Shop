@@ -18,4 +18,5 @@ public interface IAuthService {
     String loginGoogle(String token, String deviceToken) throws Exception;
     User registerFacebook(String token);
     String loginFacebook(String token, String deviceToken) throws Exception;
+    
 }

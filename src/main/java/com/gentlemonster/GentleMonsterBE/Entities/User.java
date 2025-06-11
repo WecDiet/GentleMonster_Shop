@@ -179,7 +179,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(
             name = "avatar",
             joinColumns = @JoinColumn(name = "user_id"),

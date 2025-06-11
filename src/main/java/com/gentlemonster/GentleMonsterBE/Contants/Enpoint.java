@@ -48,6 +48,7 @@ public class Enpoint {
         public static final String DELETE = "/slider_detail/{sliderID}";
         public static final String DELETE_MANY = "/delete-many";
         public static final String PUBLIC_SLIDER = "/list/{slug}";
+        public static final String MEDIA = "/slider_detail/{sliderID}/upload";
     }
 
     public static final class Product_Type{
@@ -75,6 +76,7 @@ public class Enpoint {
         public static final String DELETE = "/{bannerID}";
         public static final String ID = "/{bannerID}";
         public static final String PUBLIC_BANNER = "/us";
+        public static final String MEDIA = "/{bannerID}/upload";
     }
 
     public static final class Product{
@@ -85,6 +87,7 @@ public class Enpoint {
         public static final String ID = "/product_detail/{productID}";
         public static final String SEARCH_PRODUCT = "/search";
         public static final String DELETE_MANY = "/delete-many";
+        public static final String UPLOAD_IMAGE = "/product_detail/{productID}/upload";
         public static final String ID_PRODUCT = API_PREFIX_SHOP + "/item/{productTypeName}/{productID}";
     }
     public static final class Warehouse{
@@ -108,6 +111,7 @@ public class Enpoint {
         public static final String NEW = "/new";
         public static final String EDIT = "/{cityID}";
         public static final String DELETE = "/{cityID}";
+        public static final String MEDIA = "/{cityID}/upload";
     }
 
     public static final class Store{
@@ -118,6 +122,7 @@ public class Enpoint {
         public static final String ID = "/store_detail/{storeID}";
         public static final String STORE_PUBLIC = "/stores";
         public static final String DELETE_MANY = "/delete-many";
+        public static final String MEDIA = "/store_detail/{storeID}/upload";
     }
     public static final class Story{
         public static final String BASE = API_PREFIX_ADMIN + "/stories";
@@ -127,6 +132,7 @@ public class Enpoint {
         public static final String ID = "/story_detail/{storyID}";
         public static final String PUBLIC_STORY = API_PREFIX_SHOP + "/stories";
         public static final String PUBLIC_STORY_DETAIL = API_PREFIX_SHOP + "/stories/{slug}";
+        public static final String MEDIA = "/story_detail/{storyID}/upload";
     }
 
 }

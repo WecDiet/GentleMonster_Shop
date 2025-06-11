@@ -36,7 +36,7 @@ public class Media {
     @Column(name = "reference_id", length = 100)
     private UUID referenceId;
 
-    // "USER", "PRODUCT", "STORY", "CITY", "SLIDER", "STORE"
+    // "USER", "PRODUCT", "STORY", "CITY", "SLIDER", "STORE" , "BANNER", "COLLABORATION", "WAREHOUSE"
     @Column(name = "reference_type", length = 50)
     private String referenceType;
 

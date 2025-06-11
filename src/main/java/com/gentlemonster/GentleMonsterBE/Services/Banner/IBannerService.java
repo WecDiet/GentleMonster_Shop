@@ -9,6 +9,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.BaseBannerResponse
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.Public.BannerPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,5 +20,6 @@ public interface IBannerService {
     APIResponse<Boolean> updateBanner(String bannerID, EditBannerRequest editBannerRequest);
     APIResponse<Boolean> deleteBanner(String bannerID);
     APIResponse<List<BannerPublicResponse>> getAllBannersPublic();
+    APIResponse<Boolean> uploadMedia(String bannerID, MultipartFile file);
 
 }

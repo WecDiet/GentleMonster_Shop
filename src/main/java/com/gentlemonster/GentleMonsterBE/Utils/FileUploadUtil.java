@@ -1,11 +1,16 @@
 package com.gentlemonster.GentleMonsterBE.Utils;
 
-import lombok.experimental.UtilityClass;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.gentlemonster.GentleMonsterBE.Exception.FileUploadException;
+
+import lombok.experimental.UtilityClass;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,10 +18,8 @@ import java.util.regex.Pattern;
 public class FileUploadUtil {
     public static final long MAX_FILE_SIZE = 5 * 1024 * 1024;   // 5 MB
 
-    public static final String IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)";
-
+    public static final String MEDIA_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp|mp4|avi))$)";
     public static final String DATE_FORMAT = "yyyyMMddHHmmss";
-
     public static final String FILE_NAME_FORMAT = "%s_%s";
 
     public static boolean isAllowedExtension(final String fileName, final String pattern) {
@@ -32,13 +35,27 @@ public class FileUploadUtil {
 
         final String fileName = file.getOriginalFilename();
         if (!isAllowedExtension(fileName, pattern)) {
-            throw new FileUploadException("Only jpg, png, gif, bmp files are allowed");
+            throw new FileUploadException("Only jpg, png, gif, bmp, mp4, avi files are allowed");
         }
     }
 
-    public static String getFileName(final String name) {
+    public static String generateFileName(String name) {
         final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        final String date = dateFormat.format(System.currentTimeMillis());
-        return String.format(FILE_NAME_FORMAT, name, date);
+        final String date = dateFormat.format(new Date());
+        return String.format(FILE_NAME_FORMAT, date, name);
+    }
+
+    public static String getExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf('.') + 1);
+    }
+
+    public static String getResourceTypeFromExtension(String extension) {
+        String ext = extension.toLowerCase();
+        List<String> videoExtensions = Arrays.asList("mp4", "avi");
+
+        if (videoExtensions.contains(ext)) {
+            return "video";
+        }
+        return "image";
     }
 }

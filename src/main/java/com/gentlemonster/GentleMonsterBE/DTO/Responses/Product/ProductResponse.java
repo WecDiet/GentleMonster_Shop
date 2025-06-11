@@ -27,6 +27,6 @@ public class ProductResponse {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDateTime modifiedDate;
     private BaseProductTypeResponse productType;
-    private List<ProductImageResponse> productImage;
+    private List<String> medias;
     private ProductDetailResponse productDetail;
 }

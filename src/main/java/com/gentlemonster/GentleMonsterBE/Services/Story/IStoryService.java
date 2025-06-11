@@ -2,6 +2,8 @@ package com.gentlemonster.GentleMonsterBE.Services.Story;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Story.AddStoryRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Story.EditStoryRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Story.StoryRequest;
@@ -21,4 +23,5 @@ public interface IStoryService {
     APIResponse<Boolean> deleteStory(String storyId);
     APIResponse<List<BaseStoryPublicResponse>> getAllStoriesPublic();
     APIResponse<StoryPublicResponse> getStoryBySlug(String slug);
+    APIResponse<Boolean> uploadMedia(String storyId, MultipartFile file);
 }

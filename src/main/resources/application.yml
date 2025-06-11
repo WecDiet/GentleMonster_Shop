@@ -19,13 +19,13 @@ openapi:
 spring:
   application:
     name: GentleMonsterBE
+  config:
+    import: classpath:env.yml
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  config:
-    import: 'classpath:env.yml'
   jpa:
     show-sql: true
     properties:
@@ -41,9 +41,13 @@ spring:
   messages:
     basename: messages
   servlet:
-    enabled: true
-    max-file-size: 10MB
-    max-request-size: 10MB
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+    # enabled: true
+    # max-file-size: 10MB
+    # max-request-size: 10MB
   session:
     cookie:
     name: JSESSIONID

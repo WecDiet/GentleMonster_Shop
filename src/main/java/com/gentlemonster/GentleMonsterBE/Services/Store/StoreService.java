@@ -11,6 +11,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Store.StorePublicResponse
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Store.StoreResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Category;
 import com.gentlemonster.GentleMonsterBE.Entities.City;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import com.gentlemonster.GentleMonsterBE.Entities.Store;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
@@ -18,6 +19,7 @@ import com.gentlemonster.GentleMonsterBE.Repositories.ICityRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IStoreRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.StoreSpecification;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import lombok.NoArgsConstructor;
@@ -28,9 +30,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -51,6 +55,8 @@ public class StoreService implements IStoreService{
     private ICityRepository iCityRepository;
     @Autowired
     private ICategoryRepository iCategoryRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public PagingResponse<List<BaseStoreResponse>> GetAllStore(StoreRequest storeRequest) {
@@ -176,5 +182,39 @@ public class StoreService implements IStoreService{
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_GET_SUCCESS));
         return new APIResponse<>(storePublicResponses, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadMedia(String storeID, MultipartFile file) {
+        Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
+        if (store == null) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
+            return new APIResponse<>(false, messages);
+        }
+        try {
+            Map uploadResult = cloudinaryService.uploadMedia(file, "stores");
+            String imageURL = (String) uploadResult.get("secure_url");
+            store.getMedias().add(
+                    Media.builder()
+                        .imageUrl(imageURL)
+                        .publicId((String) uploadResult.get("public_id"))
+                        .referenceId(store.getId())
+                        .referenceType("STORE")
+                        .altText("Store photo: " + store.getStoreName())
+                        .type("STORE")
+                        .build()
+            );
+            store.setMedias(store.getMedias());
+            iStoreRepository.save(store);
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_FAILED));
+            return new APIResponse<>(false, messages);
+        }
     }
 }

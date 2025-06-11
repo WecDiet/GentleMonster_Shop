@@ -66,8 +66,8 @@ public class Warehouse {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user; // Người quản lý kho hàng này (User)
-
-    @OneToMany
+    
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "warehouse_media",
             joinColumns = @JoinColumn(name = "warehouse_id"),

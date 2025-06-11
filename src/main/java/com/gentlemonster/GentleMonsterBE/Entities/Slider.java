@@ -58,7 +58,7 @@ public class Slider {
     @JsonIgnoreProperties("slider")
     private List<Collaboration> collaborations = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "slider_media",
             joinColumns = @JoinColumn(name = "slider_id"),

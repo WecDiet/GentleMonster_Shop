@@ -71,7 +71,7 @@ public class Product {
             fetch = FetchType.LAZY)
     private ProductDetail productDetail;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "product_media",
             joinColumns = @JoinColumn(name = "product_id"),

@@ -8,8 +8,10 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.City.CityResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.City;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Enums.StoreEnum;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICityRepository;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import lombok.NoArgsConstructor;
@@ -20,10 +22,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -37,6 +41,8 @@ public class CityService implements ICityService{
     private LocalizationUtil localizationUtil;
     @Autowired
     private VietnameseStringUtils vietnameseStringUtils;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public PagingResponse<List<CityResponse>> getAllCities(CityRequest cityRequest) {
@@ -118,5 +124,34 @@ public class CityService implements ICityService{
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_DELETE_SUCCESS));
         return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadMedia(String cityID, MultipartFile file) {
+        City city = iCityRepository.findById(UUID.fromString(cityID)).orElse(null);
+        if (city == null) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
+        }
+        try {
+            Map uploadResult = cloudinaryService.uploadMedia(file, "cities");
+            String thumbnailUrl = (String) uploadResult.get("secure_url");
+            Media media = Media.builder()
+                    .imageUrl(thumbnailUrl)
+                    .publicId((String) uploadResult.get("public_id"))
+                    .altText("Thumbnail for city " + city.getName())
+                    .referenceId(city.getId())
+                    .referenceType("CITY")
+                    .type("THUMBNAIL")
+                    .build();
+            city.setMedia(media);
+            iCityRepository.save(city);
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_MEDIA_UPLOAD_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_MEDIA_UPLOAD_FAILED)));
+        
+        }
     }
 }

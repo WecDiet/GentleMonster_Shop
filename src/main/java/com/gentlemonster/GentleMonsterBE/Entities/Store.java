@@ -66,7 +66,7 @@ public class Store {
     @JoinColumn(name = "slider_id")
     private Slider slider;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "store_media",
             joinColumns = @JoinColumn(name = "store_id"),

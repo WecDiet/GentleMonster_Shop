@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -71,5 +72,10 @@ public class BannerController {
     @DeleteMapping(Enpoint.Banner.DELETE)
     public ResponseEntity<APIResponse<Boolean>> deleteBanner(@PathVariable String bannerID) {
         return ResponseEntity.ok(iBannerService.deleteBanner(bannerID));
+    }
+
+    @PostMapping(Enpoint.Banner.MEDIA)
+    public ResponseEntity<APIResponse<Boolean>> uploadBannerMedia(@PathVariable String bannerID, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(iBannerService.uploadMedia(bannerID, file));
     }
 }

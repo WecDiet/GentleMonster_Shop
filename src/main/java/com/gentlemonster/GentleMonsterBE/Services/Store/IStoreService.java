@@ -11,6 +11,8 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Store.StoreResponse;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface IStoreService {
     PagingResponse<List<BaseStoreResponse>> GetAllStore(StoreRequest storeRequest);
     APIResponse<Boolean> AddStore(AddStoreRequest addStoreRequest);
@@ -18,5 +20,5 @@ public interface IStoreService {
     APIResponse<Boolean> DeleteStore(String storeID);
     APIResponse<StoreResponse> GetOneStore(String storeID);
     APIResponse<List<StorePublicResponse>> GetAllStoreByCountry(StoreRequest storeRequest);
-
+    APIResponse<Boolean> uploadMedia(String storeID, MultipartFile file);
 }

@@ -8,16 +8,20 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Services.Product.ProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(Enpoint.Product.BASE)
+@RequiredArgsConstructor
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -62,6 +66,14 @@ public class ProductController {
         }
         return ResponseEntity.ok(productService.editProduct(productID,editProductRequest));
     }
+
+    @PostMapping(Enpoint.Product.UPLOAD_IMAGE)
+    public ResponseEntity<APIResponse<Boolean>> uploadProductImage(@PathVariable String productID, 
+                                                @RequestParam("file") MultipartFile image) {
+        return ResponseEntity.ok(productService.uploadProductImage(productID, image));
+    }
+
+
 
     @DeleteMapping(Enpoint.Product.DELETE)
     public ResponseEntity<APIResponse<Boolean>> deleteProduct(@PathVariable String productID) {
