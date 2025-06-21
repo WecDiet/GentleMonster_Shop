@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.util.UUID;
 
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -11,6 +13,6 @@ import java.util.UUID;
 public class BaseProductResponse {
     private UUID id;
     private String name;
-    private String thumbnail;
     private boolean status;
+    private ImageResponse thumbnailMedia;
 }

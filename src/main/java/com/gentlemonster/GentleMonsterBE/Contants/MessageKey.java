@@ -40,6 +40,8 @@ public class MessageKey {
     public static final String USER_NOT_EXIST = "user.not_exist";
     public static final String USER_ROLE_NULL = "user.role_null";
     public static final String USER_WRONG_ROLE = "user.wrong_role";
+    public static final String USER_UPLOAD_AVATAR_SUCCESS = "user.upload_media_success";
+    public static final String USER_UPLOAD_AVATAR_FAILED = "user.upload_media_failed";
 
     // PAYMENT TYPE
     public static final String PAYMENT_TYPE_CREATE_SUCCESS = "payment_type.create_success";
@@ -85,8 +87,13 @@ public class MessageKey {
     public static final String PRODUCT_EMPTY = "product.empty";
     public static final String PRODUCT_EXISTED = "product.existed";
     public static final String FIND_PRODUCT_CATEGORY_SLIDER_NULL = "product.category_slider_is_null";
+    public static final String PRODUCT_UPLOAD_THUMBNAIL_SUCCESS = "product.upload_thumbnail_success";
+    public static final String PRODUCT_UPLOAD_THUMBNAIL_FAILED = "product.upload_thumbnail_failed";
     public static final String PRODUCT_UPLOAD_MEDIA_SUCCESS = "product.upload_media_success";
     public static final String PRODUCT_UPLOAD_MEDIA_FAILED = "product.upload_media_failed";
+    public static final String PRODUCT_NO_FILES_UPLOADED = "product.no_files_uploaded";
+    public static final String PRODUCT_DETAIL_NOT_FOUND = "product_detail.not_found";
+    public static final String PRODUCT_DETAIL_NOT_VALID_FILES_UPLOADED = "product_detail.no_valid_files_uploaded";
 
     // PRODUCT TYPE
     public static final String PRODUCT_TYPE_CREATE_SUCCESS = "product_type.create_success";
@@ -156,6 +163,8 @@ public class MessageKey {
     public static final String PRODUCT_WAREHOUSE_EMPTY = "product_warehouse.empty";
     public static final String PRODUCT_WAREHOUSE_QUANTITY_INVALID = "product_warehouse.quantity.invalid";
     public static final String PRODUCT_WAREHOUSE_DONT_PUBLIC = "product_warehouse.dont_public";
+    public static final String PRODUCT_WAREHOUSE_UPLOAD_MEDIA_SUCCESS = "product_warehouse.upload_media_success";
+    public static final String PRODUCT_WAREHOUSE_UPLOAD_MEDIA_FAILED = "product_warehouse.upload_media_failed";
 
     // CITY
     public static final String CITY_CREATE_SUCCESS = "city.create_success";
@@ -182,6 +191,10 @@ public class MessageKey {
     public static final String STORE_WRONG_ROLE = "store.wrong.role";
     public static final String STORE_UPLOAD_MEDIA_SUCCESS = "store.upload_media_success";
     public static final String STORE_UPLOAD_MEDIA_FAILED = "store.upload_media_failed";
+    public static final String STORE_UPLOAD_THUMBNAIL_SUCCESS = "product.upload_thumbnail_success";
+    public static final String STORE_UPLOAD_THUMBNAIL_FAILED = "product.upload_thumbnail_failed";
+    public static final String STORE_NOT_VALID_FILES_UPLOADED = "store.no_valid_files_uploaded";
+
 
     // STORY
     public static final String STORY_CREATE_SUCCESS = "story.create_success";
@@ -196,6 +209,9 @@ public class MessageKey {
     public static final String STORY_GET_PUBLIC_SUCCESS = "story.get_public_success";
     public static final String STORY_UPLOAD_MEDIA_SUCCESS = "story.upload_media_success";
     public static final String STORY_UPLOAD_MEDIA_FAILED = "story.upload_media_failed";
+    public static final String STORY_UPLOAD_THUMBNAIL_SUCCESS = "story.upload_thumbnail_success";
+    public static final String STORY_UPLOAD_THUMBNAIL_FAILED = "story.upload_thumbnail_failed";
+    public static final String STORY_NOT_VALID_FILES_UPLOADED = "story.no_valid_files_uploaded";
 
 }
 

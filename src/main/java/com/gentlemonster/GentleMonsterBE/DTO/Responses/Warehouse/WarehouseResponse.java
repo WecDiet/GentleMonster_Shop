@@ -1,6 +1,8 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.Warehouse;
 
-import com.gentlemonster.GentleMonsterBE.DTO.Responses.ProductType.ProductTypeWarehouseResponse;
+import java.util.List;
+
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserWarehouse;
 import lombok.*;
 
@@ -19,4 +21,5 @@ public class WarehouseResponse {
     private String country; // Quốc gia
     private int totalCapacity; // Dung lượng tối đa của kho
     private BaseUserWarehouse user;
+    private List<ImageResponse> medias;
 }

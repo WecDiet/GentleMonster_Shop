@@ -179,12 +179,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "avatar",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "media_id")
-    )
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "avatar_id") // FK trong bảng Product
     private Media avatar;
 
 }

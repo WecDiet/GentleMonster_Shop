@@ -42,12 +42,8 @@ public class Media {
 
     // THUMBNAIL: ảnh nhỏ (thumbnail) hiển thị trong danh sách.
     // GALLERY: ảnh chi tiết trong trang sản phẩm.
-    // BANNER: ảnh lớn hiển thị trên trang chủ hoặc trang danh mục.
-    // STORY: ảnh trong các câu chuyện (stories) hoặc bài viết.
-    // CITY: ảnh đại diện cho thành phố.
-    // SLIDER: ảnh trong slider hoặc carousel.
-    // STORE: ảnh liên quan đến cửa hàng.
-    // USER: ảnh đại diện của người dùng (user profile).
+    // IMAGE: ảnh chung chung, có thể dùng cho nhiều mục đích khác nhau.
+    // AVATAR: ảnh đại diện của người dùng (user profile).
     @Column(name = "type", length = 300)
     private String type;
     

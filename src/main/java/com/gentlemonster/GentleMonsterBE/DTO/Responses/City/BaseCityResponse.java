@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.util.UUID;
 
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,4 +18,5 @@ public class BaseCityResponse {
     private String name;
     private String country;
     private String countrySlug;
+    private ImageResponse image;
 }

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -72,5 +73,10 @@ public class ProductWarehouseController {
     @GetMapping(Enpoint.Warehouse.ID_PRODUCT)
     public ResponseEntity<APIResponse<?>> getProductInWarehouse(@PathVariable String productWarehouseID) {
         return ResponseEntity.ok(warehouseProductService.getProductInWarehouse(productWarehouseID));
+    }
+
+    @PostMapping(Enpoint.Warehouse.UPLOAD_MEDIA)
+    public ResponseEntity<APIResponse<Boolean>> uploadMediaProductInWarehouse(@PathVariable String productWarehouseID, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(warehouseProductService.uploadMediaProductInWarehouse(productWarehouseID, file));
     }
 }

@@ -27,7 +27,7 @@ public class UserResponse {
     private List<AddressResponse> addresses;
     private String birthDay;
     private String password;
-    private String photoUrl;
+    private String avatar;
     private boolean status;
     private RoleResponse role;
 }

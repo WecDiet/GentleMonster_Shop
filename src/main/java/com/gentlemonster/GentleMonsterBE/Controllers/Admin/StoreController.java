@@ -55,7 +55,9 @@ public class StoreController {
     }
 
     @PostMapping(Enpoint.Store.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String storeID, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(storeService.uploadMedia(storeID, file));
+    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String storeID, 
+                                                @RequestParam("image") MultipartFile[] images,
+                                                @RequestParam("type") String type) {
+        return ResponseEntity.ok(storeService.uploadMedia(storeID, images, type));
     }
 }

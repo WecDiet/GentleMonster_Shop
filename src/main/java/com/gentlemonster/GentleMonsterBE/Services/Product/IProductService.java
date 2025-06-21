@@ -7,7 +7,9 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.BaseProductResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.ProductResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.BaseProductPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.ProductDetailPublicResponse;
+
 
 import java.util.List;
 
@@ -20,8 +22,8 @@ public interface IProductService {
     APIResponse<Boolean> editProduct(String productID, EditProductRequest editProductRequest);
     APIResponse<Boolean> deleteProduct(String productID);
 
-    APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String productTypeName, String productID);
-//    APIResponse<List<ProductPublicResponse>> getAllProductTypePublic(String categorySlug, String sliderSlug);
+    APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String slug, String productCode);
+    APIResponse<List<BaseProductPublicResponse>> getAllProductPublic(String categorySlug, String sliderSlug);
 
-    APIResponse<Boolean> uploadProductImage(String productID, MultipartFile file);
+    APIResponse<Boolean> uploadProductImage(String productID, MultipartFile[] file, String type);
 }

@@ -94,7 +94,7 @@ public class BannerService implements IBannerService {
     }
 
     @Override
-    public APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest) {
+    public APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest, MultipartFile media) {
         if(iBannerRepository.existsByTitle(addBannerRequest.getTitle())){
             List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_EXISTED));
             return new APIResponse<>(false, messages);
@@ -110,6 +110,28 @@ public class BannerService implements IBannerService {
             return new APIResponse<>(false, messages);
         }
         banner.setCategory(category);
+
+        if (media != null && !media.isEmpty()) {
+            try {
+                Map uploadResult = cloudinaryService.uploadMedia(media, "banners");
+                String imageURL = (String) uploadResult.get("secure_url");
+                Media mediaBanner = Media.builder()
+                        .imageUrl(imageURL)
+                        .publicId((String) uploadResult.get("public_id"))
+                        .referenceId(banner.getId())
+                        .referenceType("BANNER")
+                        .altText("Banner photo: " + banner.getTitle())
+                        .type("MEDIA")
+                        .build();
+                banner.setMedia(mediaBanner);
+            } catch (Exception e) {
+                e.printStackTrace();
+                List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_UPLOAD_MEDIA_FAILED));
+                return new APIResponse<>(false, messages);
+            }
+            
+        }
+
         iBannerRepository.save(banner);
         List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_CREATE_SUCCESS));
         return new APIResponse<>(true, messages);
@@ -145,6 +167,11 @@ public class BannerService implements IBannerService {
             List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_NOT_FOUND));
             return new APIResponse<>(false, messages);
         }
+        Media bannerMedia = banner.getMedia();
+        if (bannerMedia != null && bannerMedia.getPublicId() != null) {
+            // Delete media from cloudinary if it exists
+            cloudinaryService.deleteMedia(bannerMedia.getPublicId());
+        }
         iBannerRepository.delete(banner);
         List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_DELETE_SUCCESS));
         return new APIResponse<>(true, messages);
@@ -174,24 +201,29 @@ public class BannerService implements IBannerService {
     }
 
     @Override
-    public APIResponse<Boolean> uploadMedia(String bannerID, MultipartFile file) {
+    public APIResponse<Boolean> uploadMediaBanner(String bannerID, MultipartFile media) {
         Banner banner = iBannerRepository.findById(UUID.fromString(bannerID)).orElse(null);
         if (banner == null) {
             List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_NOT_FOUND));
             return new APIResponse<>(false, messages);
         }
         try {
-            Map uploadResult = cloudinaryService.uploadMedia(file, "banners");
+            if (banner.getMedia() != null) {
+                // If the banner already has media, delete it first
+                cloudinaryService.deleteMedia(banner.getMedia().getPublicId());
+                banner.setMedia(new Media());
+            }
+            Map uploadResult = cloudinaryService.uploadMedia(media, "banners");
             String imageURL = (String) uploadResult.get("secure_url");
-            banner.getMedias().add(Media.builder()
+            Media mediaEntity = Media.builder()
                     .imageUrl(imageURL)
                     .publicId((String) uploadResult.get("public_id"))
                     .referenceId(banner.getId())
                     .referenceType("BANNER")
                     .altText("Banner photo: " + banner.getTitle())
-                    .type("BANNER")
-                    .build());
-            banner.setMedias(banner.getMedias());
+                    .type("MEDIA")
+                    .build();
+            banner.setMedia(mediaEntity);
             iBannerRepository.save(banner);
             List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_UPLOAD_MEDIA_SUCCESS));
             return new APIResponse<>(true, messages);

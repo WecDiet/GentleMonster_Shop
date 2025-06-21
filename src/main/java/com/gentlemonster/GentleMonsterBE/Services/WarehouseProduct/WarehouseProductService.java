@@ -8,11 +8,13 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.WarehouseProduct.BaseProductWarehouseResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.WarehouseProduct.ProductWarehouseResponse;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Warehouse;
 import com.gentlemonster.GentleMonsterBE.Entities.WarehouseProduct;
 import com.gentlemonster.GentleMonsterBE.Repositories.IProductRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IWarehouseProductRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IWarehouseRepository;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import lombok.NoArgsConstructor;
@@ -22,11 +24,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -45,6 +49,8 @@ public class WarehouseProductService implements IWarehouseProductService{
     private IWarehouseRepository warehouseRepository;
     @Autowired
     private IProductRepository productRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public PagingResponse<List<BaseProductWarehouseResponse>> getAllProductInWarehouse(WarehouseProductRequest warehouseProductRequest) {
@@ -157,5 +163,39 @@ public class WarehouseProductService implements IWarehouseProductService{
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_GET_SUCCESS));
         return new APIResponse<>(productWarehouseResponse, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadMediaProductInWarehouse(String warehouseProductID, MultipartFile file) {
+        WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(warehouseProductID)).orElse(null);
+        if (warehouseProduct == null){
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
+            return new APIResponse<>(false, messages);
+        }        
+
+        try {
+            Map uploadResult = cloudinaryService.uploadMedia(file, "warehouse_product");
+            String imageUrl = (String) uploadResult.get("secure_url");
+            warehouseProduct.getImages().add(Media.builder()
+                        .imageUrl(imageUrl)
+                        .publicId((String) uploadResult.get("public_id"))
+                        .altText("product photos in stock: " + warehouseProduct.getProductName())
+                        .referenceId(warehouseProduct.getId())
+                        .referenceType("WAREHOUSE_PRODUCT")
+                        .type("IMAGE")
+                        .build()
+                        );
+            warehouseProduct.setImages(warehouseProduct.getImages());
+            warehouseProductRepository.save(warehouseProduct);
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_UPLOAD_MEDIA_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_UPLOAD_MEDIA_FAILED));
+            return new APIResponse<>(false, messages);
+        }
     }
 }

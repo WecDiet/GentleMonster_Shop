@@ -1,4 +1,5 @@
-package com.gentlemonster.GentleMonsterBE.DTO.Responses.Story.Public;
+package com.gentlemonster.GentleMonsterBE.DTO.Responses.Product;
+
 import java.util.List;
 
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
@@ -12,7 +13,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseStoryPublicResponse {
-    private String name;
-    private ImageResponse thumbnailMedia;
+public class ImageMediaDetail {
+    private List<ImageResponse> images;
 }

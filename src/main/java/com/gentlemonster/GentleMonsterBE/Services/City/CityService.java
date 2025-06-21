@@ -120,6 +120,10 @@ public class CityService implements ICityService{
         if (city == null) {
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
         }
+        Media cityImage = city.getImage();
+        if (cityImage != null && cityImage.getPublicId() != null) {
+            cloudinaryService.deleteMedia(cityImage.getPublicId());
+        }
         iCityRepository.delete(city);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_DELETE_SUCCESS));
@@ -127,23 +131,29 @@ public class CityService implements ICityService{
     }
 
     @Override
-    public APIResponse<Boolean> uploadMedia(String cityID, MultipartFile file) {
+    public APIResponse<Boolean> uploadImageCity(String cityID, MultipartFile image) {
         City city = iCityRepository.findById(UUID.fromString(cityID)).orElse(null);
         if (city == null) {
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
         }
         try {
-            Map uploadResult = cloudinaryService.uploadMedia(file, "cities");
+            if (city.getImage() != null) {
+                // If city already has an image, delete the old one
+                cloudinaryService.deleteMedia(city.getImage().getPublicId());
+                city.setImage(new Media()); // Clear the old image reference
+                
+            }
+            Map uploadResult = cloudinaryService.uploadMedia(image, "cities");
             String thumbnailUrl = (String) uploadResult.get("secure_url");
             Media media = Media.builder()
                     .imageUrl(thumbnailUrl)
                     .publicId((String) uploadResult.get("public_id"))
-                    .altText("Thumbnail for city " + city.getName())
+                    .altText("Photo of the city: " + city.getName())
                     .referenceId(city.getId())
                     .referenceType("CITY")
-                    .type("THUMBNAIL")
+                    .type("IMAGE")
                     .build();
-            city.setMedia(media);
+            city.setImage(media);
             iCityRepository.save(city);
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_MEDIA_UPLOAD_SUCCESS));

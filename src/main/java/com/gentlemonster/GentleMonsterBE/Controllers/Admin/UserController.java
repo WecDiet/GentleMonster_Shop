@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -93,5 +94,10 @@ public class UserController {
     @DeleteMapping(Enpoint.User.DELETE)
     public ResponseEntity<APIResponse<Boolean>> deleteUser(@PathVariable String userID) {
         return ResponseEntity.ok(userService.deleteUser(userID));
+    }
+
+    @PostMapping(Enpoint.User.UPLOAD_AVATAR)
+    public ResponseEntity<APIResponse<Boolean>> uploadAvatarEmpployee(@PathVariable String userID, @RequestParam("image") MultipartFile image) {
+        return ResponseEntity.ok(userService.uploadAvatarEmployee(userID, image));
     }
 }

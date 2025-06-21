@@ -20,5 +20,5 @@ public interface IStoreService {
     APIResponse<Boolean> DeleteStore(String storeID);
     APIResponse<StoreResponse> GetOneStore(String storeID);
     APIResponse<List<StorePublicResponse>> GetAllStoreByCountry(StoreRequest storeRequest);
-    APIResponse<Boolean> uploadMedia(String storeID, MultipartFile file);
+    APIResponse<Boolean> uploadMedia(String storeID, MultipartFile[] images, String type);
 }

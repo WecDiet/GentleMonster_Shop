@@ -1,9 +1,11 @@
 package com.gentlemonster.GentleMonsterBE.Services.Story;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
@@ -140,6 +142,11 @@ public class StoryService implements IStoryService {
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
             return new APIResponse<>(false, messages);
         }
+        if (!iStoryRepository.existsByName(addStoryRequest.getCollaboration())) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_EXISTED));
+            return new APIResponse<>(false, messages);
+        }
         story.setCollaboration(collaboration);
         if (!addStoryRequest.getCollaboration().equalsIgnoreCase(collaboration.getSlider().getName())) {
             List<String> messages = new ArrayList<>();
@@ -205,12 +212,6 @@ public class StoryService implements IStoryService {
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
             return new APIResponse<>(false, messages);
         }
-        // Collaboration collaboration = iCollaborationRepository.findById(UUID.fromString(storyID)).orElse(null);
-        // if (collaboration == null) {
-        //     List<String> messages = new ArrayList<>();
-        //     messages.add(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
-        //     return new APIResponse<>(false, messages);
-        // }
         iStoryRepository.delete(story);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_DELETE_SUCCESS));
@@ -246,7 +247,28 @@ public class StoryService implements IStoryService {
     }
 
     @Override
-    public APIResponse<Boolean> uploadMedia(String storyId, MultipartFile file) {
+    public APIResponse<Boolean> uploadMedia(String storyId, MultipartFile[] images, String type) {
+        
+        try {
+            if ("THUMBNAIL".equalsIgnoreCase(type)) {
+                return handleUploadThumbnailStory(storyId, images[0]);
+            } else if ("GALLERY".equalsIgnoreCase(type)) {
+                return handleUploadGalleryStory(storyId, images);
+            }else {
+                List<String> messages = new ArrayList<>();
+                messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_VALID_FILES_UPLOADED));
+                return new APIResponse<>(false, messages);
+                
+            }
+        } catch (Exception e) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_MEDIA_FAILED));
+            return new APIResponse<>(false, messages);
+        }
+    }
+
+
+    private APIResponse<Boolean> handleUploadThumbnailStory(String storyId, MultipartFile image) {
         Story story = iStoryRepository.findById(UUID.fromString(storyId)).orElse(null);
         if (story == null) {
             List<String> messages = new ArrayList<>();
@@ -254,18 +276,72 @@ public class StoryService implements IStoryService {
             return new APIResponse<>(false, messages);
         }
         try {
-            Map uploadResult = cloudinaryService.uploadMedia(file, "stories");
+            if (story.getThumbnailMedia() != null) {
+                // If the story already has a thumbnail, delete it first
+                cloudinaryService.deleteMedia(story.getThumbnailMedia().getPublicId());
+                story.setThumbnailMedia(new Media());      
+            }
+            Map uploadResult = cloudinaryService.uploadMedia(image, "stories");
             String imageURL = (String) uploadResult.get("secure_url");
-            story.getMedias().add(Media.builder()
-                        .imageUrl(imageURL)
-                        .publicId((String) uploadResult.get("public_id"))
-                        .altText("Story photo: " + story.getName())
-                        .referenceId(story.getId())
-                        .referenceType("STORY")
-                        .type("STORY")
-                        .build());
-            story.setMedias(story.getMedias());
+            Media thumbnailMedia = Media.builder()
+                    .imageUrl(imageURL)
+                    .publicId((String) uploadResult.get("public_id"))
+                    .altText("Thumbnail for story: " + story.getName())
+                    .referenceId(story.getId())
+                    .referenceType("STORY")
+                    .type("THUMBNAIL")
+                    .build();
+            story.setThumbnailMedia(thumbnailMedia);
             iStoryRepository.save(story);
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_THUMBNAIL_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_THUMBNAIL_FAILED));
+            return new APIResponse<>(false, messages);
+        }
+    }
+
+
+    private APIResponse<Boolean> handleUploadGalleryStory(String storyId, MultipartFile[] images) {
+        Story story = iStoryRepository.findById(UUID.fromString(storyId)).orElse(null);
+        if (story == null) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
+            return new APIResponse<>(false, messages);
+        }
+        try {
+            story.getImages().stream()
+                .filter(media -> "GALLERY".equals(media.getType()) && media.getPublicId() != null)
+                .forEach(media -> {
+                    // Delete existing gallery images from Cloudinary
+                    cloudinaryService.deleteMedia(media.getPublicId());
+                });
+            story.getImages().clear(); // Clear existing gallery images
+            List<Media> newImages = Arrays.stream(images)
+                .filter(image -> !image.isEmpty() && image != null)
+                .map(image -> {
+                    String originalFilename = image.getOriginalFilename();
+                    if (originalFilename == null || !originalFilename.contains(".")) {
+                        throw new IllegalArgumentException("Invalid image file name: " + originalFilename);
+                    }
+
+                    Map uploadResult = cloudinaryService.uploadMedia(image, "stories");
+                    String imageURL = (String) uploadResult.get("secure_url");
+                    return Media.builder()
+                            .imageUrl(imageURL)
+                            .publicId((String) uploadResult.get("public_id"))
+                            .altText("Gallery image for story: " + story.getName())
+                            .referenceId(story.getId())
+                            .referenceType("STORY")
+                            .type("GALLERY")
+                            .build();
+                }
+            ).collect(Collectors.toList());
+            story.getImages().addAll(newImages);
+            iStoryRepository.save(story);
+
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_MEDIA_SUCCESS));
             return new APIResponse<>(true, messages);

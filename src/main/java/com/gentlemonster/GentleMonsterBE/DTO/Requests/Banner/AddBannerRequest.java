@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @Getter
 @Setter
 @Builder

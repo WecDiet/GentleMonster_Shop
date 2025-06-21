@@ -9,13 +9,16 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
 
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.ImageMediaDetail;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseProductPublicResponse {
-    private UUID id;
+    private String code;
+    private String slug;
     private String name;
-    private List<String> productImages;
+    private ImageMediaDetail productDetail;
     private BigInteger price;
 }

@@ -20,28 +20,29 @@ public class ProductPublicController {
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private ProductTypeService productTypeService;
+    // @Autowired
+    // private ProductTypeService productTypeService;
 
     @GetMapping(Enpoint.Product_Type.PUBLIC_PRODUCT_TYPE)
-    public ResponseEntity<APIResponse<?>> getAllProductTypePublic(@PathVariable String categorySlug, @PathVariable String sliderSlug) {
+    public ResponseEntity<APIResponse<?>> getAllProductPublic(@PathVariable String categorySlug, @PathVariable String sliderSlug) {
         if (categorySlug == null) {
             return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Category is required !!!!")));
         }
         if (sliderSlug == null) {
             return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Slider is required !!!!")));
         }
-        return ResponseEntity.ok(productTypeService.getAllProductTypePublic(categorySlug, sliderSlug));
+        return ResponseEntity.ok(productService.getAllProductPublic(categorySlug, sliderSlug));
     }
 
     @GetMapping(Enpoint.Product.ID_PRODUCT)
-    public ResponseEntity<?> getProductById(@PathVariable String productTypeName,@PathVariable String productID) {
-        if (productID == null) {
-            return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Product ID is required !!!!")));
+    public ResponseEntity<?> getProductById(@PathVariable String productSlug, @PathVariable String productCode) {
+        if (productSlug == null) {
+            return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Slug is required !!!!")));
         }
-        if (productTypeName == null) {
-            return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Product Type Name is required !!!!")));
+        if (productCode == null) {
+            return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Code is required !!!!")));
         }
-        return ResponseEntity.ok(productService.getProductDetailPublic(productTypeName, productID));
+
+        return ResponseEntity.ok(productService.getProductDetailPublic(productSlug, productCode));
     }
 }

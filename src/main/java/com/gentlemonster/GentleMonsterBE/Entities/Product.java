@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,14 +26,14 @@ public class Product {
     @Column(name = "name", length = 500, nullable = false)
     private String name;
 
+    @Column(name = "code", length = 100)
+    private String code;
+
     @Column(name = "description", length = 5000)
     private String description;
 
     @Column(name = "price")
     private BigDecimal price;
-
-    @Column(name = "thumbnail", length = 300)
-    private String thumbnail;
 
     @Column(name = "status", nullable = false)
     private boolean status;
@@ -71,11 +70,8 @@ public class Product {
             fetch = FetchType.LAZY)
     private ProductDetail productDetail;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "product_media",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "meida_id")
-    )
-    private List<Media> medias = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    private Media thumbnailMedia;
+
 }

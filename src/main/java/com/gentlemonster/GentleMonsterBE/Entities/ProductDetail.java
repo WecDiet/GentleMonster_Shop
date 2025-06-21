@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -67,4 +69,12 @@ public class ProductDetail {
     @CreationTimestamp
     @Column(name = "modified_date")
     private LocalDateTime  modifiedDate;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+            name = "product_gallery",
+            joinColumns = @JoinColumn(name = "product_detail_id"),
+            inverseJoinColumns = @JoinColumn(name = "meida_id")
+    )
+    private List<Media> images = new ArrayList<>();
 }

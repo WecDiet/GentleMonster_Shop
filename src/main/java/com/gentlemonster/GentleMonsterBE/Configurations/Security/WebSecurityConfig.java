@@ -93,8 +93,11 @@ public class WebSecurityConfig {
                     String.format("%s/{bannerID}/upload", Enpoint.Banner.BASE),
                     String.format("%s/slider_detail/{sliderID}/upload", Enpoint.Slider.BASE),
                     String.format("%s/store_detail/{storeID}/upload", Enpoint.Store.BASE),
+                    String.format("%s/new/upload", Enpoint.Store.BASE),
                     String.format("%s/{cityID}/upload", Enpoint.City.BASE),
-                    String.format("%s/story_detail/{storyID}/upload", Enpoint.Story.BASE)
+                    String.format("%s/story_detail/{storyID}/upload", Enpoint.Story.BASE),
+                    String.format("%s/user_detail/{userID}/upload", Enpoint.User.BASE),
+                    String.format("%s/ware_product/{productWarehouseID}/upload", Enpoint.Warehouse.BASE)
 
                 ).permitAll()
 

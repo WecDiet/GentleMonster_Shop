@@ -33,9 +33,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
@@ -138,6 +140,18 @@ public class StoreService implements IStoreService{
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
             return new APIResponse<>(false, messages);
         }
+        Media storeThumb = store.getThumbnailMedia();
+        if (storeThumb != null && storeThumb.getPublicId() != null) {
+            // Xóa media thumbnail nếu có
+            cloudinaryService.deleteMedia(storeThumb.getPublicId());
+        }
+
+        if (store.getImages() != null) {
+            store.getImages().stream()
+                .filter(media -> media != null && media.getPublicId() != null)
+                .map(Media::getPublicId)
+                .forEach(cloudinaryService::deleteMedia);
+        }
         iStoreRepository.delete(store);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_DELETE_SUCCESS));
@@ -185,28 +199,105 @@ public class StoreService implements IStoreService{
     }
 
     @Override
-    public APIResponse<Boolean> uploadMedia(String storeID, MultipartFile file) {
+    public APIResponse<Boolean> uploadMedia(String storeID, MultipartFile[] images, String type) {
+        try {
+            if ("THUMBNAIL".equalsIgnoreCase(type)) {
+                return handleUploadThumbnail(storeID, images[0]);
+            } else if ("GALLERY".equalsIgnoreCase(type)) {
+                return handleUploadGallery(storeID, images);
+            } else {
+                List<String> messages = new ArrayList<>();
+                messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_VALID_FILES_UPLOADED));
+                return new APIResponse<>(false, messages);
+                
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_FAILED));
+            return new APIResponse<>(false, messages);
+        }
+    }
+
+    private APIResponse<Boolean> handleUploadThumbnail(String storeID, MultipartFile file) {
         Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
         if (store == null) {
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
             return new APIResponse<>(false, messages);
         }
+
         try {
+            if (store.getThumbnailMedia() != null) {
+                // Xóa media cũ nếu có
+                cloudinaryService.deleteMedia(store.getThumbnailMedia().getPublicId());
+                store.setThumbnailMedia(new Media());
+                
+            }
             Map uploadResult = cloudinaryService.uploadMedia(file, "stores");
             String imageURL = (String) uploadResult.get("secure_url");
-            store.getMedias().add(
-                    Media.builder()
-                        .imageUrl(imageURL)
-                        .publicId((String) uploadResult.get("public_id"))
-                        .referenceId(store.getId())
-                        .referenceType("STORE")
-                        .altText("Store photo: " + store.getStoreName())
-                        .type("STORE")
-                        .build()
-            );
-            store.setMedias(store.getMedias());
+
+            Media thumbnailMedia = Media.builder()
+                    .imageUrl(imageURL)
+                    .publicId((String) uploadResult.get("public_id"))
+                    .referenceId(store.getId())
+                    .referenceType("STORE")
+                    .altText("Thumbnail for store: " + store.getStoreName())
+                    .type("THUMBNAIL")
+                    .build();
+
+            store.setThumbnailMedia(thumbnailMedia);
             iStoreRepository.save(store);
+
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_THUMBNAIL_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_THUMBNAIL_FAILED));
+            return new APIResponse<>(false, messages);
+        }
+    }
+
+    private APIResponse<Boolean> handleUploadGallery(String storeID, MultipartFile[] images) {
+        Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
+        if (store == null) {
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
+            return new APIResponse<>(false, messages);
+        }
+
+        try {
+            store.getImages().stream()
+                .filter(media -> "GALLERY".equals(media.getType()) && media.getPublicId() != null)
+                .forEach(media -> {
+                    cloudinaryService.deleteMedia(media.getPublicId());
+                });
+            store.getImages().clear();
+            List<Media> newImages = Arrays.stream(images)
+                .filter(image -> image != null && !image.isEmpty())
+                .map(
+                    image -> {
+                        String originalFilename = image.getOriginalFilename();
+                        if (originalFilename == null || !originalFilename.contains(".")) {
+                            throw new RuntimeException("Invalid file name: " + (originalFilename != null ? originalFilename : "null"));
+                        }
+                        Map uploadResult = cloudinaryService.uploadMedia(image, "stores");
+                        String imageURL = (String) uploadResult.get("secure_url");
+                        return Media.builder()
+                                .imageUrl(imageURL)
+                                .publicId((String) uploadResult.get("public_id"))
+                                .referenceId(store.getId())
+                                .referenceType("STORE")
+                                .altText("Gallery image for store: " + store.getStoreName())
+                                .type("GALLERY")
+                                .build();
+                    }
+                ).collect(Collectors.toList());
+            store.getImages().addAll(newImages);
+            iStoreRepository.save(store);
+
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_SUCCESS));
             return new APIResponse<>(true, messages);
@@ -217,4 +308,6 @@ public class StoreService implements IStoreService{
             return new APIResponse<>(false, messages);
         }
     }
+
+    
 }

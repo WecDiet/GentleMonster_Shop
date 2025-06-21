@@ -1,12 +1,14 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.WarehouseProduct;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.BaseProductResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Warehouse.BaseWarehouseResponse;
 import lombok.*;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -37,4 +39,6 @@ public class ProductWarehouseResponse {
     private String productType; // Loại sản phẩm
 
     private BaseWarehouseResponse warehouse;
+
+    private List<ImageResponse> images; // Danh sách hình ảnh của sản phẩm
 }

@@ -2,7 +2,10 @@ package com.gentlemonster.GentleMonsterBE.DTO.Responses.Product;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
+
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
 
 @Getter
 @Setter
@@ -19,4 +22,5 @@ public class ProductDetailResponse {
     private double bridge;
     private String country;
     private String manufacturer;
+    private List<ImageResponse> images;
 }

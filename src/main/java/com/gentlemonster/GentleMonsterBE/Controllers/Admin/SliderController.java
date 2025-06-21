@@ -76,7 +76,8 @@ public class SliderController {
     }
 
     @PostMapping(Enpoint.Slider.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadMediaSlider(@PathVariable String sliderID, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(sliderService.uploadMedia(sliderID, file));
+    public ResponseEntity<?> uploadSliderImage(@PathVariable String sliderID, @RequestParam("image") MultipartFile image, @RequestParam("type") String type) {
+        sliderService.uploadImage(sliderID, image, type);
+        return ResponseEntity.status(200).body(new APIResponse<>(null, List.of("Image uploaded successfully")));
     }
 }

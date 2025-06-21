@@ -16,5 +16,5 @@ public interface ICityService {
     APIResponse<Boolean> addCity(AddCityRequest addCityRequest);
     APIResponse<Boolean> editCity(String cityID, EditCityRequest editCityRequest);
     APIResponse<Boolean> deleteCity(String cityID);
-    APIResponse<Boolean> uploadMedia(String cityID, MultipartFile file);
+    APIResponse<Boolean> uploadImageCity(String cityID, MultipartFile image);
 }

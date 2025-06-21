@@ -1,8 +1,11 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider;
 
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Category.CategoryResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
+
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -13,7 +16,6 @@ import java.util.UUID;
 public class SliderResponse {
     private UUID id;
     private String name;
-    private String image;
     private boolean status;
     private boolean highlighted;
     private String linkURL;
@@ -21,4 +23,5 @@ public class SliderResponse {
     private String createdDate;
     private String modifiedDate;
     private CategoryResponse category;
+    private ImageResponse sliderBanner;
 }

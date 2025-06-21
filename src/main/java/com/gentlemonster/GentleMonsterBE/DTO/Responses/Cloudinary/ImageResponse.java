@@ -1,4 +1,4 @@
-package com.gentlemonster.GentleMonsterBE.DTO.Responses.Product;
+package com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary;
 
 import lombok.*;
 
@@ -6,6 +6,6 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductImageResponse {
+public class ImageResponse {
     private String imageUrl;
 }

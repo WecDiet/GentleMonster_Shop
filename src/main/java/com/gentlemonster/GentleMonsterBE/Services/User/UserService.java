@@ -9,6 +9,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Address;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
 import com.gentlemonster.GentleMonsterBE.Entities.Store;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
@@ -17,6 +18,7 @@ import com.gentlemonster.GentleMonsterBE.Repositories.IRoleRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IStoreRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IUserRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.UserSpecification;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
 import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
 import jakarta.transaction.Transactional;
@@ -31,6 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +59,8 @@ public class UserService implements IUserService {
     private IAddressRepository iAddressRepository;
     @Autowired
     private VietnameseStringUtils vietnameseStringUtils;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public PagingResponse<List<BaseUserResponse>> getAllUser(@ModelAttribute UserRequest userRequest) {
@@ -391,4 +396,32 @@ public class UserService implements IUserService {
         return code;
     }
 
+    @Override
+    public APIResponse<Boolean> uploadAvatarEmployee(String userID, MultipartFile image) {
+        User user = iUserRepository.findById(UUID.fromString(userID)).orElse(null);
+        if (user == null) {
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_EXIST)));
+        }
+        try {
+            Map uploadResult = cloudinaryService.uploadMedia(image, "users");
+            String imageUrl = (String) uploadResult.get("secure_url");
+            Media media = Media.builder()
+                    .imageUrl(imageUrl)
+                    .publicId((String) uploadResult.get("public_id"))
+                    .referenceId(user.getId())
+                    .referenceType("EMPLOYEE")
+                    .altText("Avatar: " + user.getFullName())
+                    .type("IMAGE")
+                    .build();
+            user.setAvatar(media);
+            iUserRepository.save(user);
+            List<String> messages = new ArrayList<>();
+            messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_UPLOAD_AVATAR_SUCCESS));
+            return new APIResponse<>(true, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.USER_UPLOAD_AVATAR_FAILED)));
+        }
+
+    }
 }

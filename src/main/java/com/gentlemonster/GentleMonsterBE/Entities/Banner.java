@@ -47,11 +47,8 @@ public class Banner {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "banner_media",
-            joinColumns = @JoinColumn(name = "banner_id"),
-            inverseJoinColumns = @JoinColumn(name = "meida_id")
-    )
-    private List<Media> medias = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "media_id") // FK trong bảng Product
+    private Media media;
+
 }

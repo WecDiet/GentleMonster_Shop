@@ -66,11 +66,15 @@ public class Store {
     @JoinColumn(name = "slider_id")
     private Slider slider;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
             name = "store_media",
             joinColumns = @JoinColumn(name = "store_id"),
             inverseJoinColumns = @JoinColumn(name = "meida_id")
     )
-    private List<Media> medias = new ArrayList<>();
+    private List<Media> images = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    private Media thumbnailMedia;
 }

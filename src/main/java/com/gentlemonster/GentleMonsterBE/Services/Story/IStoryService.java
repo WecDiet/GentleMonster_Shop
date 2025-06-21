@@ -23,5 +23,5 @@ public interface IStoryService {
     APIResponse<Boolean> deleteStory(String storyId);
     APIResponse<List<BaseStoryPublicResponse>> getAllStoriesPublic();
     APIResponse<StoryPublicResponse> getStoryBySlug(String slug);
-    APIResponse<Boolean> uploadMedia(String storyId, MultipartFile file);
+    APIResponse<Boolean> uploadMedia(String storyId, MultipartFile[] image, String type);
 }

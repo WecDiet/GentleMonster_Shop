@@ -16,10 +16,10 @@ import java.util.List;
 public interface IBannerService {
     PagingResponse<List<BaseBannerResponse>> getAllBanners(@ModelAttribute BannerRequest bannerRequest);
     APIResponse<BannerResponse> getOneBanner(String bannerID);
-    APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest);
+    APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest,MultipartFile media);
     APIResponse<Boolean> updateBanner(String bannerID, EditBannerRequest editBannerRequest);
     APIResponse<Boolean> deleteBanner(String bannerID);
     APIResponse<List<BannerPublicResponse>> getAllBannersPublic();
-    APIResponse<Boolean> uploadMedia(String bannerID, MultipartFile file);
+    APIResponse<Boolean> uploadMediaBanner(String bannerID, MultipartFile media);
 
 }

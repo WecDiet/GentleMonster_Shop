@@ -80,7 +80,7 @@ public class StoryController {
     }
 
     @PostMapping(Enpoint.Story.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String storyID, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(storyService.uploadMedia(storyID, file));
+    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String storyID, @RequestParam("image") MultipartFile[] images, @RequestParam("type") String type) {
+        return ResponseEntity.ok(storyService.uploadMedia(storyID, images, type));
     }
 }

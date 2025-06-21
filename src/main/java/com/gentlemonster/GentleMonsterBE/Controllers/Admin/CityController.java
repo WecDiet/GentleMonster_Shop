@@ -58,7 +58,7 @@ public class CityController {
     }
 
     @PostMapping(Enpoint.City.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String cityID, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(cityService.uploadMedia(cityID, file));
+    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String cityID, @RequestParam("image") MultipartFile image) {
+        return ResponseEntity.ok(cityService.uploadImageCity(cityID, image));
     }
 }

@@ -3,7 +3,6 @@ package com.gentlemonster.GentleMonsterBE.DTO.Requests.Story;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.BaseProductPublicResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

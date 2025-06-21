@@ -22,6 +22,7 @@ public class Enpoint {
         public static final String DELETE = "/user_detail/{userID}";
         public static final String SEARCH_USER = "/search";
         public static final String DELETE_MANY = "/delete-many";
+        public static final String UPLOAD_AVATAR = "/user_detail/{userID}/upload";
     }
     public static final class Role{
         public static final String BASE = API_PREFIX_ADMIN + "/roles";
@@ -88,7 +89,7 @@ public class Enpoint {
         public static final String SEARCH_PRODUCT = "/search";
         public static final String DELETE_MANY = "/delete-many";
         public static final String UPLOAD_IMAGE = "/product_detail/{productID}/upload";
-        public static final String ID_PRODUCT = API_PREFIX_SHOP + "/item/{productTypeName}/{productID}";
+        public static final String ID_PRODUCT = API_PREFIX_SHOP + "/item/{productSlug}/{productCode}";
     }
     public static final class Warehouse{
         public static final String BASE = API_PREFIX_ADMIN + "/warehouses";
@@ -104,6 +105,8 @@ public class Enpoint {
         public static final String EDIT_PRODUCT = "/ware_product/{productWarehouseID}";
         public static final String DELETE_PRODUCT = "/ware_product/{productWarehouseID}";
         public static final String ID_PRODUCT = "/ware_product/{productWarehouseID}";
+        public static final String UPLOAD_MEDIA = "/ware_product/{productWarehouseID}/upload";
+
     }
 
     public static final class City{
@@ -123,6 +126,7 @@ public class Enpoint {
         public static final String STORE_PUBLIC = "/stores";
         public static final String DELETE_MANY = "/delete-many";
         public static final String MEDIA = "/store_detail/{storeID}/upload";
+        public static final String UPLOAD_THUMB = NEW + "/upload";
     }
     public static final class Story{
         public static final String BASE = API_PREFIX_ADMIN + "/stories";

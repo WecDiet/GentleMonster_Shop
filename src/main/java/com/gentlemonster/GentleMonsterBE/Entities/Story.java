@@ -45,13 +45,17 @@ public class Story {
     @JoinColumn(name = "story_id")
     private ProductType productType;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
             name = "story_media",
             joinColumns = @JoinColumn(name = "story_id"),
             inverseJoinColumns = @JoinColumn(name = "meida_id")
     )
-    private List<Media> medias = new ArrayList<>();
+    private List<Media> images = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    private Media thumbnailMedia;
 
     @OneToOne
     @JoinColumn(name = "collaboration_id", nullable = false, unique = true)

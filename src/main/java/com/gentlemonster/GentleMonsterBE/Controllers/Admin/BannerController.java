@@ -8,6 +8,9 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.BannerResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Services.Banner.IBannerService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -44,7 +47,7 @@ public class BannerController {
     }
 
     @PostMapping(Enpoint.Banner.NEW)
-    public ResponseEntity<APIResponse<Boolean>> addBanner(@RequestBody AddBannerRequest addBannerRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> addBanner(@Valid @ModelAttribute AddBannerRequest addBannerRequest, @RequestPart("media") MultipartFile media,BindingResult result) {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -53,7 +56,7 @@ public class BannerController {
             // Creating an APIResponse with error messages
             return ResponseEntity.badRequest().body(new APIResponse<>(null, errorMessages));
         }
-        return ResponseEntity.ok(iBannerService.addBanner(addBannerRequest));
+        return ResponseEntity.ok(iBannerService.addBanner(addBannerRequest,media));
     }
 
     @PutMapping(Enpoint.Banner.EDIT)
@@ -75,7 +78,7 @@ public class BannerController {
     }
 
     @PostMapping(Enpoint.Banner.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadBannerMedia(@PathVariable String bannerID, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(iBannerService.uploadMedia(bannerID, file));
+    public ResponseEntity<APIResponse<Boolean>> uploadBannerMedia(@PathVariable String bannerID, @RequestParam("media") MultipartFile media) {
+        return ResponseEntity.ok(iBannerService.uploadMediaBanner(bannerID, media));
     }
 }

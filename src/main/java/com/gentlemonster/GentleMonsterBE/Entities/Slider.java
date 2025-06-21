@@ -22,10 +22,10 @@ public class Slider {
 
     @Column(name = "name", length = 100, nullable = false)
     private String name;
-
+    
     @Column(name = "status", nullable = false)
     private boolean status;
-
+    
     @Column(name = "title_slider", length = 200)
     private String titleSlider;
 
@@ -58,11 +58,15 @@ public class Slider {
     @JsonIgnoreProperties("slider")
     private List<Collaboration> collaborations = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
             name = "slider_media",
             joinColumns = @JoinColumn(name = "slider_id"),
-            inverseJoinColumns = @JoinColumn(name = "meida_id")
+            inverseJoinColumns = @JoinColumn(name = "media_id")
     )
-    private List<Media> media = new ArrayList<>();
+    private Media sliderBanner;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    private Media thumbnailMedia;
 }

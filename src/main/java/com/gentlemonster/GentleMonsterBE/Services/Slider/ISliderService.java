@@ -21,5 +21,8 @@ public interface ISliderService {
     APIResponse<Boolean> deleteSlider(String sliderID);
     APIResponse<SliderResponse> getOneSlider(String sliderID);
     APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String categorySlug);
-    APIResponse<Boolean> uploadMedia(String sliderID, MultipartFile file);
+    // APIResponse<Boolean> uploadThumbnailSliderImage(String sliderID, MultipartFile thumbnail);
+    // APIResponse<Boolean> uploadSliderImage(String sliderID, MultipartFile image);
+
+    void uploadImage(String sliderID, MultipartFile image, String type);
 }

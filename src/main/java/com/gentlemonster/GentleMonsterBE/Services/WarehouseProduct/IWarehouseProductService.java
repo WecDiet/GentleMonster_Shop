@@ -10,10 +10,13 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.WarehouseProduct.ProductW
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface IWarehouseProductService {
     PagingResponse<List<BaseProductWarehouseResponse>> getAllProductInWarehouse(WarehouseProductRequest warehouseProductRequest);
     APIResponse<Boolean> addProductToWarehouse(AddProductWarehouseRequest addProductWarehouseRequest);
     APIResponse<Boolean> editProductInWarehouse(String id ,EditProductWarehouseRequest editProductWarehouseRequest);
     APIResponse<Boolean> deleteProductInWarehouse(String id);
     APIResponse<ProductWarehouseResponse> getProductInWarehouse(String id);
+    APIResponse<Boolean> uploadMediaProductInWarehouse(String warehouseProductID, MultipartFile file);
 }

@@ -1,6 +1,9 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.Store;
 
+import java.util.List;
+
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.City.BaseCityResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +26,5 @@ public class StoreResponse {
     private String countrySlug;
     private BaseCityResponse city;
     private SliderResponse slider;
+    private List<ImageResponse> images;
 }

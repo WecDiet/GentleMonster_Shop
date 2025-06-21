@@ -69,8 +69,9 @@ public class ProductController {
 
     @PostMapping(Enpoint.Product.UPLOAD_IMAGE)
     public ResponseEntity<APIResponse<Boolean>> uploadProductImage(@PathVariable String productID, 
-                                                @RequestParam("file") MultipartFile image) {
-        return ResponseEntity.ok(productService.uploadProductImage(productID, image));
+                                                @RequestParam("image") MultipartFile[] images,
+                                                @RequestParam("type") String type) {
+        return ResponseEntity.ok(productService.uploadProductImage(productID, images, type));
     }
 
 

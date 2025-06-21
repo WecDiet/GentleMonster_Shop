@@ -1,5 +1,9 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.Store;
 
+import java.util.List;
+
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +21,5 @@ public class StorePublicResponse {
     private String hotLine;
     private String email;
     private String description;
+    private List<ImageResponse> images;
 }

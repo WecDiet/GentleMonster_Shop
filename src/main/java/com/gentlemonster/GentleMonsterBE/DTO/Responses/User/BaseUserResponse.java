@@ -16,6 +16,6 @@ public class BaseUserResponse {
     private String email;
     private String createdDate;
     private RoleResponse role;
-    private String photoUrl;
+    private String avatar;
     private String slug;
 }

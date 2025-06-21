@@ -1,5 +1,7 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.Public;
 
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
+
 import lombok.*;
 
 @Getter
@@ -7,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BannerPublicResponse {
-    private String image;  // Đường dẫn ảnh banner
+    private ImageResponse media; 
     private String title;
     private String link;
 }

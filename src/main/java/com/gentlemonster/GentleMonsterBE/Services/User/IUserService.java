@@ -8,6 +8,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserResponse;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,5 +21,6 @@ public interface IUserService {
     APIResponse<Boolean> deleteUser(String userID);
     APIResponse<List<BaseUserResponse>> searchUser(UserRequest userRequest);
     APIResponse<Boolean> deleteMutiUser(List<String> userIDs);
-
+    APIResponse<Boolean> uploadAvatarEmployee(String userID, MultipartFile image);
+    // APIResponse<Boolean> uploadMeidaEmployee(MultipartFile image);
 }
