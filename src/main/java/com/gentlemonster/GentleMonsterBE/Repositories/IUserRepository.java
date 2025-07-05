@@ -17,4 +17,5 @@ public interface IUserRepository extends JpaRepository<User, UUID>, JpaSpecifica
     boolean existsByEmailAndSlug(String email, String slug);
     Optional<User> findByEmail(String email);
     Optional<User> findByFullNameAndCode(String fullName, String code);
+    Optional<User> findByUsername(String userName);
 }

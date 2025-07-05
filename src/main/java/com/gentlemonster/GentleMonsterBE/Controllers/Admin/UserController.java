@@ -8,6 +8,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.User.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class UserController {
     }
 
     @GetMapping(Enpoint.User.SEARCH_USER)
-    public ResponseEntity<APIResponse<List<BaseUserResponse>>> searchUser(@Valid @ModelAttribute UserRequest userRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<List<BaseUserResponse>>> searchUser(@Valid @ModelAttribute UserRequest userRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -57,12 +58,12 @@ public class UserController {
         return ResponseEntity.ok(userService.searchUser(userRequest));
     }
     @GetMapping(Enpoint.User.ID)
-    public ResponseEntity<APIResponse<UserResponse>> getUserByID(@PathVariable String userID) {
+    public ResponseEntity<APIResponse<UserResponse>> getUserByID(@PathVariable String userID) throws NotFoundException {
         return ResponseEntity.ok(userService.getOneUser(userID));
     }
 
     @PostMapping(Enpoint.User.NEW)
-    public ResponseEntity<APIResponse<Boolean>> createNewUser(@Valid @RequestBody AddUserResquest addUserRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> createNewUser(@Valid @RequestBody AddUserResquest addUserRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -77,7 +78,7 @@ public class UserController {
     }
 
     @PutMapping(Enpoint.User.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editUser(@PathVariable String userID, @Valid @RequestBody EditUserRequest editUserRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editUser(@PathVariable String userID, @Valid @RequestBody EditUserRequest editUserRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -92,12 +93,12 @@ public class UserController {
     }
 
     @DeleteMapping(Enpoint.User.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteUser(@PathVariable String userID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteUser(@PathVariable String userID) throws NotFoundException {
         return ResponseEntity.ok(userService.deleteUser(userID));
     }
 
     @PostMapping(Enpoint.User.UPLOAD_AVATAR)
-    public ResponseEntity<APIResponse<Boolean>> uploadAvatarEmpployee(@PathVariable String userID, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<APIResponse<Boolean>> uploadAvatarEmpployee(@PathVariable String userID, @RequestParam("image") MultipartFile image) throws NotFoundException {
         return ResponseEntity.ok(userService.uploadAvatarEmployee(userID, image));
     }
 }

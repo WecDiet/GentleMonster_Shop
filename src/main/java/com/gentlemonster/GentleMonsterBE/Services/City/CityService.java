@@ -10,10 +10,11 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.City;
 import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Enums.StoreEnum;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICityRepository;
 import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ public class CityService implements ICityService{
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
     @Autowired
     private CloudinaryService cloudinaryService;
 
@@ -77,9 +78,10 @@ public class CityService implements ICityService{
     }
 
     @Override
-    public APIResponse<Boolean> addCity(AddCityRequest addCityRequest) {
+    public APIResponse<Boolean> addCity(AddCityRequest addCityRequest) throws NotFoundException{
         if (iCityRepository.existsByName(addCityRequest.getName())){
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_EXISTED)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_EXISTED)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CITY_EXISTED));
         }
         City city = modelMapper.map(addCityRequest, City.class);
         city.setName(addCityRequest.getName());
@@ -95,10 +97,11 @@ public class CityService implements ICityService{
     }
 
     @Override
-    public APIResponse<Boolean> editCity(String cityID, EditCityRequest editCityRequest) {
+    public APIResponse<Boolean> editCity(String cityID, EditCityRequest editCityRequest) throws NotFoundException{
         City city = iCityRepository.findById(UUID.fromString(cityID)).orElse(null);
         if (city == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
         }
 
         modelMapper.map(editCityRequest, city);
@@ -115,10 +118,11 @@ public class CityService implements ICityService{
     }
 
     @Override
-    public APIResponse<Boolean> deleteCity(String cityID) {
+    public APIResponse<Boolean> deleteCity(String cityID) throws NotFoundException {
         City city = iCityRepository.findById(UUID.fromString(cityID)).orElse(null);
         if (city == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
         }
         Media cityImage = city.getImage();
         if (cityImage != null && cityImage.getPublicId() != null) {
@@ -131,10 +135,11 @@ public class CityService implements ICityService{
     }
 
     @Override
-    public APIResponse<Boolean> uploadImageCity(String cityID, MultipartFile image) {
+    public APIResponse<Boolean> uploadImageCity(String cityID, MultipartFile image) throws NotFoundException {
         City city = iCityRepository.findById(UUID.fromString(cityID)).orElse(null);
         if (city == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
         }
         try {
             if (city.getImage() != null) {

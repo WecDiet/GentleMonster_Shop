@@ -8,17 +8,18 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Store.BaseStoreResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Store.StorePublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Store.StoreResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IStoreService {
-    PagingResponse<List<BaseStoreResponse>> GetAllStore(StoreRequest storeRequest);
-    APIResponse<Boolean> AddStore(AddStoreRequest addStoreRequest);
-    APIResponse<Boolean> EditStore(String storeID, EditStoreRequest editStoreRequest);
-    APIResponse<Boolean> DeleteStore(String storeID);
-    APIResponse<StoreResponse> GetOneStore(String storeID);
-    APIResponse<List<StorePublicResponse>> GetAllStoreByCountry(StoreRequest storeRequest);
-    APIResponse<Boolean> uploadMedia(String storeID, MultipartFile[] images, String type);
+    PagingResponse<List<BaseStoreResponse>> getAllStore(StoreRequest storeRequest);
+    APIResponse<Boolean> addStore(AddStoreRequest addStoreRequest) throws NotFoundException;
+    APIResponse<Boolean> editStore(String storeID, EditStoreRequest editStoreRequest) throws NotFoundException;
+    APIResponse<Boolean> deleteStore(String storeID) throws NotFoundException;
+    APIResponse<StoreResponse> getOneStore(String storeID) throws NotFoundException;
+    APIResponse<List<StorePublicResponse>> getAllStoreByCountry(StoreRequest storeRequest) throws NotFoundException;
+    APIResponse<Boolean> handleUploadGallery(String storeID, MultipartFile[] images) throws NotFoundException;
 }

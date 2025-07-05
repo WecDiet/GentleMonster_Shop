@@ -8,8 +8,9 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Collaboration.CollaborationResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Collaboration;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICollaborationRepository;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class CollaborationService implements ICollaborationService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
     private ICollaborationRepository ICollaborationRepository;
 
@@ -95,10 +96,11 @@ public class CollaborationService implements ICollaborationService {
     }
 
     @Override
-    public APIResponse<Boolean> editCollaboration(String collaborationID,EditCollaborationRequest editCollaborationRequest) {
+    public APIResponse<Boolean> editCollaboration(String collaborationID,EditCollaborationRequest editCollaborationRequest) throws NotFoundException {
         Collaboration collaboration = ICollaborationRepository.findById(UUID.fromString(collaborationID)).orElse(null);
         if (collaboration == null) {
-            return new APIResponse<>(false, List.of(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND)));
+            // return new APIResponse<>(false, List.of(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
         }
         collaboration.setStatus(editCollaborationRequest.isStatus());
         collaboration.setModifiedDate(LocalDateTime.now());
@@ -110,10 +112,11 @@ public class CollaborationService implements ICollaborationService {
     }
 
     @Override
-    public APIResponse<CollaborationResponse> getOneCollaboration(String collaborationID) {
+    public APIResponse<CollaborationResponse> getOneCollaboration(String collaborationID) throws NotFoundException {
         Collaboration collaboration = ICollaborationRepository.findById(UUID.fromString(collaborationID)).orElse(null);
         if (collaboration == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
         }
         CollaborationResponse collaborationResponse = modelMapper.map(collaboration, CollaborationResponse.class);
         ArrayList<String> messages = new ArrayList<>();

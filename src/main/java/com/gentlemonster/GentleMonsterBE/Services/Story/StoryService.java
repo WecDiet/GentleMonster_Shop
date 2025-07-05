@@ -30,13 +30,14 @@ import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.ProductType;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import com.gentlemonster.GentleMonsterBE.Entities.Story;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICollaborationRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IProductTypeRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IStoryRepository;
 import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 
 import lombok.NoArgsConstructor;
 
@@ -54,10 +55,10 @@ public class StoryService implements IStoryService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
 
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
 
     @Autowired
     private ICollaborationRepository iCollaborationRepository;
@@ -98,12 +99,13 @@ public class StoryService implements IStoryService {
     }
 
     @Override
-    public APIResponse<StoryResponse> getStoryById(String storyID) {
+    public APIResponse<StoryResponse> getStoryById(String storyID) throws NotFoundException{
         Story story = iStoryRepository.findById(UUID.fromString(storyID)).orElse(null);
         if (story == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_EMPTY));
-            return new APIResponse<>(null, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_EMPTY));
+            // return new APIResponse<>(null, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
         }
 
         StoryResponse storyResponse = modelMapper.map(story, StoryResponse.class);
@@ -113,7 +115,7 @@ public class StoryService implements IStoryService {
     }
 
     @Override
-    public APIResponse<Boolean> addStory(@RequestBody AddStoryRequest addStoryRequest) {
+    public APIResponse<Boolean> addStory(@RequestBody AddStoryRequest addStoryRequest) throws NotFoundException {
         if (iStoryRepository.existsByName(addStoryRequest.getName())) {
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_EXISTED));
@@ -125,22 +127,25 @@ public class StoryService implements IStoryService {
 
         ProductType productType = iProductTypeRepository.findByName(addStoryRequest.getProductType()).orElse(null);
         if (productType == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
     
         Slider slider = iSliderRepository.findByName(addStoryRequest.getCollaboration()).orElse(null);
         if (slider == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         Collaboration collaboration = iCollaborationRepository.findBySlider(slider).orElse(null);
         if (collaboration == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
         }
         if (!iStoryRepository.existsByName(addStoryRequest.getCollaboration())) {
             List<String> messages = new ArrayList<>();
@@ -162,33 +167,37 @@ public class StoryService implements IStoryService {
     }
 
     @Override
-    public APIResponse<Boolean> editStory(String storyID, EditStoryRequest editStoryRequest) {
+    public APIResponse<Boolean> editStory(String storyID, EditStoryRequest editStoryRequest) throws NotFoundException {
         Story story = iStoryRepository.findById(UUID.fromString(storyID)).orElse(null);
         if (story == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
         }
         modelMapper.map(editStoryRequest, story);
         String storySlug = vietnameseStringUtils.removeAccents(editStoryRequest.getName());
         story.setSlug(storySlug);
         ProductType productType = iProductTypeRepository.findByName(editStoryRequest.getProductType()).orElse(null);
         if (productType == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         Slider slider = iSliderRepository.findByName(editStoryRequest.getCollaboration()).orElse(null);
         if (slider == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         Collaboration collaboration = iCollaborationRepository.findBySlider(slider).orElse(null);
         if (collaboration == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.COLLABORATION_NOT_FOUND));
         }
         story.setCollaboration(collaboration);
         if (!editStoryRequest.getCollaboration().equalsIgnoreCase(collaboration.getSlider().getName())) {
@@ -205,12 +214,24 @@ public class StoryService implements IStoryService {
     }
 
     @Override
-    public APIResponse<Boolean> deleteStory(String storyID) {
+    public APIResponse<Boolean> deleteStory(String storyID) throws NotFoundException {
         Story story = iStoryRepository.findById(UUID.fromString(storyID)).orElse(null);
         if (story == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
+        }
+        // Media storyThumb = story.getThumbnailMedia();
+        // if (storyThumb != null && storyThumb.getPublicId() != null) {
+        //     // Xóa media thumbnail nếu có
+        //     cloudinaryService.deleteMedia(storyThumb.getPublicId());
+        // }
+        if (story.getImage() != null) {
+                story.getImage().stream()
+                    .filter(media -> media != null && media.getPublicId() != null)
+                    .map(Media::getPublicId)
+                    .forEach(cloudinaryService::deleteMedia);
         }
         iStoryRepository.delete(story);
         List<String> messages = new ArrayList<>();
@@ -232,12 +253,13 @@ public class StoryService implements IStoryService {
     }
 
     @Override
-    public APIResponse<StoryPublicResponse> getStoryBySlug(String slug) {
+    public APIResponse<StoryPublicResponse> getStoryBySlug(String slug) throws NotFoundException {
         Story story = iStoryRepository.findBySlug(slug).orElse(null);
         if (story == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_EMPTY));
-            return new APIResponse<>(null, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_EMPTY));
+            // return new APIResponse<>(null, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
         }
 
         StoryPublicResponse storyResponse = modelMapper.map(story, StoryPublicResponse.class);
@@ -246,79 +268,75 @@ public class StoryService implements IStoryService {
         return new APIResponse<>(storyResponse, messages);
     }
 
-    @Override
-    public APIResponse<Boolean> uploadMedia(String storyId, MultipartFile[] images, String type) {
+    // @Override
+    // public APIResponse<Boolean> uploadMedia(String storyId, MultipartFile[] images, String type) {
         
-        try {
-            if ("THUMBNAIL".equalsIgnoreCase(type)) {
-                return handleUploadThumbnailStory(storyId, images[0]);
-            } else if ("GALLERY".equalsIgnoreCase(type)) {
-                return handleUploadGalleryStory(storyId, images);
-            }else {
-                List<String> messages = new ArrayList<>();
-                messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_VALID_FILES_UPLOADED));
-                return new APIResponse<>(false, messages);
+    //     try {
+    //         if ("THUMBNAIL".equalsIgnoreCase(type)) {
+    //             return handleUploadThumbnailStory(storyId, images[0]);
+    //         } else if ("GALLERY".equalsIgnoreCase(type)) {
+    //             return handleUploadGalleryStory(storyId, images);
+    //         }else {
+    //             List<String> messages = new ArrayList<>();
+    //             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_VALID_FILES_UPLOADED));
+    //             return new APIResponse<>(false, messages);
                 
-            }
-        } catch (Exception e) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_MEDIA_FAILED));
-            return new APIResponse<>(false, messages);
-        }
-    }
+    //         }
+    //     } catch (Exception e) {
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_MEDIA_FAILED));
+    //         return new APIResponse<>(false, messages);
+    //     }
+    // }
 
 
-    private APIResponse<Boolean> handleUploadThumbnailStory(String storyId, MultipartFile image) {
+    // private APIResponse<Boolean> handleUploadThumbnailStory(String storyId, MultipartFile image) throws NotFoundException {
+    //     Story story = iStoryRepository.findById(UUID.fromString(storyId)).orElse(null);
+    //     if (story == null) {
+    //         throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
+    //     }
+    //     try {
+    //         if (story.getThumbnailMedia() != null) {
+    //             // If the story already has a thumbnail, delete it first
+    //             cloudinaryService.deleteMedia(story.getThumbnailMedia().getPublicId());
+    //             story.setThumbnailMedia(new Media());      
+    //         }
+    //         Map uploadResult = cloudinaryService.uploadMedia(image, "stories");
+    //         String imageURL = (String) uploadResult.get("secure_url");
+    //         Media thumbnailMedia = Media.builder()
+    //                 .imageUrl(imageURL)
+    //                 .publicId((String) uploadResult.get("public_id"))
+    //                 .altText("Thumbnail for story: " + story.getName())
+    //                 .referenceId(story.getId())
+    //                 .referenceType("STORY")
+    //                 .type("THUMBNAIL")
+    //                 .build();
+    //         story.setThumbnailMedia(thumbnailMedia);
+    //         iStoryRepository.save(story);
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_THUMBNAIL_SUCCESS));
+    //         return new APIResponse<>(true, messages);
+    //     } catch (Exception e) {
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_THUMBNAIL_FAILED));
+    //         return new APIResponse<>(false, messages);
+    //     }
+    // }
+
+    @Override
+    public APIResponse<Boolean> handleUploadGalleryStory(String storyId, MultipartFile[] images) throws NotFoundException {
         Story story = iStoryRepository.findById(UUID.fromString(storyId)).orElse(null);
         if (story == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
         }
         try {
-            if (story.getThumbnailMedia() != null) {
-                // If the story already has a thumbnail, delete it first
-                cloudinaryService.deleteMedia(story.getThumbnailMedia().getPublicId());
-                story.setThumbnailMedia(new Media());      
-            }
-            Map uploadResult = cloudinaryService.uploadMedia(image, "stories");
-            String imageURL = (String) uploadResult.get("secure_url");
-            Media thumbnailMedia = Media.builder()
-                    .imageUrl(imageURL)
-                    .publicId((String) uploadResult.get("public_id"))
-                    .altText("Thumbnail for story: " + story.getName())
-                    .referenceId(story.getId())
-                    .referenceType("STORY")
-                    .type("THUMBNAIL")
-                    .build();
-            story.setThumbnailMedia(thumbnailMedia);
-            iStoryRepository.save(story);
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_THUMBNAIL_SUCCESS));
-            return new APIResponse<>(true, messages);
-        } catch (Exception e) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_UPLOAD_THUMBNAIL_FAILED));
-            return new APIResponse<>(false, messages);
-        }
-    }
-
-
-    private APIResponse<Boolean> handleUploadGalleryStory(String storyId, MultipartFile[] images) {
-        Story story = iStoryRepository.findById(UUID.fromString(storyId)).orElse(null);
-        if (story == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORY_NOT_FOUND));
-            return new APIResponse<>(false, messages);
-        }
-        try {
-            story.getImages().stream()
+            story.getImage().stream()
                 .filter(media -> "GALLERY".equals(media.getType()) && media.getPublicId() != null)
                 .forEach(media -> {
                     // Delete existing gallery images from Cloudinary
                     cloudinaryService.deleteMedia(media.getPublicId());
                 });
-            story.getImages().clear(); // Clear existing gallery images
+            story.getImage().clear(); // Clear existing gallery images
             List<Media> newImages = Arrays.stream(images)
                 .filter(image -> !image.isEmpty() && image != null)
                 .map(image -> {
@@ -339,7 +357,7 @@ public class StoryService implements IStoryService {
                             .build();
                 }
             ).collect(Collectors.toList());
-            story.getImages().addAll(newImages);
+            story.getImage().addAll(newImages);
             iStoryRepository.save(story);
 
             List<String> messages = new ArrayList<>();

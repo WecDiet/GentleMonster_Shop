@@ -11,12 +11,13 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.ProductType.ProductTypeRe
 import com.gentlemonster.GentleMonsterBE.Entities.Category;
 import com.gentlemonster.GentleMonsterBE.Entities.ProductType;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IProductTypeRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.ProductSpecification;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,34 +45,11 @@ public class ProductTypeService implements IProductTypeService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
     @Autowired
     private ICategoryRepository iCategoryRepository;
-
-//    @Override
-//    public PagingResponse<List<BaseProductTypeResponse>> getAllProductType(ProductTypeRequest productTypeRequest) {
-//        List<BaseProductTypeResponse> productTypeResponseList;
-//        List<ProductType> productTypeList;
-//        Pageable pageable;
-//
-//        int page = Math.max(productTypeRequest.getPage() - 1, 0); // Page index should start from 0
-//        int size = productTypeRequest.getLimit() > 0 ? productTypeRequest.getLimit() : 10; // Default size is 10 if limit is not provided
-//        pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-//
-//        Page<ProductType> productTypes = iProductTypeRepository.findAll(pageable);
-//        productTypeList = productTypes.getContent();
-//        productTypeResponseList = productTypeList.stream()
-//                .map(productType -> modelMapper.map(productType, BaseProductTypeResponse.class))
-//                .toList();
-//        if (productTypeResponseList.isEmpty()) {
-//            return new PagingResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_EMPTY)), 0, 0L);
-//        }
-//        List<String> messages = new ArrayList<>();
-//        messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_GET_SUCCESS));
-//        return new PagingResponse<>(productTypeResponseList, messages, productTypes.getTotalPages(), productTypes.getTotalElements());
-//    }
 
     @Override
     public PagingResponse<List<BaseProductTypeResponse>> getAllProductType(ProductTypeRequest productTypeRequest) {
@@ -101,12 +79,13 @@ public class ProductTypeService implements IProductTypeService {
     }
 
     @Override
-    public APIResponse<Boolean> addProductType(AddProductTypeRequest addProductTypeRequest) {
+    public APIResponse<Boolean> addProductType(AddProductTypeRequest addProductTypeRequest) throws NotFoundException {
         if(iProductTypeRepository.existsByName(addProductTypeRequest.getName())){
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_EXISTED)));
         }
         if (addProductTypeRequest.getSlider() == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         ProductType productType = modelMapper.map(addProductTypeRequest, ProductType.class);
         String slugStandardization = vietnameseStringUtils.removeAccents(addProductTypeRequest.getName()).toLowerCase().replaceAll("\\s+", "-").trim();
@@ -114,11 +93,13 @@ public class ProductTypeService implements IProductTypeService {
         productType.setLinkURL("/"+slugStandardization);
         Slider slider = iSliderRepository.findByName(addProductTypeRequest.getSlider()).orElse(null);
         if (slider == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         Category category = iCategoryRepository.findByName(addProductTypeRequest.getCategory()).orElse(null);
         if (category == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         if(!slider.getCategory().equals(category)){
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_IN_CATEGORY)));
@@ -132,10 +113,11 @@ public class ProductTypeService implements IProductTypeService {
     }
 
     @Override
-    public APIResponse<Boolean> editProductType(String productTypeID, EditProductTypeRequest editProductTypeRequest) {
+    public APIResponse<Boolean> editProductType(String productTypeID, EditProductTypeRequest editProductTypeRequest) throws NotFoundException {
         ProductType productType = iProductTypeRepository.findById(UUID.fromString(productTypeID)).orElse(null);
         if (productType == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         modelMapper.map(editProductTypeRequest, productType);
         String slugStandardization = vietnameseStringUtils.removeAccents(editProductTypeRequest.getName()).toLowerCase().replaceAll("\\s+", "-").trim();
@@ -143,11 +125,13 @@ public class ProductTypeService implements IProductTypeService {
         productType.setLinkURL("/"+slugStandardization);
         Slider slider = iSliderRepository.findByName(editProductTypeRequest.getSlider()).orElse(null);
         if (slider == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         Category category = iCategoryRepository.findByName(editProductTypeRequest.getCategory()).orElse(null);
         if (category == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         productType.setCategory(category);
         productType.setSlider(slider);
@@ -159,10 +143,11 @@ public class ProductTypeService implements IProductTypeService {
     }
 
     @Override
-    public APIResponse<Boolean> deleteProductType(String productTypeID) {
+    public APIResponse<Boolean> deleteProductType(String productTypeID) throws NotFoundException {
         ProductType productType = iProductTypeRepository.findById(UUID.fromString(productTypeID)).orElse(null);
         if (productType == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         iProductTypeRepository.delete(productType);
         List<String> messages = new ArrayList<>();
@@ -171,10 +156,11 @@ public class ProductTypeService implements IProductTypeService {
     }
 
     @Override
-    public APIResponse<ProductTypeResponse> getProductType(String productTypeID) {
+    public APIResponse<ProductTypeResponse> getProductType(String productTypeID) throws NotFoundException {
         ProductType productType = iProductTypeRepository.findById(UUID.fromString(productTypeID)).orElse(null);
         if (productType == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         ProductTypeResponse productTypeResponse = modelMapper.map(productType, ProductTypeResponse.class);
         List<String> messages = new ArrayList<>();

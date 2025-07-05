@@ -64,9 +64,9 @@ public class Slider {
             joinColumns = @JoinColumn(name = "slider_id"),
             inverseJoinColumns = @JoinColumn(name = "media_id")
     )
-    private Media sliderBanner;
+    private Media image;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
-    private Media thumbnailMedia;
+    // @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    // @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    // private Media image;
 }

@@ -66,5 +66,5 @@ public class WarehouseProduct {
             joinColumns = @JoinColumn(name = "warehouse_product_id"),
             inverseJoinColumns = @JoinColumn(name = "meida_id")
     )
-    private List<Media> images = new ArrayList<>();
+    private List<Media> image = new ArrayList<>();
 }

@@ -49,6 +49,6 @@ public class Banner {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "media_id") // FK trong bảng Product
-    private Media media;
+    private Media image;
 
 }

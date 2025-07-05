@@ -5,6 +5,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Store.AddStoreRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Store.StoreRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Store.StoreService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +28,16 @@ public class StoreController {
     public ResponseEntity<PagingResponse<?>> getAllStore(@ModelAttribute StoreRequest storeRequest) {
         System.out.println(Enpoint.Store.STORE_PUBLIC);
         System.out.println(Enpoint.API_PREFIX_SHOP + Enpoint.Store.STORE_PUBLIC);
-        return ResponseEntity.ok(storeService.GetAllStore(storeRequest));
+        return ResponseEntity.ok(storeService.getAllStore(storeRequest));
     }
 
     @GetMapping(Enpoint.Store.ID)
-    public ResponseEntity<APIResponse<?>> getStoreById(@PathVariable String storeID) {
-        return ResponseEntity.ok(storeService.GetOneStore(storeID));
+    public ResponseEntity<APIResponse<?>> getStoreById(@PathVariable String storeID) throws NotFoundException {
+        return ResponseEntity.ok(storeService.getOneStore(storeID));
     }
 
     @PostMapping(Enpoint.Store.NEW)
-    public ResponseEntity<APIResponse<Boolean>> addStore(@Valid @RequestBody AddStoreRequest addStoreRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> addStore(@Valid @RequestBody AddStoreRequest addStoreRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -46,18 +47,17 @@ public class StoreController {
             APIResponse<Boolean> errorResponse = new APIResponse<>(null, errorMessages);
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        return ResponseEntity.ok(storeService.AddStore(addStoreRequest));
+        return ResponseEntity.ok(storeService.addStore(addStoreRequest));
     }
 
     @DeleteMapping(Enpoint.Store.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteStore(@PathVariable String storeID) {
-        return ResponseEntity.ok(storeService.DeleteStore(storeID));
+    public ResponseEntity<APIResponse<Boolean>> deleteStore(@PathVariable String storeID) throws NotFoundException {
+        return ResponseEntity.ok(storeService.deleteStore(storeID));
     }
 
     @PostMapping(Enpoint.Store.MEDIA)
     public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String storeID, 
-                                                @RequestParam("image") MultipartFile[] images,
-                                                @RequestParam("type") String type) {
-        return ResponseEntity.ok(storeService.uploadMedia(storeID, images, type));
+                                                @RequestParam("image") MultipartFile[] images) throws NotFoundException {
+        return ResponseEntity.ok(storeService.handleUploadGallery(storeID, images));
     }
 }

@@ -7,6 +7,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.WarehouseProduct.EditProdu
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.WarehouseProduct.WarehouseProductRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.WarehouseProduct.WarehouseProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class ProductWarehouseController {
     }
 
     @PostMapping(Enpoint.Warehouse.ADD_PRODUCT)
-    public ResponseEntity<APIResponse<Boolean>> addProductToWarehouse(@RequestBody AddProductWarehouseRequest addProductToWarehouseRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> addProductToWarehouse(@RequestBody AddProductWarehouseRequest addProductToWarehouseRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -52,7 +53,7 @@ public class ProductWarehouseController {
     }
 
     @PutMapping(Enpoint.Warehouse.EDIT_PRODUCT)
-    public ResponseEntity<APIResponse<Boolean>> editProductInWarehouse(@PathVariable String productWarehouseID, @RequestBody EditProductWarehouseRequest editProductWarehouseRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editProductInWarehouse(@PathVariable String productWarehouseID, @RequestBody EditProductWarehouseRequest editProductWarehouseRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -66,17 +67,17 @@ public class ProductWarehouseController {
     }
 
     @DeleteMapping(Enpoint.Warehouse.DELETE_PRODUCT)
-    public ResponseEntity<APIResponse<Boolean>> deleteProductInWarehouse(@PathVariable String productWarehouseID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteProductInWarehouse(@PathVariable String productWarehouseID) throws NotFoundException {
         return ResponseEntity.ok(warehouseProductService.deleteProductInWarehouse(productWarehouseID));
     }
 
     @GetMapping(Enpoint.Warehouse.ID_PRODUCT)
-    public ResponseEntity<APIResponse<?>> getProductInWarehouse(@PathVariable String productWarehouseID) {
+    public ResponseEntity<APIResponse<?>> getProductInWarehouse(@PathVariable String productWarehouseID) throws NotFoundException {
         return ResponseEntity.ok(warehouseProductService.getProductInWarehouse(productWarehouseID));
     }
 
     @PostMapping(Enpoint.Warehouse.UPLOAD_MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadMediaProductInWarehouse(@PathVariable String productWarehouseID, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<APIResponse<Boolean>> uploadMediaProductInWarehouse(@PathVariable String productWarehouseID, @RequestParam("file") MultipartFile file) throws NotFoundException {
         return ResponseEntity.ok(warehouseProductService.uploadMediaProductInWarehouse(productWarehouseID, file));
     }
 }

@@ -3,6 +3,7 @@ package com.gentlemonster.GentleMonsterBE.Controllers.Public;
 import com.gentlemonster.GentleMonsterBE.Contants.Enpoint;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Store.StoreRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Store.StoreService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class StoresPublicController {
     private StoreService storeService;
 
     @GetMapping("/us/store")
-    public ResponseEntity<APIResponse<?>> getAllStorePublic(@Valid @ModelAttribute StoreRequest storeRequest,  BindingResult result) {
+    public ResponseEntity<APIResponse<?>> getAllStorePublic(@Valid @ModelAttribute StoreRequest storeRequest,  BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -32,6 +33,6 @@ public class StoresPublicController {
             // Creating an APIResponse with error messages
             return ResponseEntity.badRequest().body(new APIResponse<>(null,  errorMessages));
         }
-        return ResponseEntity.ok(storeService.GetAllStoreByCountry(storeRequest));
+        return ResponseEntity.ok(storeService.getAllStoreByCountry(storeRequest));
     }
 }

@@ -1,0 +1,44 @@
+package com.gentlemonster.GentleMonsterBE.Services.Token;
+
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.gentlemonster.GentleMonsterBE.Entities.AuthToken;
+import com.gentlemonster.GentleMonsterBE.Entities.User;
+import com.gentlemonster.GentleMonsterBE.Repositories.ITokenRepository;
+import com.gentlemonster.GentleMonsterBE.Utils.JwtTokenUtils;
+
+import lombok.RequiredArgsConstructor;
+
+
+@Service
+@RequiredArgsConstructor
+public class TokenService implements ITokenService {
+
+    @Autowired
+    private ITokenRepository authTokenRepository;
+
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
+    @Override
+    public AuthToken saveToken(String token, User user, String refreshToken, String tokenType, String deviceToken,
+            String deviceName) {
+            AuthToken authToken = AuthToken.builder()
+                .user(user)
+                .token(token)
+                .refreshToken(refreshToken)
+                .tokenType(tokenType)
+                .expirationDate(LocalDateTime.now().plusHours(jwtTokenUtils.getExpiration()))
+                .refreshExpirationDate(LocalDateTime.now().plusHours(jwtTokenUtils.getJwtRefreshExpiration()))
+                .deviceToken(deviceToken)
+                .deviceName(deviceName != null ? deviceName : "Unknown")
+                .revoked(false)
+                .build();
+        return authTokenRepository.save(authToken);
+    }
+
+
+    
+}

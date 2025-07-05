@@ -8,10 +8,13 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Category.CategoryResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Category;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import lombok.NoArgsConstructor;
+
+import org.aspectj.weaver.ast.Not;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,28 +36,10 @@ public class CategoryService implements ICategoryService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
 
-
-//    @Override
-//    public PagingResponse<List<CategoryResponse>> getAllCategory(CategoryRequest categoryRequest) {
-//        List<CategoryResponse> categoryResponseList;
-//        List<Category> categoryList;
-//        Pageable pageable;
-//        int page = Math.max(categoryRequest.getPage() - 1, 0); // Page index should start from 0
-//        int size = categoryRequest.getLimit() > 0 ? categoryRequest.getLimit() : 10; // Default size is 10 if limit is not provided
-//        pageable = PageRequest.of(page, size, Sort.by("name").descending());
-//        Page<Category> categoryPage = iCategoryRepository.findAll(pageable);
-//        categoryList = categoryPage.getContent();
-//        categoryResponseList = categoryList.stream()
-//                .map(category -> modelMapper.map(category, CategoryResponse.class))
-//                .toList();
-//        List<String> messages = new ArrayList<>();
-//        messages.add(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_GET_SUCCESS));
-//        return new PagingResponse<>(categoryResponseList, messages,  categoryPage.getTotalPages(), categoryPage.getTotalElements());
-//    }
 
     @Override
     public PagingResponse<List<CategoryResponse>> getAllCategory(CategoryRequest categoryRequest) {
@@ -104,10 +89,11 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public APIResponse<Boolean> editCategory(@PathVariable String categoryID , @RequestBody EditCategoryRequest editCategoryRequest) {
+    public APIResponse<Boolean> editCategory(@PathVariable String categoryID , @RequestBody EditCategoryRequest editCategoryRequest) throws NotFoundException {
         Category category = iCategoryRepository.findById(UUID.fromString(categoryID)).orElse(null);
         if(category == null){
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         if(editCategoryRequest.getName() == null || editCategoryRequest.getName().isEmpty()){
             return new APIResponse<>(null, List.of("Category name is required"));
@@ -124,10 +110,11 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public APIResponse<Boolean> deleteCategory(String categoryID) {
+    public APIResponse<Boolean> deleteCategory(String categoryID) throws NotFoundException {
         Category category = iCategoryRepository.findById(UUID.fromString(categoryID)).orElse(null);
         if(category == null){
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         iCategoryRepository.delete(category);
         List<String> messages = new ArrayList<>();

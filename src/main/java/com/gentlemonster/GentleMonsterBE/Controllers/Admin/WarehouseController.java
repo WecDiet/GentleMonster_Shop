@@ -8,6 +8,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Warehouse.WarehouseRequest
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Warehouse.WarehouseResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Warehouse.WarehouseService;
 import com.gentlemonster.GentleMonsterBE.Services.WarehouseProduct.WarehouseProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class WarehouseController {
     private WarehouseService warehouseService;
 
     @GetMapping
-    public ResponseEntity<PagingResponse<?>> getAllWarehouse(@ModelAttribute WarehouseRequest warehouseRequest, BindingResult result) {
+    public ResponseEntity<PagingResponse<?>> getAllWarehouse(@ModelAttribute WarehouseRequest warehouseRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -38,7 +39,7 @@ public class WarehouseController {
     }
 
     @GetMapping(Enpoint.Warehouse.ID)
-    public ResponseEntity<APIResponse<WarehouseResponse>> getWarehouseDetail(@PathVariable String warehouseID) {
+    public ResponseEntity<APIResponse<WarehouseResponse>> getWarehouseDetail(@PathVariable String warehouseID) throws NotFoundException {
         return ResponseEntity.ok(warehouseService.getWarehouseById(warehouseID));
     }
 
@@ -57,7 +58,7 @@ public class WarehouseController {
     }
 
     @PutMapping(Enpoint.Warehouse.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editWarehouse(@PathVariable String warehouseID, @RequestBody EditWarehouseRequest editWarehouseRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editWarehouse(@PathVariable String warehouseID, @RequestBody EditWarehouseRequest editWarehouseRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -71,7 +72,7 @@ public class WarehouseController {
     }
 
     @DeleteMapping(Enpoint.Warehouse.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteWarehouse(@PathVariable String warehouseID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteWarehouse(@PathVariable String warehouseID) throws NotFoundException {
         return ResponseEntity.ok(warehouseService.deleteWarehouse(warehouseID));
     }
 

@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @UtilityClass
-public class FileUploadUtil {
+public class FileUploadUtils {
     public static final long MAX_FILE_SIZE = 5 * 1024 * 1024;   // 5 MB
 
     public static final String MEDIA_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp|mp4|avi))$)";

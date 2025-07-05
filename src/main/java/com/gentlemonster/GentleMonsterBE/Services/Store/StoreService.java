@@ -14,14 +14,15 @@ import com.gentlemonster.GentleMonsterBE.Entities.City;
 import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import com.gentlemonster.GentleMonsterBE.Entities.Store;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICityRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IStoreRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.StoreSpecification;
 import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,9 @@ public class StoreService implements IStoreService{
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
     @Autowired
     private ISliderRepository iSliderRepository;
     @Autowired
@@ -61,7 +62,7 @@ public class StoreService implements IStoreService{
     private CloudinaryService cloudinaryService;
 
     @Override
-    public PagingResponse<List<BaseStoreResponse>> GetAllStore(StoreRequest storeRequest) {
+    public PagingResponse<List<BaseStoreResponse>> getAllStore(StoreRequest storeRequest) {
         List<BaseStoreResponse> baseStoreResponses;
         List<Store> listStore;
         Pageable pageable;
@@ -87,7 +88,7 @@ public class StoreService implements IStoreService{
     }
 
     @Override
-    public APIResponse<Boolean> AddStore(AddStoreRequest addStoreRequest) {
+    public APIResponse<Boolean> addStore(AddStoreRequest addStoreRequest) throws NotFoundException{
         if (iStoreRepository.existsByStoreName(addStoreRequest.getStoreName())) {
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_EXISTED));
@@ -96,16 +97,18 @@ public class StoreService implements IStoreService{
         Store store = modelMapper.map(addStoreRequest, Store.class);
         City city = iCityRepository.findByName(addStoreRequest.getCity()).orElse(null);
         if (city == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
         }
         store.setCity(city);
         Category category = iCategoryRepository.findByName("Stores").orElse(null);
         if (category == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         String sliderName = city.getName();
         String sliderSlug = vietnameseStringUtils.removeAccents(city.getName());
@@ -128,26 +131,24 @@ public class StoreService implements IStoreService{
     }
 
     @Override
-    public APIResponse<Boolean> EditStore(String storeID, EditStoreRequest editStoreRequest) {
+    public APIResponse<Boolean> editStore(String storeID, EditStoreRequest editStoreRequest) throws NotFoundException {
         return null;
     }
 
     @Override
-    public APIResponse<Boolean> DeleteStore(String storeID) {
+    public APIResponse<Boolean> deleteStore(String storeID) throws NotFoundException {
         Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
         if (store == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
         }
-        Media storeThumb = store.getThumbnailMedia();
-        if (storeThumb != null && storeThumb.getPublicId() != null) {
-            // Xóa media thumbnail nếu có
-            cloudinaryService.deleteMedia(storeThumb.getPublicId());
-        }
+        // Media storeThumb = store.getThumbnailMedia();
+        // if (storeThumb != null && storeThumb.getPublicId() != null) {
+        //     // Xóa media thumbnail nếu có
+        //     cloudinaryService.deleteMedia(storeThumb.getPublicId());
+        // }
 
-        if (store.getImages() != null) {
-            store.getImages().stream()
+        if (store.getImage() != null) {
+            store.getImage().stream()
                 .filter(media -> media != null && media.getPublicId() != null)
                 .map(Media::getPublicId)
                 .forEach(cloudinaryService::deleteMedia);
@@ -159,12 +160,13 @@ public class StoreService implements IStoreService{
     }
 
     @Override
-    public APIResponse<StoreResponse> GetOneStore(String storeID) {
+    public APIResponse<StoreResponse> getOneStore(String storeID) throws NotFoundException {
         Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
         if (store == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
-            return new APIResponse<>(null, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
+            // return new APIResponse<>(null, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
         }
         StoreResponse storeResponse = modelMapper.map(store, StoreResponse.class);
         List<String> messages = new ArrayList<>();
@@ -173,19 +175,21 @@ public class StoreService implements IStoreService{
     }
 
     @Override
-    public APIResponse<List<StorePublicResponse>> GetAllStoreByCountry(StoreRequest storeRequest) {
+    public APIResponse<List<StorePublicResponse>> getAllStoreByCountry(StoreRequest storeRequest) throws NotFoundException {
         List<StorePublicResponse> storePublicResponses;
         List<Store> listStore;
         if (!iCityRepository.existsByCountrySlug(storeRequest.getCountry())){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.COUNTRY_NOT_FOUND));
-            return new APIResponse<>(null, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.COUNTRY_NOT_FOUND));
+            // return new APIResponse<>(null, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.COUNTRY_NOT_FOUND));
         }
         if (storeRequest.getCity() != null && !storeRequest.getCity().isEmpty()) {
             if (!iCityRepository.existsByName(storeRequest.getCity())) {
-                List<String> messages = new ArrayList<>();
-                messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
-                return new APIResponse<>(null, messages);
+                // List<String> messages = new ArrayList<>();
+                // messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
+                // return new APIResponse<>(null, messages);
+                throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
             }
         }
         Specification<Store> specification = StoreSpecification.filterStore(storeRequest.getCountry(), storeRequest.getCity());
@@ -198,83 +202,83 @@ public class StoreService implements IStoreService{
         return new APIResponse<>(storePublicResponses, messages);
     }
 
+    // @Override
+    // public APIResponse<Boolean> uploadMedia(String storeID, MultipartFile[] images, String type) {
+    //     try {
+    //         if ("THUMBNAIL".equalsIgnoreCase(type)) {
+    //             return handleUploadThumbnail(storeID, images[0]);
+    //         } else if ("GALLERY".equalsIgnoreCase(type)) {
+    //             return handleUploadGallery(storeID, images);
+    //         } else {
+    //             List<String> messages = new ArrayList<>();
+    //             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_VALID_FILES_UPLOADED));
+    //             return new APIResponse<>(false, messages);
+                
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_FAILED));
+    //         return new APIResponse<>(false, messages);
+    //     }
+    // }
+
+    // private APIResponse<Boolean> handleUploadThumbnail(String storeID, MultipartFile file) throws NotFoundException {
+    //     Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
+    //     if (store == null) {
+    //         // List<String> messages = new ArrayList<>();
+    //         // messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
+    //         // return new APIResponse<>(false, messages);
+    //         throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
+    //     }
+
+    //     try {
+    //         if (store.getThumbnailMedia() != null) {
+    //             // Xóa media cũ nếu có
+    //             cloudinaryService.deleteMedia(store.getThumbnailMedia().getPublicId());
+    //             store.setThumbnailMedia(new Media());
+                
+    //         }
+    //         Map uploadResult = cloudinaryService.uploadMedia(file, "stores");
+    //         String imageURL = (String) uploadResult.get("secure_url");
+
+    //         Media thumbnailMedia = Media.builder()
+    //                 .imageUrl(imageURL)
+    //                 .publicId((String) uploadResult.get("public_id"))
+    //                 .referenceId(store.getId())
+    //                 .referenceType("STORE")
+    //                 .altText("Thumbnail for store: " + store.getStoreName())
+    //                 .type("THUMBNAIL")
+    //                 .build();
+
+    //         store.setThumbnailMedia(thumbnailMedia);
+    //         iStoreRepository.save(store);
+
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_THUMBNAIL_SUCCESS));
+    //         return new APIResponse<>(true, messages);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_THUMBNAIL_FAILED));
+    //         return new APIResponse<>(false, messages);
+    //     }
+    // }
+
     @Override
-    public APIResponse<Boolean> uploadMedia(String storeID, MultipartFile[] images, String type) {
-        try {
-            if ("THUMBNAIL".equalsIgnoreCase(type)) {
-                return handleUploadThumbnail(storeID, images[0]);
-            } else if ("GALLERY".equalsIgnoreCase(type)) {
-                return handleUploadGallery(storeID, images);
-            } else {
-                List<String> messages = new ArrayList<>();
-                messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_VALID_FILES_UPLOADED));
-                return new APIResponse<>(false, messages);
-                
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_FAILED));
-            return new APIResponse<>(false, messages);
-        }
-    }
-
-    private APIResponse<Boolean> handleUploadThumbnail(String storeID, MultipartFile file) {
+    public APIResponse<Boolean> handleUploadGallery(String storeID, MultipartFile[] images) throws NotFoundException {
         Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
         if (store == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
         }
 
         try {
-            if (store.getThumbnailMedia() != null) {
-                // Xóa media cũ nếu có
-                cloudinaryService.deleteMedia(store.getThumbnailMedia().getPublicId());
-                store.setThumbnailMedia(new Media());
-                
-            }
-            Map uploadResult = cloudinaryService.uploadMedia(file, "stores");
-            String imageURL = (String) uploadResult.get("secure_url");
-
-            Media thumbnailMedia = Media.builder()
-                    .imageUrl(imageURL)
-                    .publicId((String) uploadResult.get("public_id"))
-                    .referenceId(store.getId())
-                    .referenceType("STORE")
-                    .altText("Thumbnail for store: " + store.getStoreName())
-                    .type("THUMBNAIL")
-                    .build();
-
-            store.setThumbnailMedia(thumbnailMedia);
-            iStoreRepository.save(store);
-
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_THUMBNAIL_SUCCESS));
-            return new APIResponse<>(true, messages);
-        } catch (Exception e) {
-            e.printStackTrace();
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_THUMBNAIL_FAILED));
-            return new APIResponse<>(false, messages);
-        }
-    }
-
-    private APIResponse<Boolean> handleUploadGallery(String storeID, MultipartFile[] images) {
-        Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
-        if (store == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
-        }
-
-        try {
-            store.getImages().stream()
+            store.getImage().stream()
                 .filter(media -> "GALLERY".equals(media.getType()) && media.getPublicId() != null)
                 .forEach(media -> {
                     cloudinaryService.deleteMedia(media.getPublicId());
                 });
-            store.getImages().clear();
+            store.getImage().clear();
             List<Media> newImages = Arrays.stream(images)
                 .filter(image -> image != null && !image.isEmpty())
                 .map(
@@ -295,13 +299,13 @@ public class StoreService implements IStoreService{
                                 .build();
                     }
                 ).collect(Collectors.toList());
-            store.getImages().addAll(newImages);
+            store.getImage().addAll(newImages);
             iStoreRepository.save(store);
 
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_SUCCESS));
             return new APIResponse<>(true, messages);
-        } catch (Exception e) {
+        } catch (Exception e) { 
             e.printStackTrace();
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_UPLOAD_MEDIA_FAILED));

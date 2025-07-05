@@ -5,6 +5,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Collaboration.Collaboratio
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Collaboration.EditCollaborationRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Collaboration.CollaborationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class CollaborationController {
     private CollaborationService collaborationService;
 
     @GetMapping
-    public ResponseEntity<PagingResponse<?>> getAllCollaboration(@ModelAttribute CollaborationRequest collaborationRequest, BindingResult result) {
+    public ResponseEntity<PagingResponse<?>> getAllCollaboration(@ModelAttribute CollaborationRequest collaborationRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -35,12 +36,12 @@ public class CollaborationController {
     }
 
     @GetMapping(Enpoint.Collaboration.ID)
-    public ResponseEntity<APIResponse<?>> getOneCollaboration(@PathVariable String collaborationID) {
+    public ResponseEntity<APIResponse<?>> getOneCollaboration(@PathVariable String collaborationID) throws NotFoundException {
         return ResponseEntity.ok(collaborationService.getOneCollaboration(collaborationID));
     }
 
     @PutMapping(Enpoint.Collaboration.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editCollaboration(@PathVariable String collaborationID, @RequestBody EditCollaborationRequest editCollaborationRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editCollaboration(@PathVariable String collaborationID, @RequestBody EditCollaborationRequest editCollaborationRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()

@@ -6,6 +6,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Role.EditRoleRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Role.RoleRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Role.RoleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class RoleController {
         return ResponseEntity.ok(roleService.editRole(roleID,editRoleRequest));
     }
     @DeleteMapping(Enpoint.Role.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteRole(@PathVariable String roleID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteRole(@PathVariable String roleID) throws NotFoundException {
         return ResponseEntity.ok(roleService.deleteRole(roleID));
     }
 }

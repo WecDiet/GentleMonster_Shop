@@ -8,7 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.gentlemonster.GentleMonsterBE.Utils.FileUploadUtil;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
+import com.gentlemonster.GentleMonsterBE.Utils.FileUploadUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +22,7 @@ public class CloudinaryService implements ICloudinaryService {
     public Map<String, Object> uploadMedia(MultipartFile media, String folderName) {
         try {
             // Validate file
-            FileUploadUtil.assertAllowed(media, FileUploadUtil.MEDIA_PATTERN);
+            FileUploadUtils.assertAllowed(media, FileUploadUtils.MEDIA_PATTERN);
 
             // Lấy phần mở rộng
             String originalFilename = media.getOriginalFilename();
@@ -29,9 +30,9 @@ public class CloudinaryService implements ICloudinaryService {
                 throw new RuntimeException("Invalid file name");
             }
 
-            String extension = FileUploadUtil.getExtension(originalFilename);
-            String resourceType = FileUploadUtil.getResourceTypeFromExtension(extension);
-            String fileNameCloudinary = FileUploadUtil.generateFileName(originalFilename);
+            String extension = FileUploadUtils.getExtension(originalFilename);
+            String resourceType = FileUploadUtils.getResourceTypeFromExtension(extension);
+            String fileNameCloudinary = FileUploadUtils.generateFileName(originalFilename);
             // File tạm
             File tempFile = new File(System.getProperty("java.io.tmpdir"), fileNameCloudinary);
             media.transferTo(tempFile);
@@ -60,14 +61,11 @@ public class CloudinaryService implements ICloudinaryService {
        
     }
 
-    public void deleteMedia(String publicId) {
+    public void deleteMedia(String publicId){
        try {
             if (publicId == null || publicId.isEmpty()) {
                 throw new IllegalArgumentException("Public ID cannot be null or empty");
             }
-
-            // Construct full public_id (e.g., products/filename)
-            System.out.println("Deleting Public ID: " + publicId);
 
             // Assume resource type is image
             String resourceType = "image";

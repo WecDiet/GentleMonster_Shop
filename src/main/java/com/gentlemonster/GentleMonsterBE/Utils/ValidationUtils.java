@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Component
-public class VietnameseStringUtils {
+public class ValidationUtils {
     public String removeAccents(String input) {
         if (input == null) {
             return null;

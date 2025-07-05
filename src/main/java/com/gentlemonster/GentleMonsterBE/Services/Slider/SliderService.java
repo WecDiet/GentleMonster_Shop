@@ -13,13 +13,14 @@ import com.gentlemonster.GentleMonsterBE.Entities.Category;
 import com.gentlemonster.GentleMonsterBE.Entities.Collaboration;
 import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Slider;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICollaborationRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.SliderSpecification;
 import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,9 @@ public class SliderService implements ISliderService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
     @Autowired
     private ICollaborationRepository ICollaborationRepository;
     @Autowired
@@ -87,7 +88,7 @@ public class SliderService implements ISliderService {
     }
 
     @Override
-    public APIResponse<Boolean> addSlider(AddSliderRequest addSliderRequest) {
+    public APIResponse<Boolean> addSlider(AddSliderRequest addSliderRequest) throws NotFoundException {
         if (iSliderRepository.existsByName(addSliderRequest.getName())) {
             return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_EXISTED)));
         }
@@ -100,7 +101,8 @@ public class SliderService implements ISliderService {
 
         Category category = iCategoryRepository.findByName(addSliderRequest.getCategory()).orElse(null);
         if (category == null){
-            return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            // return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         slider.setCategory(category);
         iSliderRepository.save(slider);
@@ -118,16 +120,18 @@ public class SliderService implements ISliderService {
     }
 
     @Override
-    public APIResponse<Boolean> editSlider(String sliderID, EditSliderRequest editSliderRequest) {
+    public APIResponse<Boolean> editSlider(String sliderID, EditSliderRequest editSliderRequest) throws NotFoundException {
         Slider slider = iSliderRepository.findById(UUID.fromString(sliderID)).orElse(null);
         if (slider == null){
-            return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            // return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
 
         modelMapper.map(editSliderRequest, slider);
         Category category = iCategoryRepository.findByName(editSliderRequest.getCategory()).orElse(null);
         if (category == null){
-            return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            // return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         slider.setCategory(category);
         String slugStandardization = vietnameseStringUtils.removeAccents(editSliderRequest.getName()).toLowerCase().replaceAll("\\s+", "-").trim();
@@ -157,18 +161,19 @@ public class SliderService implements ISliderService {
     }
 
     @Override
-    public APIResponse<Boolean> deleteSlider(String sliderID) {
+    public APIResponse<Boolean> deleteSlider(String sliderID) throws NotFoundException {
         Slider slider = iSliderRepository.findById(UUID.fromString(sliderID)).orElse(null);
         if (slider == null){
-            return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            // return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
-        Media sliderThumb = slider.getThumbnailMedia();
-        if (sliderThumb != null && sliderThumb.getPublicId() != null) {
-            cloudinaryService.deleteMedia(sliderThumb.getPublicId());
-        }
+        // Media sliderThumb = slider.getThumbnailMedia();
+        // if (sliderThumb != null && sliderThumb.getPublicId() != null) {
+        //     cloudinaryService.deleteMedia(sliderThumb.getPublicId());
+        // }
 
-        if (slider.getSliderBanner() != null && slider.getSliderBanner().getPublicId() != null) {
-            cloudinaryService.deleteMedia(slider.getSliderBanner().getPublicId());
+        if (slider.getImage() != null && slider.getImage().getPublicId() != null) {
+            cloudinaryService.deleteMedia(slider.getImage().getPublicId());
         }
         iSliderRepository.delete(slider);
         List<String> messages = new ArrayList<>();
@@ -177,10 +182,11 @@ public class SliderService implements ISliderService {
     }
 
     @Override
-    public APIResponse<SliderResponse> getOneSlider(String sliderID) {
+    public APIResponse<SliderResponse> getOneSlider(String sliderID) throws NotFoundException {
         Slider slider = iSliderRepository.findById(UUID.fromString(sliderID)).orElse(null);
         if (slider == null){
-            return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            // return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         SliderResponse sliderResponse = modelMapper.map(slider, SliderResponse.class);
         List<String> messages = new ArrayList<>();
@@ -190,13 +196,14 @@ public class SliderService implements ISliderService {
 
 
     @Override
-    public APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String categorySlug) {
+    public APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String categorySlug) throws NotFoundException {
         List<SliderPublicResponse> sliderPublicResponseList;
         List<Slider> sliderList;
         Category categoryRepo = iCategoryRepository.findBySlug(categorySlug).orElse(null);
         Specification<Slider> sliderPublic = SliderSpecification.getListSlider(categoryRepo.getSlug());
         if (sliderPublic == null){
-            return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            // return new APIResponse<>(null,List.of( localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         sliderList = iSliderRepository.findAll(sliderPublic);
         sliderPublicResponseList = sliderList.stream()
@@ -211,70 +218,71 @@ public class SliderService implements ISliderService {
     }
 
 
+    // @Override
+    // public void uploadImage(String sliderID, MultipartFile image, String type) {
+    //     try {
+    //         if (type.equalsIgnoreCase("THUMBNAIL")) {
+    //             handleUploadThumbnail(sliderID, image);
+    //         } else if (type.equalsIgnoreCase("IMAGE")) {
+    //             handleUploadImage(sliderID, image);
+    //         } else {
+    //             throw new IllegalArgumentException("Invalid image type: " + type);
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         throw new RuntimeException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_FAILED));
+    //     }
+    // }
+
+
+    // private APIResponse<Boolean> handleUploadThumbnail(String sliderID, MultipartFile thumbnail) throws NotFoundException {
+    //     Slider slider = iSliderRepository.findById(UUID.fromString(sliderID)).orElse(null);
+    //     if (slider == null) {
+    //         // return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+    //         throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+    //     }
+    //     try {
+    //         if(slider.getThumbnailMedia() != null){
+    //             // Xóa media cũ nếu có
+    //             cloudinaryService.deleteMedia(slider.getThumbnailMedia().getPublicId());
+    //             slider.setThumbnailMedia(new Media());
+    //         }
+
+    //         Map uploadThumbnailResult = cloudinaryService.uploadMedia(thumbnail, "sliders");
+    //         String thumbnailUrl = (String) uploadThumbnailResult.get("secure_url");
+    //         Media thumbnailMedia = Media.builder()
+    //             .imageUrl(thumbnailUrl)
+    //             .publicId((String) uploadThumbnailResult.get("public_id"))
+    //             .referenceId(slider.getId())
+    //             .referenceType("SLIDER")
+    //             .altText("Slider Thumbnail: " + slider.getName())
+    //             .type("THUMBNAIL")
+    //             .build();
+    //         slider.setThumbnailMedia(thumbnailMedia);
+
+    //         iSliderRepository.save(slider);
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_SUCCESS));
+    //         return new APIResponse<>(true, messages);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_FAILED));
+    //         return new APIResponse<>(false, messages);
+    //     }
+
+    // }
     @Override
-    public void uploadImage(String sliderID, MultipartFile image, String type) {
-        try {
-            if (type.equalsIgnoreCase("THUMBNAIL")) {
-                handleUploadThumbnail(sliderID, image);
-            } else if (type.equalsIgnoreCase("IMAGE")) {
-                handleUploadImage(sliderID, image);
-            } else {
-                throw new IllegalArgumentException("Invalid image type: " + type);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_FAILED));
-        }
-    }
-
-
-    private APIResponse<Boolean> handleUploadThumbnail(String sliderID, MultipartFile thumbnail) {
+    public APIResponse<Boolean> handleUploadImage(String sliderID, MultipartFile image) throws NotFoundException {
         Slider slider = iSliderRepository.findById(UUID.fromString(sliderID)).orElse(null);
         if (slider == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
         }
         try {
-            if(slider.getThumbnailMedia() != null){
+            if (slider.getImage() != null) {
                 // Xóa media cũ nếu có
-                cloudinaryService.deleteMedia(slider.getThumbnailMedia().getPublicId());
-                slider.setThumbnailMedia(new Media());
-            }
-
-            Map uploadThumbnailResult = cloudinaryService.uploadMedia(thumbnail, "sliders");
-            String thumbnailUrl = (String) uploadThumbnailResult.get("secure_url");
-            Media thumbnailMedia = Media.builder()
-                .imageUrl(thumbnailUrl)
-                .publicId((String) uploadThumbnailResult.get("public_id"))
-                .referenceId(slider.getId())
-                .referenceType("SLIDER")
-                .altText("Slider Thumbnail: " + slider.getName())
-                .type("THUMBNAIL")
-                .build();
-            slider.setThumbnailMedia(thumbnailMedia);
-
-            iSliderRepository.save(slider);
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_SUCCESS));
-            return new APIResponse<>(true, messages);
-        } catch (Exception e) {
-            e.printStackTrace();
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_FAILED));
-            return new APIResponse<>(false, messages);
-        }
-
-    }
-
-    private APIResponse<Boolean> handleUploadImage(String sliderID, MultipartFile image) {
-        Slider slider = iSliderRepository.findById(UUID.fromString(sliderID)).orElse(null);
-        if (slider == null) {
-            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND)));
-        }
-        try {
-            if (slider.getSliderBanner() != null) {
-                // Xóa media cũ nếu có
-                cloudinaryService.deleteMedia(slider.getSliderBanner().getPublicId());
-                slider.setSliderBanner(new Media());
+                cloudinaryService.deleteMedia(slider.getImage().getPublicId());
+                slider.setImage(new Media());
             }
             Map uploadResult = cloudinaryService.uploadMedia(image, "sliders");
             String imageUrl = (String) uploadResult.get("secure_url");
@@ -286,7 +294,7 @@ public class SliderService implements ISliderService {
                     .altText("Slider Image: " + slider.getName())
                     .type("IMAGE")
                     .build();
-            slider.setSliderBanner(sliderMedia);
+            slider.setImage(sliderMedia);
             iSliderRepository.save(slider);
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_UPLOAD_MEDIA_SUCCESS));

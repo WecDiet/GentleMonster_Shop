@@ -8,8 +8,9 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Role.RoleResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.IRoleRepository;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,7 +33,7 @@ public class RoleService implements IRoleService{
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
 
     @Override
     public PagingResponse<List<RoleResponse>> getAllRole(RoleRequest roleRequest) {
@@ -58,26 +59,6 @@ public class RoleService implements IRoleService{
                 .toList();
         return new PagingResponse<>(roleResponses, null, rolePage.getTotalPages(), rolePage.getTotalElements());
     }
-
-//    @Override
-//    public PagingResponse<List<RoleResponse>> getAllRole(RoleRequest roleRequest) {
-//        List<RoleResponse> roleResponses;
-//        List<Role> roles;
-//        Pageable pageable;
-//
-//        int page = Math.max(roleRequest.getPage() - 1, 0); // Page index should start from 0
-//        int size = roleRequest.getLimit() > 0 ? roleRequest.getLimit() : 10; // Default size is 10 if limit is not provided
-//        pageable = PageRequest.of(page, size, Sort.by("name").ascending());
-//
-//        Page<Role> rolePage = iRoleRepository.findAll(pageable);
-//        roles = rolePage.getContent();
-//        roleResponses = roles.stream()
-//                .map(role -> modelMapper.map(role, RoleResponse.class))
-//                .toList();
-//        List<String> messages = new ArrayList<>();
-//        messages.add(localizationUtil.getLocalizedMessage(MessageKey.ROLE_GET_SUCCESS));
-//        return new PagingResponse<>(roleResponses, messages, rolePage.getTotalPages(), rolePage.getTotalElements());
-//    }
 
     @Override
     @Transactional
@@ -119,10 +100,11 @@ public class RoleService implements IRoleService{
     }
 
     @Override
-    public APIResponse<Boolean> deleteRole(String roleID) {
+    public APIResponse<Boolean> deleteRole(String roleID) throws NotFoundException {
         Role role = iRoleRepository.findById(UUID.fromString(roleID)).orElse(null);
         if (role == null){
-            return new APIResponse<>(false, List.of(localizationUtil.getLocalizedMessage(MessageKey.ROLE_NOT_FOUND)));
+            // return new APIResponse<>(false, List.of(localizationUtil.getLocalizedMessage(MessageKey.ROLE_NOT_FOUND)));
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.ROLE_NOT_FOUND));
         }
         iRoleRepository.delete(role);
         List<String> messages = new ArrayList<>();

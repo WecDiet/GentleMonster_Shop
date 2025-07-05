@@ -76,5 +76,5 @@ public class ProductDetail {
             joinColumns = @JoinColumn(name = "product_detail_id"),
             inverseJoinColumns = @JoinColumn(name = "meida_id")
     )
-    private List<Media> images = new ArrayList<>();
+    private List<Media> image = new ArrayList<>();
 }

@@ -3,6 +3,7 @@ package com.gentlemonster.GentleMonsterBE.Controllers.Public;
 import com.gentlemonster.GentleMonsterBE.Contants.Enpoint;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Slider.SliderPublicResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Slider.ISliderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class SliderPublicController {
     private ISliderService sliderService;
 
     @GetMapping(Enpoint.Slider.PUBLIC_SLIDER)
-    public APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String slug){
+    public APIResponse<List<SliderPublicResponse>> getAllSliderPublic(@PathVariable String slug) throws NotFoundException{
         if (slug == null) {
             return new APIResponse<>(null, List.of("Category is required !!!!"));
         }

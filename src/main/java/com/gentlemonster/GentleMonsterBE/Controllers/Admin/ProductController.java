@@ -6,6 +6,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Product.EditProductRequest
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Product.ProductRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Product.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class ProductController {
     }
 
     @PostMapping(Enpoint.Product.NEW)
-    public ResponseEntity<APIResponse<Boolean>> createNewProduct(@Valid @RequestBody AddProductRequest addProductRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> createNewProduct(@Valid @RequestBody AddProductRequest addProductRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -54,7 +55,7 @@ public class ProductController {
     }
 
     @PutMapping(Enpoint.Product.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editProduct(@PathVariable String productID,@Valid @RequestBody EditProductRequest editProductRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editProduct(@PathVariable String productID,@Valid @RequestBody EditProductRequest editProductRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -69,20 +70,19 @@ public class ProductController {
 
     @PostMapping(Enpoint.Product.UPLOAD_IMAGE)
     public ResponseEntity<APIResponse<Boolean>> uploadProductImage(@PathVariable String productID, 
-                                                @RequestParam("image") MultipartFile[] images,
-                                                @RequestParam("type") String type) {
-        return ResponseEntity.ok(productService.uploadProductImage(productID, images, type));
+                                                @RequestParam("image") MultipartFile[] images) throws NotFoundException {
+        return ResponseEntity.ok(productService.handleUploadImages(productID, images));
     }
 
 
 
     @DeleteMapping(Enpoint.Product.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteProduct(@PathVariable String productID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteProduct(@PathVariable String productID) throws NotFoundException {
         return ResponseEntity.ok(productService.deleteProduct(productID));
     }
 
     @GetMapping(Enpoint.Product.ID)
-    public ResponseEntity<APIResponse<?>> getProductDetail(@PathVariable String productID) {
+    public ResponseEntity<APIResponse<?>> getProductDetail(@PathVariable String productID) throws NotFoundException {
         return ResponseEntity.ok(productService.getOneProduct(productID));
     }
 }

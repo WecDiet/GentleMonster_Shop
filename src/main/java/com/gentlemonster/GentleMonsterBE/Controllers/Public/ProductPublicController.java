@@ -2,6 +2,7 @@ package com.gentlemonster.GentleMonsterBE.Controllers.Public;
 
 import com.gentlemonster.GentleMonsterBE.Contants.Enpoint;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Product.ProductService;
 import com.gentlemonster.GentleMonsterBE.Services.ProductType.ProductTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class ProductPublicController {
     // private ProductTypeService productTypeService;
 
     @GetMapping(Enpoint.Product_Type.PUBLIC_PRODUCT_TYPE)
-    public ResponseEntity<APIResponse<?>> getAllProductPublic(@PathVariable String categorySlug, @PathVariable String sliderSlug) {
+    public ResponseEntity<APIResponse<?>> getAllProductPublic(@PathVariable String categorySlug, @PathVariable String sliderSlug) throws NotFoundException {
         if (categorySlug == null) {
             return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Category is required !!!!")));
         }
@@ -35,7 +36,7 @@ public class ProductPublicController {
     }
 
     @GetMapping(Enpoint.Product.ID_PRODUCT)
-    public ResponseEntity<?> getProductById(@PathVariable String productSlug, @PathVariable String productCode) {
+    public ResponseEntity<?> getProductById(@PathVariable String productSlug, @PathVariable String productCode) throws NotFoundException {
         if (productSlug == null) {
             return ResponseEntity.badRequest().body(new APIResponse<>(null, List.of("Slug is required !!!!")));
         }

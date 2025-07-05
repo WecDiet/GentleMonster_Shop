@@ -11,6 +11,7 @@ import com.gentlemonster.GentleMonsterBE.Contants.Enpoint;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Story.Public.BaseStoryPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Story.Public.StoryPublicResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Story.StoryService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,7 @@ public class StoryPublicController {
     }
     
     @GetMapping(Enpoint.Story.PUBLIC_STORY_DETAIL)
-    public ResponseEntity<APIResponse<StoryPublicResponse>> getStoryBySlug(@PathVariable String slug) {
+    public ResponseEntity<APIResponse<StoryPublicResponse>> getStoryBySlug(@PathVariable String slug) throws NotFoundException {
         return ResponseEntity.ok(storyService.getStoryBySlug(slug));
     }
 }

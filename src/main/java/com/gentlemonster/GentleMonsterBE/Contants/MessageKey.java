@@ -42,6 +42,7 @@ public class MessageKey {
     public static final String USER_WRONG_ROLE = "user.wrong_role";
     public static final String USER_UPLOAD_AVATAR_SUCCESS = "user.upload_media_success";
     public static final String USER_UPLOAD_AVATAR_FAILED = "user.upload_media_failed";
+    public static final String USER_NOT_FOUND = "user.not_found";
 
     // PAYMENT TYPE
     public static final String PAYMENT_TYPE_CREATE_SUCCESS = "payment_type.create_success";
@@ -151,6 +152,8 @@ public class MessageKey {
     public static final String WAREHOUSE_PRODUCT_TYPE_EMPTY = "warehouse.product_type.empty";
     public static final String WAREHOUSE_PRODUCT_TYPE_QUANTITY_REQUIRED = "warehouse.product_type.quantity_required";
     public static final String WAREHOUSE_PRODUCT_TYPE_QUANTITY_INVALID = "warehouse.product_type.quantity_invalid";
+    public static final String WAREHOUSE_UPLOAD_MEDIA_SUCCESS = "warehouse.upload_media_success";
+    public static final String WAREHOUSE_UPLOAD_MEDIA_FAILED = "warehouse.upload_media_failed";
 
     // PRODUCT WAREHOUSE
     public static final String PRODUCT_WAREHOUSE_CREATE_SUCCESS = "product_warehouse.create_success";
@@ -213,5 +216,11 @@ public class MessageKey {
     public static final String STORY_UPLOAD_THUMBNAIL_FAILED = "story.upload_thumbnail_failed";
     public static final String STORY_NOT_VALID_FILES_UPLOADED = "story.no_valid_files_uploaded";
 
+    // TOKEN
+    public static final String TOKEN_EXPIRED = "token.expired";
+    public static final String TOKEN_INVALID = "token.invalid";
+    public static final String TOKEN_NOT_FOUND = "token.not_found";
+    public static final String TOKEN_REFRESH_SUCCESS = "token.refresh_success";
+    public static final String TOKEN_REFRESH_FAILED = "token.refresh_failed";
 }
 

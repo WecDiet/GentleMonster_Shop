@@ -10,8 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 public class UserLoginRequest {
     @NotEmpty(message = "Email is required not empty !")
-    private String email;
+    private String login;
     @NotEmpty(message = "Password is required not empty !")
     private String password;
     private String deviceToken;
+    private String deviceName;
+    private String tokenType; // "Bearer" or "Refresh"
 }

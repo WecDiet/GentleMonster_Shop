@@ -1,7 +1,7 @@
 package com.gentlemonster.GentleMonsterBE.Repositories.Specification;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class UserSpecification {
 
-    private static VietnameseStringUtils vietnameseStringUtils = new VietnameseStringUtils();
+    private static ValidationUtils vietnameseStringUtils = new ValidationUtils();
     public static Specification<User> searchUser(String email, String name, String employeeCode) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction(); // Khởi tạo một điều kiện "TRUE"

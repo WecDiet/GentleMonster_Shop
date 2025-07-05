@@ -6,6 +6,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.City.CityRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.City.EditCityRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.City.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,8 @@ public class CityController {
     }
 
     @PostMapping(Enpoint.City.NEW)
-    public ResponseEntity<APIResponse<Boolean>> addCity(@RequestBody AddCityRequest addCityRequest, BindingResult result) {
-        if (result.hasErrors()) {
+    public ResponseEntity<APIResponse<Boolean>> addCity(@RequestBody AddCityRequest addCityRequest, BindingResult result) throws NotFoundException {
+        if (result.hasErrors())  {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
                     .map(FieldError::getDefaultMessage)
@@ -41,8 +42,8 @@ public class CityController {
     }
 
     @PutMapping(Enpoint.City.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editCity(@PathVariable String cityID, @RequestBody EditCityRequest editCityRequest, BindingResult result) {
-        if (result.hasErrors()) {
+    public ResponseEntity<APIResponse<Boolean>> editCity(@PathVariable String cityID, @RequestBody EditCityRequest editCityRequest, BindingResult result)throws NotFoundException {
+        if (result.hasErrors())  {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
                     .map(FieldError::getDefaultMessage)
@@ -53,12 +54,12 @@ public class CityController {
     }
 
     @DeleteMapping(Enpoint.City.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteCity(@PathVariable String cityID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteCity(@PathVariable String cityID) throws NotFoundException {
         return ResponseEntity.ok(cityService.deleteCity(cityID));
     }
 
     @PostMapping(Enpoint.City.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String cityID, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String cityID, @RequestParam("image") MultipartFile image) throws NotFoundException {
         return ResponseEntity.ok(cityService.uploadImageCity(cityID, image));
     }
 }

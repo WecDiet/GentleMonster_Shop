@@ -6,6 +6,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.EditSliderRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Slider.SliderRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Slider.SliderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,12 @@ public class SliderController {
     }
 
     @GetMapping(Enpoint.Slider.ID)
-    public ResponseEntity<APIResponse<?>> getOneSlider(@PathVariable String sliderID) {
+    public ResponseEntity<APIResponse<?>> getOneSlider(@PathVariable String sliderID) throws NotFoundException {
         return ResponseEntity.ok(sliderService.getOneSlider(sliderID));
     }
 
     @PostMapping(Enpoint.Slider.NEW)
-    public ResponseEntity<APIResponse<Boolean>> createNewSlider(@Valid @RequestBody AddSliderRequest addSliderRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> createNewSlider(@Valid @RequestBody AddSliderRequest addSliderRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -57,7 +58,7 @@ public class SliderController {
     }
 
     @PutMapping(Enpoint.Slider.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editSlider(@PathVariable String sliderID, @Valid @RequestBody EditSliderRequest editSliderRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editSlider(@PathVariable String sliderID, @Valid @RequestBody EditSliderRequest editSliderRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -71,13 +72,13 @@ public class SliderController {
     }
 
     @DeleteMapping(Enpoint.Slider.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteSlider(@PathVariable String sliderID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteSlider(@PathVariable String sliderID) throws NotFoundException {
         return ResponseEntity.ok(sliderService.deleteSlider(sliderID));
     }
 
     @PostMapping(Enpoint.Slider.MEDIA)
-    public ResponseEntity<?> uploadSliderImage(@PathVariable String sliderID, @RequestParam("image") MultipartFile image, @RequestParam("type") String type) {
-        sliderService.uploadImage(sliderID, image, type);
+    public ResponseEntity<?> uploadSliderImage(@PathVariable String sliderID, @RequestParam("image") MultipartFile image) throws NotFoundException {
+        sliderService.handleUploadImage(sliderID, image);
         return ResponseEntity.status(200).body(new APIResponse<>(null, List.of("Image uploaded successfully")));
     }
 }

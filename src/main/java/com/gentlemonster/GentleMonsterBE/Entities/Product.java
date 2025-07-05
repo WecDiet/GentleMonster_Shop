@@ -70,8 +70,7 @@ public class Product {
             fetch = FetchType.LAZY)
     private ProductDetail productDetail;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
-    private Media thumbnailMedia;
-
+    // @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    // @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    // private Media image;
 }

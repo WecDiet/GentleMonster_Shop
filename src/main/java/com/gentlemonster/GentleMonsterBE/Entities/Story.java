@@ -51,11 +51,11 @@ public class Story {
             joinColumns = @JoinColumn(name = "story_id"),
             inverseJoinColumns = @JoinColumn(name = "meida_id")
     )
-    private List<Media> images = new ArrayList<>();
+    private List<Media> image = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
-    private Media thumbnailMedia;
+    // @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    // @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    // private Media thumbnailMedia;
 
     @OneToOne
     @JoinColumn(name = "collaboration_id", nullable = false, unique = true)

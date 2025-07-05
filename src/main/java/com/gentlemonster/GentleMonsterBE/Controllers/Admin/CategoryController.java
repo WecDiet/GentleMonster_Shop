@@ -6,6 +6,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Category.CategoryRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Category.EditCategoryRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Category.CategoryService;
 import com.gentlemonster.GentleMonsterBE.Services.Slider.SliderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class CategoryController {
     }
 
     @PutMapping(Enpoint.Category.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editCategory(@PathVariable String categoryID,@RequestBody EditCategoryRequest editCategoryRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editCategory(@PathVariable String categoryID,@RequestBody EditCategoryRequest editCategoryRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -67,7 +68,7 @@ public class CategoryController {
     }
 
     @DeleteMapping(Enpoint.Category.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteCategory(@PathVariable String categoryID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteCategory(@PathVariable String categoryID) throws NotFoundException {
         return ResponseEntity.ok(categoryService.deleteCategory(categoryID));
     }
 }

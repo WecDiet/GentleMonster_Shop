@@ -11,12 +11,13 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.WarehouseProduct.ProductW
 import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Warehouse;
 import com.gentlemonster.GentleMonsterBE.Entities.WarehouseProduct;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.IProductRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IWarehouseProductRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IWarehouseRepository;
 import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,9 @@ public class WarehouseProductService implements IWarehouseProductService{
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
     private IWarehouseRepository warehouseRepository;
     @Autowired
@@ -92,12 +93,13 @@ public class WarehouseProductService implements IWarehouseProductService{
     }
 
     @Override
-    public APIResponse<Boolean> addProductToWarehouse(AddProductWarehouseRequest addProductWarehouseRequest) {
+    public APIResponse<Boolean> addProductToWarehouse(AddProductWarehouseRequest addProductWarehouseRequest) throws NotFoundException {
         Warehouse warehouse = warehouseRepository.findByWarehouseName(addProductWarehouseRequest.getWareHouseName()).orElse(null);
         if (warehouse == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
         WarehouseProduct warehouseProduct = modelMapper.map(addProductWarehouseRequest, WarehouseProduct.class);
         warehouseProduct.setWarehouse(warehouse);
@@ -112,18 +114,20 @@ public class WarehouseProductService implements IWarehouseProductService{
     }
 
     @Override
-    public APIResponse<Boolean> editProductInWarehouse(String id, EditProductWarehouseRequest editProductWarehouseRequest) {
+    public APIResponse<Boolean> editProductInWarehouse(String id, EditProductWarehouseRequest editProductWarehouseRequest) throws NotFoundException {
         Warehouse warehouse = warehouseRepository.findByWarehouseName(editProductWarehouseRequest.getWareHouseName()).orElse(null);
         WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(id)).orElse(null);
         if (warehouse == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
         if (warehouseProduct == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
         modelMapper.map(editProductWarehouseRequest, warehouseProduct);
         warehouseProduct.setWarehouse(warehouse);
@@ -135,12 +139,10 @@ public class WarehouseProductService implements IWarehouseProductService{
     }
 
     @Override
-    public APIResponse<Boolean> deleteProductInWarehouse(String id) {
+    public APIResponse<Boolean> deleteProductInWarehouse(String id) throws NotFoundException {
         WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(id)).orElse(null);
         if (warehouseProduct == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
         warehouseProductRepository.delete(warehouseProduct);
         List<String> messages = new ArrayList<>();
@@ -149,12 +151,10 @@ public class WarehouseProductService implements IWarehouseProductService{
     }
 
     @Override
-    public APIResponse<ProductWarehouseResponse> getProductInWarehouse(String id) {
+    public APIResponse<ProductWarehouseResponse> getProductInWarehouse(String id) throws NotFoundException {
         WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(id)).orElse(null);
         if (warehouseProduct == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-            return new APIResponse<>(null, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
 //        ProductWarehouseResponse productWarehouseResponse = modelMapper.map(warehouseProduct, ProductWarehouseResponse.class);
         ProductWarehouseResponse productWarehouseResponse = modelMapper.typeMap(WarehouseProduct.class, ProductWarehouseResponse.class)
@@ -166,18 +166,19 @@ public class WarehouseProductService implements IWarehouseProductService{
     }
 
     @Override
-    public APIResponse<Boolean> uploadMediaProductInWarehouse(String warehouseProductID, MultipartFile file) {
+    public APIResponse<Boolean> uploadMediaProductInWarehouse(String warehouseProductID, MultipartFile file) throws NotFoundException {
         WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(warehouseProductID)).orElse(null);
         if (warehouseProduct == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }        
 
         try {
             Map uploadResult = cloudinaryService.uploadMedia(file, "warehouse_product");
             String imageUrl = (String) uploadResult.get("secure_url");
-            warehouseProduct.getImages().add(Media.builder()
+            warehouseProduct.getImage().add(Media.builder()
                         .imageUrl(imageUrl)
                         .publicId((String) uploadResult.get("public_id"))
                         .altText("product photos in stock: " + warehouseProduct.getProductName())
@@ -186,7 +187,7 @@ public class WarehouseProductService implements IWarehouseProductService{
                         .type("IMAGE")
                         .build()
                         );
-            warehouseProduct.setImages(warehouseProduct.getImages());
+            warehouseProduct.setImage(warehouseProduct.getImage());
             warehouseProductRepository.save(warehouseProduct);
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_UPLOAD_MEDIA_SUCCESS));

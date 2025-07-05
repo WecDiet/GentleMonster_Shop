@@ -10,7 +10,7 @@ import java.util.Locale;
 
 @RequiredArgsConstructor
 @Component
-public class LocalizationUtil {
+public class LocalizationUtils {
     private final MessageSource messageSource;
     private final LocaleResolver localeResolver;
     public String getLocalizedMessage(String messageKey, Object... params)  {

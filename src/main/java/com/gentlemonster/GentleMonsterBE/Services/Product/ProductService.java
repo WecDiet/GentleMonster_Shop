@@ -11,11 +11,12 @@ import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.ProductResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.BaseProductPublicResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Product.Public.ProductDetailPublicResponse;
 import com.gentlemonster.GentleMonsterBE.Entities.*;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.*;
 import com.gentlemonster.GentleMonsterBE.Repositories.Specification.ProductSpecification;
 import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
-import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtil;
-import com.gentlemonster.GentleMonsterBE.Utils.VietnameseStringUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
+import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,9 @@ public class ProductService implements IProductService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private LocalizationUtil localizationUtil;
+    private LocalizationUtils localizationUtil;
     @Autowired
-    private VietnameseStringUtils vietnameseStringUtils;
+    private ValidationUtils vietnameseStringUtils;
     @Autowired
     private IProductTypeRepository iProductTypeRepository;
     @Autowired
@@ -96,12 +97,13 @@ public class ProductService implements IProductService {
     }
  
     @Override
-    public APIResponse<ProductResponse> getOneProduct(String productID) {
+    public APIResponse<ProductResponse> getOneProduct(String productID) throws NotFoundException {
         Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
         if(product == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            return new APIResponse<>(null, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+            // return new APIResponse<>(null, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
         ProductResponse productResponse = modelMapper.map(product, ProductResponse.class);
         List<String> messages = new ArrayList<>();
@@ -110,11 +112,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public APIResponse<Boolean> addProduct(AddProductRequest addProductRequest) {
+    public APIResponse<Boolean> addProduct(AddProductRequest addProductRequest) throws NotFoundException {
         if (!iWarehouseProductRepository.existsByProductName(addProductRequest.getProductName())){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
         if (iWarehouseProductRepository.existsByPublicProductFalse()){
             List<String> messages = new ArrayList<>();
@@ -141,9 +144,10 @@ public class ProductService implements IProductService {
         product.setProductDetail(productDetail);
         ProductType productType = iProductTypeRepository.findByName(addProductRequest.getProductType()).orElse(null);
         if (productType == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         product.setProductType(productType);
         iProductRepository.save(product);
@@ -153,13 +157,14 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public APIResponse<Boolean> editProduct(String productID, EditProductRequest editProductRequest) {
+    public APIResponse<Boolean> editProduct(String productID, EditProductRequest editProductRequest) throws NotFoundException {
         // Tìm sản phẩm theo ID
         Product productEdit = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
         if (productEdit == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
         if (iWarehouseProductRepository.existsByPublicProductFalse()){
             List<String> messages = new ArrayList<>();
@@ -207,9 +212,10 @@ public class ProductService implements IProductService {
         // Cập nhật ProductType
         ProductType productType = iProductTypeRepository.findByName(editProductRequest.getProductType()).orElse(null);
         if (productType == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         productEdit.setProductType(productType);
 
@@ -222,22 +228,18 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public APIResponse<Boolean> deleteProduct(String productID) {
+    public APIResponse<Boolean> deleteProduct(String productID) throws NotFoundException {
         Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
         if (product == null){
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            return new APIResponse<>(false, messages);
-        }
-        //  Kiểm tra null trước khi gọi getPublicId()
-        Media thumbnail = product.getThumbnailMedia();
-        if (thumbnail != null && thumbnail.getPublicId() != null) {
-            cloudinaryService.deleteMedia(thumbnail.getPublicId());
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+            // return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
 
         //  Kiểm tra null ProductDetail trước khi truy xuất danh sách ảnh
-        if (product.getProductDetail() != null && product.getProductDetail().getImages() != null) {
-            product.getProductDetail().getImages().stream()
+        if (product.getProductDetail() != null && product.getProductDetail().getImage() != null) {
+            product.getProductDetail().getImage().stream()
                 .filter(media -> media != null && media.getPublicId() != null)
                 .map(Media::getPublicId)
                 .forEach(cloudinaryService::deleteMedia);
@@ -250,13 +252,14 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String productSlug, String productCode) {
+    public APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String productSlug, String productCode) throws NotFoundException {
         Specification<Product> specification = ProductSpecification.getOneProductBySlugAndCode(productSlug, productCode);
         Product product = iProductRepository.findOne(specification).orElse(null);
         if (product == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            return new APIResponse<>(null, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+            // return new APIResponse<>(null, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         };
         ProductDetailPublicResponse productDetailPublicResponse = modelMapper.map(product, ProductDetailPublicResponse.class);
         ArrayList <String> messages = new ArrayList<>();
@@ -264,89 +267,87 @@ public class ProductService implements IProductService {
         return new APIResponse<>(productDetailPublicResponse, messages);
     }
 
-    @Override
-    public APIResponse<Boolean> uploadProductImage(String productID, MultipartFile[] images, String type) {
-        try{
-            if ("THUMBNAIL".equalsIgnoreCase(type)) {
-                if (images == null || images.length != 1 || images[0] == null || images[0].isEmpty()) {
-                    return new APIResponse<>(false, List.of("Exactly one thumbnail file is required"));
-                }
-                return handleUploadThumbnail(productID, images[0]);
-            }else if("GALLERY".equalsIgnoreCase(type)){
-                if (images == null || images.length == 0) {
-                    return new APIResponse<>(false, List.of("At least one detail image file is required"));
-                }
-                return handleUploadImages(productID, images);
-            }else{
-                List<String> messages = new ArrayList<>();
-                messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_MEDIA_FAILED));
-                return new APIResponse<>(false, messages);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_MEDIA_FAILED));
-            return new APIResponse<>(false, messages);
-        }
+    // @Override
+    // public APIResponse<Boolean> uploadProductImage(String productID, MultipartFile[] images, String type) {
+    //     try{
+    //         if ("THUMBNAIL".equalsIgnoreCase(type)) {
+    //             if (images == null || images.length != 1 || images[0] == null || images[0].isEmpty()) {
+    //                 return new APIResponse<>(false, List.of("Exactly one thumbnail file is required"));
+    //             }
+    //             return handleUploadThumbnail(productID, images[0]);
+    //         }else if("GALLERY".equalsIgnoreCase(type)){
+    //             if (images == null || images.length == 0) {
+    //                 return new APIResponse<>(false, List.of("At least one detail image file is required"));
+    //             }
+    //             return handleUploadImages(productID, images);
+    //         }else{
+    //             List<String> messages = new ArrayList<>();
+    //             messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_MEDIA_FAILED));
+    //             return new APIResponse<>(false, messages);
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_MEDIA_FAILED));
+    //         return new APIResponse<>(false, messages);
+    //     }
             
-    }
+    // }
 
-    private APIResponse<Boolean> handleUploadThumbnail(String productID, MultipartFile thumbnail) {
+    // private APIResponse<Boolean> handleUploadThumbnail(String productID, MultipartFile thumbnail) throws NotFoundException{
+    //     Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
+    //     if (product == null) {
+    //         // List<String> messages = new ArrayList<>();
+    //         // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+    //         // return new APIResponse<>(false, messages);
+    //         throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
+    //     }
+    //     try {
+    //         if (product.getThumbnailMedia() != null) {
+    //             // Xóa media cũ nếu có
+    //             cloudinaryService.deleteMedia(product.getThumbnailMedia().getPublicId());
+    //             product.setThumbnailMedia(new Media());
+    //         }
+    //         Map uploadResult = cloudinaryService.uploadMedia(thumbnail, "products");
+    //         String imageUrl = (String) uploadResult.get("secure_url");
+    //         Media thumbnailMedia = Media.builder()
+    //                 .imageUrl(imageUrl)
+    //                 .publicId((String) uploadResult.get("public_id"))
+    //                 .referenceId(product.getId())
+    //                 .referenceType("PRODUCT")
+    //                 .altText("Thumbnail for product: " + product.getName())
+    //                 .type("THUMBNAIL")
+    //                 .build();
+    //         product.setThumbnailMedia(thumbnailMedia);
+    //         iProductRepository.save(product);
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_THUMBNAIL_SUCCESS));
+    //         return new APIResponse<>(true, messages);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         List<String> messages = new ArrayList<>();
+    //         messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_THUMBNAIL_FAILED));
+    //         return new APIResponse<>(false, messages);
+    //     }
+    // }
+    
+    @Override
+    public APIResponse<Boolean> handleUploadImages(String productID, MultipartFile[] images) throws NotFoundException{
         Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
         if (product == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            return new APIResponse<>(false, messages);
-        }
-        try {
-            if (product.getThumbnailMedia() != null) {
-                // Xóa media cũ nếu có
-                cloudinaryService.deleteMedia(product.getThumbnailMedia().getPublicId());
-                product.setThumbnailMedia(new Media());
-            }
-            Map uploadResult = cloudinaryService.uploadMedia(thumbnail, "products");
-            String imageUrl = (String) uploadResult.get("secure_url");
-            Media thumbnailMedia = Media.builder()
-                    .imageUrl(imageUrl)
-                    .publicId((String) uploadResult.get("public_id"))
-                    .referenceId(product.getId())
-                    .referenceType("PRODUCT")
-                    .altText("Thumbnail for product: " + product.getName())
-                    .type("THUMBNAIL")
-                    .build();
-            product.setThumbnailMedia(thumbnailMedia);
-            iProductRepository.save(product);
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_THUMBNAIL_SUCCESS));
-            return new APIResponse<>(true, messages);
-        } catch (Exception e) {
-            e.printStackTrace();
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_UPLOAD_THUMBNAIL_FAILED));
-            return new APIResponse<>(false, messages);
-        }
-    }
-
-    private APIResponse<Boolean> handleUploadImages(String productID, MultipartFile[] images){
-        Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
-        if (product == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
         ProductDetail productDetail = product.getProductDetail();
         if (productDetail == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_DETAIL_NOT_FOUND));
-            return new APIResponse<>(false, messages);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_DETAIL_NOT_FOUND));
         }
         try {
-            productDetail.getImages().stream()
+            productDetail.getImage().stream()
                 .filter(media -> "GALLERY".equals(media.getType()) && media.getPublicId() != null)
                 .forEach(media -> {
                     cloudinaryService.deleteMedia(media.getPublicId());
                 });
-            productDetail.getImages().clear();
+            productDetail.getImage().clear();
 
             List<Media> newImages = Arrays.stream(images)
                 .filter(image -> image != null && !image.isEmpty())
@@ -375,7 +376,7 @@ public class ProductService implements IProductService {
                 messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_DETAIL_NOT_VALID_FILES_UPLOADED));
                 return new APIResponse<>(false, messages);
             }
-            productDetail.getImages().addAll(newImages);
+            productDetail.getImage().addAll(newImages);
             iProductDetailRepository.save(productDetail);
             System.out.println("Product detail images uploaded successfully: " + newImages.size() + " images");
             List<String> messages = new ArrayList<>();
@@ -391,7 +392,7 @@ public class ProductService implements IProductService {
     }
 
    @Override
-   public APIResponse<List<BaseProductPublicResponse>> getAllProductPublic(String categorySlug, String sliderSlug) {
+   public APIResponse<List<BaseProductPublicResponse>> getAllProductPublic(String categorySlug, String sliderSlug) throws NotFoundException {
         List<BaseProductPublicResponse> productPublicResponseList;
         List<Product> productList;
         List<String> targetCategories = Arrays.asList("sunglasses", "glasses");
@@ -405,9 +406,10 @@ public class ProductService implements IProductService {
                 // Nếu là /collaboration/view-all → lấy toàn bộ productType của các slider hợp lệ
                 if ("view-all".equalsIgnoreCase(sliderSlug)) {
                     if (categoryCollaboration.isEmpty()) {
-                        List<String> messages = new ArrayList<>();
-                        messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-                        return new APIResponse<>(null, messages);
+                        // List<String> messages = new ArrayList<>();
+                        // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+                        // return new APIResponse<>(null, messages);
+                        throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
                     }
                     Specification<Product> listProductSpecification = ProductSpecification.getListProductBySliders(categoryCollaboration);
                     productList = iProductRepository.findAll(listProductSpecification);
@@ -418,9 +420,10 @@ public class ProductService implements IProductService {
                         .findFirst()
                         .orElse(null);
                     if (slider == null) {
-                        List<String> messages = new ArrayList<>();
-                        messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-                        return new APIResponse<>(null, messages);
+                        // List<String> messages = new ArrayList<>();
+                        // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+                        // return new APIResponse<>(null, messages);
+                        throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
                     }
                     Specification<Product> productSpecification = ProductSpecification.getListProductBySlider(sliderSlug);
                     productList = iProductRepository.findAll(productSpecification);
@@ -438,9 +441,10 @@ public class ProductService implements IProductService {
         // Trường hợp bình thường: kiểm tra category hợp lệ
             Category category = iCategoryRepository.findBySlug(categorySlug).orElse(null);
             if (category == null) {
-            List<String> messages = new ArrayList<>();
-            messages.add(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
-            return new APIResponse<>(null, messages);
+            // List<String> messages = new ArrayList<>();
+            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
+            // return new APIResponse<>(null, messages);
+                throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
             }
             if("view-all".equalsIgnoreCase(sliderSlug)){
                 Specification<Product> specification = ProductSpecification.getListProductByCategorySlug(categorySlug);
@@ -448,9 +452,10 @@ public class ProductService implements IProductService {
             }else{
                 Slider slider = iSliderRepository.findBySlug(sliderSlug).orElse(null);
                 if (slider == null) {
-                    List<String> messages = new ArrayList<>();
-                    messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-                    return new APIResponse<>(null, messages);
+                    // List<String> messages = new ArrayList<>();
+                    // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+                    // return new APIResponse<>(null, messages);
+                    throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
                 }
                 Specification<Product> specification = ProductSpecification.getListProduct(categorySlug, sliderSlug);
                 productList = iProductRepository.findAll(specification);

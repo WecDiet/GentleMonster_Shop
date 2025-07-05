@@ -6,6 +6,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Banner.BannerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Banner.EditBannerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Banner.BannerResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.Services.Banner.IBannerService;
 
@@ -42,12 +43,12 @@ public class BannerController {
     }
 
     @GetMapping(Enpoint.Banner.ID)
-    public ResponseEntity<APIResponse<BannerResponse>> getBanner(@PathVariable String bannerID) {
+    public ResponseEntity<APIResponse<BannerResponse>> getBanner(@PathVariable String bannerID) throws NotFoundException {
         return ResponseEntity.ok(iBannerService.getOneBanner(bannerID));
     }
 
     @PostMapping(Enpoint.Banner.NEW)
-    public ResponseEntity<APIResponse<Boolean>> addBanner(@Valid @ModelAttribute AddBannerRequest addBannerRequest, @RequestPart("media") MultipartFile media,BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> addBanner(@Valid @ModelAttribute AddBannerRequest addBannerRequest, @RequestPart("media") MultipartFile media,BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -60,7 +61,7 @@ public class BannerController {
     }
 
     @PutMapping(Enpoint.Banner.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> updateBanner(@PathVariable String bannerID, @RequestBody EditBannerRequest editBannerRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> updateBanner(@PathVariable String bannerID, @RequestBody EditBannerRequest editBannerRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -73,12 +74,12 @@ public class BannerController {
     }
 
     @DeleteMapping(Enpoint.Banner.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteBanner(@PathVariable String bannerID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteBanner(@PathVariable String bannerID) throws NotFoundException {
         return ResponseEntity.ok(iBannerService.deleteBanner(bannerID));
     }
 
     @PostMapping(Enpoint.Banner.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadBannerMedia(@PathVariable String bannerID, @RequestParam("media") MultipartFile media) {
+    public ResponseEntity<APIResponse<Boolean>> uploadBannerMedia(@PathVariable String bannerID, @RequestParam("media") MultipartFile media) throws NotFoundException {
         return ResponseEntity.ok(iBannerService.uploadMediaBanner(bannerID, media));
     }
 }

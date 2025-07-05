@@ -73,6 +73,6 @@ public class Warehouse {
             joinColumns = @JoinColumn(name = "warehouse_id"),
             inverseJoinColumns = @JoinColumn(name = "meida_id")
     )
-    private List<Media> medias = new ArrayList<>();
+    private List<Media> image = new ArrayList<>();
 
 }

@@ -7,6 +7,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.ProductType.EditProductTyp
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.ProductType.ProductTypeRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.ProductType.ProductTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +38,12 @@ public class ProductTypeController {
     }
 
     @GetMapping(Enpoint.Product_Type.ID)
-    public ResponseEntity<APIResponse<?>> getProductTypeById(@PathVariable String productTypeID) {
+    public ResponseEntity<APIResponse<?>> getProductTypeById(@PathVariable String productTypeID) throws NotFoundException {
         return ResponseEntity.ok(productTypeService.getProductType(productTypeID));
     }
 
     @PostMapping(Enpoint.Product_Type.NEW)
-    public ResponseEntity<APIResponse<Boolean>> addProductType(@RequestBody AddProductTypeRequest addProductTypeRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> addProductType(@RequestBody AddProductTypeRequest addProductTypeRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -55,7 +56,7 @@ public class ProductTypeController {
     }
 
     @PutMapping(Enpoint.Product_Type.EDIT)
-    public ResponseEntity<APIResponse<Boolean>> editProductType(@PathVariable String productTypeID, @RequestBody EditProductTypeRequest editProductTypeRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editProductType(@PathVariable String productTypeID, @RequestBody EditProductTypeRequest editProductTypeRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -68,7 +69,7 @@ public class ProductTypeController {
     }
 
     @DeleteMapping(Enpoint.Product_Type.DELETE)
-    public ResponseEntity<APIResponse<Boolean>> deleteProductType(@PathVariable String productTypeID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteProductType(@PathVariable String productTypeID) throws NotFoundException {
         return ResponseEntity.ok(productTypeService.deleteProductType(productTypeID));
     }
 }

@@ -34,10 +34,6 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: ${DB_DDL_AUTO}
-  #    security:
-  #        name: admin
-  #        password: admin123
-  #        roles: USER
   messages:
     basename: messages
   servlet:
@@ -45,9 +41,6 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
-    # enabled: true
-    # max-file-size: 10MB
-    # max-request-size: 10MB
   session:
     cookie:
     name: JSESSIONID
@@ -62,5 +55,5 @@ cloudinary:
   api-secret: ${CLOUDINARY_API_SECRET}
 jwt:
   expiration: ${JWT_EXPIRATION} # 30 ngày = 30 * 24h * 60p * 60s
-  jwtRefreshExpiration: ${JWT_REFRESH_EXPIRATION}
+  jwtRefreshExpiration: ${JWT_REFRESH_EXPIRATION} #60 days = 60 * 24 * 60 * 60
   secretKey: ${JWT_SECRET_KEY}

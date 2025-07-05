@@ -59,7 +59,7 @@ public class Store {
     @JoinColumn(name = "city_id")
     private City city;
 
-    @OneToMany(mappedBy = "store",cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<User> users;
 
     @ManyToOne
@@ -72,9 +72,9 @@ public class Store {
             joinColumns = @JoinColumn(name = "store_id"),
             inverseJoinColumns = @JoinColumn(name = "meida_id")
     )
-    private List<Media> images = new ArrayList<>();
+    private List<Media> image = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
-    private Media thumbnailMedia;
+    // @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    // @JoinColumn(name = "thumbnail_media_id") // FK trong bảng Product
+    // private Media image;
 }

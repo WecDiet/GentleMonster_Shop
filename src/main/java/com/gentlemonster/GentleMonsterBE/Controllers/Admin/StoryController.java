@@ -18,6 +18,7 @@ import com.gentlemonster.GentleMonsterBE.DTO.Requests.Story.StoryRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Story.StoryResponse;
+import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Services.Story.StoryService;
 
 import jakarta.validation.Valid;
@@ -42,12 +43,12 @@ public class StoryController {
     }
 
     @GetMapping(Enpoint.Story.ID)
-    public ResponseEntity<APIResponse<StoryResponse>> getUserByID(@PathVariable String storyID) {
+    public ResponseEntity<APIResponse<StoryResponse>> getUserByID(@PathVariable String storyID) throws NotFoundException {
         return ResponseEntity.ok(storyService.getStoryById(storyID));
     }
 
     @PostMapping(Enpoint.Story.NEW)
-    public ResponseEntity<APIResponse<Boolean>> addStory(@Valid @RequestBody AddStoryRequest addStoryRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> addStory(@Valid @RequestBody AddStoryRequest addStoryRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -61,7 +62,7 @@ public class StoryController {
     }
 
     @PutMapping(Enpoint.Story.ID)
-    public ResponseEntity<APIResponse<Boolean>> editStory(@PathVariable String storyID, @Valid @RequestBody EditStoryRequest editStoryRequest, BindingResult result) {
+    public ResponseEntity<APIResponse<Boolean>> editStory(@PathVariable String storyID, @Valid @RequestBody EditStoryRequest editStoryRequest, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -75,12 +76,12 @@ public class StoryController {
     }
 
     @DeleteMapping(Enpoint.Story.ID)
-    public ResponseEntity<APIResponse<Boolean>> deleteStory(@PathVariable String storyID) {
+    public ResponseEntity<APIResponse<Boolean>> deleteStory(@PathVariable String storyID) throws NotFoundException {
         return ResponseEntity.ok(storyService.deleteStory(storyID));
     }
 
     @PostMapping(Enpoint.Story.MEDIA)
-    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String storyID, @RequestParam("image") MultipartFile[] images, @RequestParam("type") String type) {
-        return ResponseEntity.ok(storyService.uploadMedia(storyID, images, type));
+    public ResponseEntity<APIResponse<Boolean>> uploadMedia(@PathVariable String storyID, @RequestParam("image") MultipartFile[] images) throws NotFoundException {
+        return ResponseEntity.ok(storyService.handleUploadGalleryStory(storyID, images));
     }
 }

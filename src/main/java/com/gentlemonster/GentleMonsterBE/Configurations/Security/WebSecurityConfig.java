@@ -28,17 +28,17 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.authorizeHttpRequests(request -> request
-                .requestMatchers(
-                        "/swagger-ui/index.html",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/swagger/**",
-                        "/v3/api-docs/**",
-                        "/swagger-resources/**",
-                        "/swagger-resources/",
-                        "/configuration/ui",
-                        "/configuration/security"
-                ).permitAll()
+                // .requestMatchers(
+                //         "/swagger-ui/index.html",
+                //         "/swagger-ui/**",
+                //         "/swagger-ui.html",
+                //         "/swagger/**",
+                //         "/v3/api-docs/**",
+                //         "/swagger-resources/**",
+                //         "/swagger-resources/",
+                //         "/configuration/ui",
+                //         "/configuration/security"
+                // ).permitAll()
 
                 .requestMatchers(HttpMethod.GET,
                     String.format("%s/*", Enpoint.API_PREFIX_ADMIN),
@@ -66,13 +66,15 @@ public class WebSecurityConfig {
                     String.format("%s/store_detail/*",Enpoint.Store.BASE),
                     String.format("%s/stories/*", Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/story_detail/*", Enpoint.Story.BASE),
+                    String.format("%s/me", Enpoint.Auth.BASE_ADMIN),
                     // Shop API USER
 //                  String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
                     "/us/store",
                     "/us", // Hiển thị toàn bộ banner ở trang chủ
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
                     String.format("%s/item/**",Enpoint.API_PREFIX_SHOP),
-                    String.format("%s/stories/**", Enpoint.API_PREFIX_SHOP)
+                    String.format("%s/stories/**", Enpoint.API_PREFIX_SHOP),
+                    String.format("%s/me", Enpoint.Auth.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.POST,
@@ -97,7 +99,13 @@ public class WebSecurityConfig {
                     String.format("%s/{cityID}/upload", Enpoint.City.BASE),
                     String.format("%s/story_detail/{storyID}/upload", Enpoint.Story.BASE),
                     String.format("%s/user_detail/{userID}/upload", Enpoint.User.BASE),
-                    String.format("%s/ware_product/{productWarehouseID}/upload", Enpoint.Warehouse.BASE)
+                    String.format("%s/ware_product/{productWarehouseID}/upload", Enpoint.Warehouse.BASE),
+
+
+                    String.format("%s/login", Enpoint.Auth.BASE),
+                    String.format("%s/login", Enpoint.Auth.BASE_ADMIN),
+                    String.format("%s/change_password", Enpoint.Auth.BASE_ADMIN),
+                    String.format("%s/change_password", Enpoint.Auth.BASE)
 
                 ).permitAll()
 
@@ -136,19 +144,19 @@ public class WebSecurityConfig {
                 .authenticated()
         ).csrf(AbstractHttpConfigurer::disable);
 
-        httpSecurity.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {
-            @Override
-            public void customize(CorsConfigurer<HttpSecurity> httpSecurityCorsConfigurer) {
-                CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("*"));
-                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-                configuration.setExposedHeaders(List.of("x-auth-token"));
-                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", configuration);
-                httpSecurityCorsConfigurer.configurationSource(source);
-            }
-        });
+        // httpSecurity.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {
+        //     @Override
+        //     public void customize(CorsConfigurer<HttpSecurity> httpSecurityCorsConfigurer) {
+        //         CorsConfiguration configuration = new CorsConfiguration();
+        //         configuration.setAllowedOrigins(List.of("*"));
+        //         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        //         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        //         configuration.setExposedHeaders(List.of("x-auth-token"));
+        //         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        //         source.registerCorsConfiguration("/**", configuration);
+        //         httpSecurityCorsConfigurer.configurationSource(source);
+        //     }
+        // });
         return httpSecurity.build();
     }
 }
