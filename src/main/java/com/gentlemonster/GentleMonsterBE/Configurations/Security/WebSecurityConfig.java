@@ -66,7 +66,7 @@ public class WebSecurityConfig {
                     String.format("%s/store_detail/*",Enpoint.Store.BASE),
                     String.format("%s/stories/*", Enpoint.API_PREFIX_ADMIN),
                     String.format("%s/story_detail/*", Enpoint.Story.BASE),
-                    String.format("%s/me", Enpoint.Auth.BASE_ADMIN),
+                    String.format("%s/account/me", Enpoint.Auth.BASE_ADMIN),
                     // Shop API USER
 //                  String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
                     "/us/store",
@@ -74,7 +74,8 @@ public class WebSecurityConfig {
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
                     String.format("%s/item/**",Enpoint.API_PREFIX_SHOP),
                     String.format("%s/stories/**", Enpoint.API_PREFIX_SHOP),
-                    String.format("%s/me", Enpoint.Auth.BASE)
+                    String.format("%s/account/me", Enpoint.Auth.BASE),
+                    String.format("%s/account/address", Enpoint.Auth.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.POST,
@@ -105,7 +106,9 @@ public class WebSecurityConfig {
                     String.format("%s/login", Enpoint.Auth.BASE),
                     String.format("%s/login", Enpoint.Auth.BASE_ADMIN),
                     String.format("%s/change_password", Enpoint.Auth.BASE_ADMIN),
-                    String.format("%s/change_password", Enpoint.Auth.BASE)
+                    String.format("%s/change_password", Enpoint.Auth.BASE),
+                    String.format("%s/account/address", Enpoint.Auth.BASE),
+                    String.format("%s/account/me", Enpoint.Auth.BASE)
 
                 ).permitAll()
 

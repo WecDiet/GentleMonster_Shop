@@ -19,10 +19,11 @@ public class Enpoint {
         public static final String RESET_PASSWORD = "/reset-password";
         public static final String REGISTER_FACEBOOK ="/register-facebook";
         public static final String LOGOUT = "/logout";
-        public static final String ME = "/me";
+        public static final String ME = "/account/me";
         public static final String REFRESH_TOKEN = "/refreshtoken";
         public static final String UPDATE_INFO = "/update-info";
         public static final String CHANGE_AVATAR = "/avatar";
+        public static final String ADDRESS = "/account/address";
 
         // Admin
         public static final String BASE_ADMIN = API_PREFIX_ADMIN + "/auth";

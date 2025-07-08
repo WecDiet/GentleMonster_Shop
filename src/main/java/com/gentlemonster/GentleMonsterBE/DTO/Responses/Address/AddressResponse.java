@@ -1,4 +1,4 @@
-package com.gentlemonster.GentleMonsterBE.DTO.Responses.User;
+package com.gentlemonster.GentleMonsterBE.DTO.Responses.Address;
 
 import lombok.*;
 

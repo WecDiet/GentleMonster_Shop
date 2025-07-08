@@ -43,6 +43,15 @@ public class MessageKey {
     public static final String USER_UPLOAD_AVATAR_SUCCESS = "user.upload_media_success";
     public static final String USER_UPLOAD_AVATAR_FAILED = "user.upload_media_failed";
     public static final String USER_NOT_FOUND = "user.not_found";
+    public static final String USER_ADDRESS_MAXIMUM_LIMIT = "user.address.maximum_limit";
+    public static final String USER_CREATE_ADDRESS_SUCCESS = "user.create_address_success";
+    public static final String USER_UPDATE_ADDRESS_SUCCESS = "user.update_address_success";
+    public static final String USER_DELETE_ADDRESS_SUCCESS = "user.delete_address_success";
+    public static final String USER_ADDRESS_NOT_FOUND = "user.address.not_found";
+    public static final String USER_ADDRESS_EXISTED = "user.address.existed";
+    public static final String USER_ADDRESS_REQUIRED = "user.address.required";
+    public static final String USER_ADDRESS_EMPTY = "user.address.empty";
+    public static final String USER_ADDRESS_GET_SUCCESS = "user.address.get_success";
 
     // PAYMENT TYPE
     public static final String PAYMENT_TYPE_CREATE_SUCCESS = "payment_type.create_success";

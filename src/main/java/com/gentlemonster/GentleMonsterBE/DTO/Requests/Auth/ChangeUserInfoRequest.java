@@ -9,8 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ChangeUserInfoRequest {
     private String firstName;
-    private String lastName;
     private String middleName;
+    private String lastName;
     private String phoneNumber;
-
 }

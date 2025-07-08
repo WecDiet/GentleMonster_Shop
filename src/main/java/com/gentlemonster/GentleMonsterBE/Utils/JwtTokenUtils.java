@@ -2,6 +2,7 @@ package com.gentlemonster.GentleMonsterBE.Utils;
 
 import com.gentlemonster.GentleMonsterBE.Exception.InvalidParamException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -182,5 +183,20 @@ public class JwtTokenUtils {
     // Hàm lấy subject từ token
     public String extractSubject(String token) {
         return extractClaim(token, Claims::getSubject); // lấy subject từ token
+    }
+
+
+    public boolean isValidToken(String token){
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey()) // set khoá bí mật để ký token
+                    .build() // build parser
+                    .parseClaimsJws(token); // parse token thành JWS
+            return true; // nếu token hợp lệ thì trả về true
+        } catch (JwtException | IllegalArgumentException e) {
+            // Nếu token không hợp lệ hoặc có lỗi khi parse, trả về false
+            System.out.println("Invalid JWT token: " + e.getMessage());
+            return false;
+        }
     }
 }

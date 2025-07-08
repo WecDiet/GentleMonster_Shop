@@ -1,5 +1,6 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.User;
 
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Address.AddressResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Role.RoleResponse;
 import lombok.*;
 

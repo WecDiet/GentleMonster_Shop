@@ -20,6 +20,12 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "name", length = 100)
+    private String name; // Tên người nhận địa chỉ
+
+    @Column(name = "phone_number", length = 15)
+    private String phoneNumber; // Số điện thoại người nhận địa chỉ
+
     @Column(name = "street", length = 200)
     private String street;
 
@@ -34,6 +40,14 @@ public class Address {
 
     @Column(name = "country", length = 100)
     private String country;
+
+    @Column(name = "is_default")
+    private boolean isDefault; // Địa chỉ mặc định
+
+    // Loại địa chỉ (ví dụ: "home", "office", "other")
+    // true: địa chỉ này là địa chỉ nhà, false: địa chỉ này là địa chỉ văn phòng
+    @Column(name = "type", length = 50)
+    private boolean type;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)

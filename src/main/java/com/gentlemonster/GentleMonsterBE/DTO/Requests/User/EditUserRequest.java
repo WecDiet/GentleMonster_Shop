@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Data
-public class EditUserRequest extends AddressUserRequest {
+public class EditUserRequest extends AddressEmployeeRequest {
     @NotEmpty(message = "title is required not empty !")
     private String title;
     @NotEmpty(message = "First name is required")

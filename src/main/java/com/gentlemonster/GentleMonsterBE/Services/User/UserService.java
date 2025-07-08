@@ -2,10 +2,12 @@ package com.gentlemonster.GentleMonsterBE.Services.User;
 
 import com.gentlemonster.GentleMonsterBE.Contants.MessageKey;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.User.AddUserResquest;
+import com.gentlemonster.GentleMonsterBE.DTO.Requests.User.AddressCustomerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.User.EditUserRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.User.UserRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.PagingResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Address.AddressCustomerResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.BaseUserResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserInforResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserResponse;
@@ -13,7 +15,6 @@ import com.gentlemonster.GentleMonsterBE.Entities.Address;
 import com.gentlemonster.GentleMonsterBE.Entities.AuthToken;
 import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
-import com.gentlemonster.GentleMonsterBE.Entities.Store;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
 import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.IAddressRepository;
@@ -27,9 +28,7 @@ import com.gentlemonster.GentleMonsterBE.Utils.JwtTokenUtils;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
 import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 
-import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -179,11 +178,15 @@ public class UserService implements IUserService {
         user.setSlug(slugStandardization);
         // Xử lý danh sách địa chỉ
         Address address = Address.builder()
+                .name(addUserRequest.getFirstName() + " " + addUserRequest.getMiddleName() + " " + addUserRequest.getLastName())
+                .phoneNumber(addUserRequest.getPhoneNumber())
                 .street(addUserRequest.getStreet())
                 .ward(addUserRequest.getWard())
                 .district(addUserRequest.getDistrict())
                 .city(addUserRequest.getCity())
                 .country(addUserRequest.getCountry())
+                .isDefault(false) // true: địa chỉ này sẽ là địa chỉ mặc định, false: địa chỉ này sẽ không phải là địa chỉ mặc định
+                .type(false) // true: địa chỉ này là địa chỉ nhà, false: địa chỉ này là địa chỉ văn phòng
                 .user(user)
                 .build();
 
@@ -306,10 +309,10 @@ public class UserService implements IUserService {
         }
         AuthToken authToken = iTokenRepository.findByUserId(user.getId()).orElse(null);
         if (authToken != null) {
-            // Xóa token liên quan đến người dùng
+            // // Xóa token liên quan đến người dùng
             iTokenRepository.delete(authToken);
         }
-
+        
         iUserRepository.delete(user);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_DELETE_SUCCESS));
@@ -408,6 +411,7 @@ public class UserService implements IUserService {
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
         }
         try {
+            
             Map uploadResult = cloudinaryService.uploadMedia(image, "users");
             String imageUrl = (String) uploadResult.get("secure_url");
             Media media = Media.builder()
@@ -464,5 +468,137 @@ public class UserService implements IUserService {
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
         }
         return userResponse;
+    }
+
+    @Override
+    public APIResponse<Boolean> addAddressByCustomer(String token, AddressCustomerRequest addressCustomerRequest) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        if (user.getAddresses().size() > 2) { // đi từ 0 -> 2 sẽ là 3 địa chỉ
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_MAXIMUM_LIMIT));            
+        }else{
+            Address addressByCustomer = Address.builder()
+                    .name(addressCustomerRequest.getName())
+                    .phoneNumber(addressCustomerRequest.getPhoneNumber())
+                    .street(addressCustomerRequest.getStreet())
+                    .ward(addressCustomerRequest.getWard())
+                    .district(addressCustomerRequest.getDistrict())
+                    .city(addressCustomerRequest.getCity())
+                    .country(addressCustomerRequest.getCountry())
+                    .isDefault(addressCustomerRequest.isDefaultAddress()) // true: địa chỉ này sẽ là địa chỉ mặc định, false: địa chỉ này sẽ không phải là địa chỉ mặc định
+                    .type(addressCustomerRequest.isType()) // true: địa chỉ này là địa chỉ nhà, false: địa chỉ này là địa chỉ văn phòng
+                    .user(user)
+                    .build();
+            iAddressRepository.save(addressByCustomer);
+            user.getAddresses().add(addressByCustomer);
+        }
+        iUserRepository.save(user);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_CREATE_ADDRESS_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> updateAddressByCustomer(String token, String addressID, AddressCustomerRequest addressCustomerRequest) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        Address address = iAddressRepository.findById(UUID.fromString(addressID)).orElse(null);
+        if (address == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        modelMapper.map(addressCustomerRequest, address);
+        address.setUser(user);
+        address.setModifiedDate(LocalDateTime.now());
+        iAddressRepository.save(address);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_UPDATE_ADDRESS_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> deleteAddressByCustomer(String token, String addressID, AddressCustomerRequest addressCustomerRequest) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        Address address = iAddressRepository.findById(UUID.fromString(addressID)).orElse(null);
+        if (address == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        if (!user.getAddresses().contains(address)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_NOT_FOUND));
+        }
+        iAddressRepository.delete(address);
+        user.getAddresses().remove(address);
+        iUserRepository.save(user);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_DELETE_ADDRESS_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+    
+    @Override
+    public APIResponse<List<AddressCustomerResponse>> getAllAddressByCustomer(String token) throws NotFoundException
+    {
+        String jwt = token.substring(7).trim();
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        List<AddressCustomerResponse> addressCustomerResponses = user.getAddresses().stream()
+                .map(address -> modelMapper.map(address, AddressCustomerResponse.class))
+                .toList();
+        if (addressCustomerResponses.isEmpty()) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_NOT_FOUND));
+        }
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_GET_SUCCESS));
+        return new APIResponse<>(addressCustomerResponses, messages);
+        
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadAvatarCustomer(String token, MultipartFile image) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        Map uploadResult = cloudinaryService.uploadMedia(image, "customers");
+        String imageUrl = (String) uploadResult.get("secure_url");
+        Media media = Media.builder()
+                .imageUrl(imageUrl)
+                .publicId((String) uploadResult.get("public_id"))
+                .referenceId(user.getId())
+                .referenceType("CUSTOMER")
+                .altText("Avatar: " + user.getFullName())
+                .type("IMAGE")
+                .build();
+        user.setImage(media);
+        iUserRepository.save(user);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_UPLOAD_AVATAR_SUCCESS));
+        return new APIResponse<>(true, messages);
     }
 }

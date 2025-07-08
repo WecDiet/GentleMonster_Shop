@@ -1,9 +1,6 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.User;
 
-import java.time.LocalDate;
-
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
-import com.gentlemonster.GentleMonsterBE.DTO.Responses.Role.RoleUserResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

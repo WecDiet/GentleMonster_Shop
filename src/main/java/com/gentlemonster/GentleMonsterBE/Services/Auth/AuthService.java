@@ -171,18 +171,31 @@ public class AuthService implements IAuthService{
         }else if (!existingUser.isStatus()) {
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.ACCOUNT_LOCKED));
         }
-
+        
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         login, password,
                         existingUser.getAuthorities()
                     );
         authenticationManager.authenticate(authenticationToken);
-        System.out.println("Role getAuthorities is: " + existingUser.getAuthorities());
 
-        String accessToken = jwtTokenUtils.generateToken(existingUser);
-        String refreshToken = jwtTokenUtils.generateRefreshToken(existingUser);
+        Optional<AuthToken> existingToken = tokenService.findByToken(existingUser, tokenType, deviceToken, deviceName);
+        String accessToken;
+        String refreshToken;
+        AuthToken authToken;
+        if (existingToken.isPresent() && jwtTokenUtils.isValidToken(existingToken.get().getToken()) && jwtTokenUtils.isValidToken(existingToken.get().getRefreshToken())){
+            authToken = existingToken.get();
+            accessToken = authToken.getToken();
+            refreshToken = authToken.getRefreshToken();
 
-        AuthToken authToken = tokenService.saveToken(accessToken, existingUser, refreshToken, tokenType, deviceToken, deviceName);
+        }else{
+            if (existingToken.isPresent()) {
+                // Nếu token đã tồn tại nhưng không hợp lệ, xóa token cũ
+                iTokenRepository.delete(existingToken.get());
+            }
+            accessToken = jwtTokenUtils.generateToken(existingUser);
+            refreshToken = jwtTokenUtils.generateRefreshToken(existingUser);
+            authToken = tokenService.saveToken(accessToken, existingUser, refreshToken, tokenType, deviceToken, deviceName);
+        }
 
         UserLoginResponse response = UserLoginResponse.builder()
                 .token(accessToken)

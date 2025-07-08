@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressUserRequest {
+public class AddressEmployeeRequest {
     @NotEmpty(message = "street is required not empty !")
     private String street;
     @NotEmpty(message = "ward is required not empty !")

@@ -4,7 +4,9 @@ import com.gentlemonster.GentleMonsterBE.Contants.Enpoint;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Auth.ChangePasswordRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Auth.UserLoginRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Auth.UserRegisterRequest;
+import com.gentlemonster.GentleMonsterBE.DTO.Requests.User.AddressCustomerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Address.AddressCustomerResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Auth.UserLoginResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserInforResponse;
 import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
@@ -22,7 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
@@ -109,4 +113,40 @@ public class UserPublicController {
 
     }
 
+    @GetMapping(Enpoint.Auth.ADDRESS)
+    public ResponseEntity<APIResponse<List<AddressCustomerResponse>>> getCustomerAddress(@RequestHeader("Authorization") String token) throws NotFoundException {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        APIResponse<List<AddressCustomerResponse>> response = userService.getAllAddressByCustomer(token);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(Enpoint.Auth.ADDRESS)
+    ResponseEntity<APIResponse<Boolean>> addCustomerAddress(@RequestHeader("Authorization") String token,
+                                               @Valid @RequestBody AddressCustomerRequest addressCustomerRequest,
+                                               BindingResult bindingResult) throws NotFoundException {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .toList();
+            return ResponseEntity.badRequest().body(new APIResponse<>(null, errorMessages));
+        }
+        if (token == null || !token.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        APIResponse<Boolean> response = userService.addAddressByCustomer(token, addressCustomerRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(Enpoint.Auth.ME)
+    public ResponseEntity<APIResponse<Boolean>> uploadAvatarCustomer(@RequestHeader("Authorization") String token,@RequestParam("image") MultipartFile image) throws NotFoundException {
+    
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        APIResponse<Boolean> response = userService.uploadAvatarCustomer(token, image);
+        return ResponseEntity.ok(response);
+    }
 }

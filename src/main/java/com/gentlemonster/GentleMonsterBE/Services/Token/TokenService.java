@@ -1,13 +1,16 @@
 package com.gentlemonster.GentleMonsterBE.Services.Token;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.gentlemonster.GentleMonsterBE.Entities.AuthToken;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
 import com.gentlemonster.GentleMonsterBE.Repositories.ITokenRepository;
+import com.gentlemonster.GentleMonsterBE.Repositories.Specification.TokenSpecification;
 import com.gentlemonster.GentleMonsterBE.Utils.JwtTokenUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,15 @@ public class TokenService implements ITokenService {
                 .revoked(false)
                 .build();
         return authTokenRepository.save(authToken);
+    }
+    @Override
+    public Optional<AuthToken> findByToken(User user, String tokenType, String deviceToken,
+            String deviceName) {
+        if (user == null || tokenType == null || deviceToken == null) {
+            return Optional.empty();
+        }
+        Specification<AuthToken> spec = TokenSpecification.tokenSpec(user, tokenType, deviceToken, deviceName);
+        return authTokenRepository.findOne(spec);
     }
 
 
