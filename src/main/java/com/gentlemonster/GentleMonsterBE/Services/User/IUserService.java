@@ -28,10 +28,5 @@ public interface IUserService {
     APIResponse<List<BaseUserResponse>> searchUser(UserRequest userRequest);
     APIResponse<Boolean> deleteMutiUser(List<String> userIDs);
     APIResponse<Boolean> uploadAvatarEmployee(String userID, MultipartFile image) throws NotFoundException;
-    UserInforResponse getUserLoginResponse(String login) throws NotFoundException;
-    APIResponse<Boolean> addAddressByCustomer(String token, AddressCustomerRequest addressCustomerRequest) throws NotFoundException;
-    APIResponse<Boolean> updateAddressByCustomer(String token, String addressID, AddressCustomerRequest addressCustomerRequest) throws NotFoundException;
-    APIResponse<Boolean> deleteAddressByCustomer(String token, String addressID, AddressCustomerRequest addressCustomerRequest) throws NotFoundException;
-    APIResponse<List<AddressCustomerResponse>> getAllAddressByCustomer(String token) throws NotFoundException;
-    APIResponse<Boolean> uploadAvatarCustomer(String token, MultipartFile image) throws NotFoundException;
+
 }

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,16 +15,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class AddressCustomerResponse {
+public class AddressCustomerResponse extends AddressResponse {
     private String name; // Tên người nhận địa chỉ
     private String phoneNumber; // Số điện thoại người nhận địa chỉ
-    private String street;
-    private String ward;
-    private String district;
-    private String city;
-    private String country;
     private boolean type; // Loại địa chỉ (ví dụ: "home", "office")
     private boolean isDefault; // Địa chỉ mặc định
-    
 }

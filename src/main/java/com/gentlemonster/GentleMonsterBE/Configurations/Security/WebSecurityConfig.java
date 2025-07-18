@@ -74,8 +74,8 @@ public class WebSecurityConfig {
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
                     String.format("%s/item/**",Enpoint.API_PREFIX_SHOP),
                     String.format("%s/stories/**", Enpoint.API_PREFIX_SHOP),
-                    String.format("%s/account/me", Enpoint.Auth.BASE),
-                    String.format("%s/account/address", Enpoint.Auth.BASE)
+                    String.format("%s/myaccount/me", Enpoint.Auth.BASE),
+                    String.format("%s/myaccount/address", Enpoint.Auth.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.POST,
@@ -107,8 +107,10 @@ public class WebSecurityConfig {
                     String.format("%s/login", Enpoint.Auth.BASE_ADMIN),
                     String.format("%s/change_password", Enpoint.Auth.BASE_ADMIN),
                     String.format("%s/change_password", Enpoint.Auth.BASE),
-                    String.format("%s/account/address", Enpoint.Auth.BASE),
-                    String.format("%s/account/me", Enpoint.Auth.BASE)
+                    String.format("%s/myaccount/address", Enpoint.Auth.BASE),
+                    String.format("%s/myaccount/me", Enpoint.Auth.BASE),
+                    String.format("%s/myaccount/profile/password-verification", Enpoint.Auth.BASE_ADMIN),
+                    String.format("%s/myaccount/profile/password-verification", Enpoint.Auth.BASE)
 
                 ).permitAll()
 
@@ -125,7 +127,9 @@ public class WebSecurityConfig {
                     String.format("%s/product_detail/*",Enpoint.Product.BASE),
                     String.format("%s/*", Enpoint.Banner.BASE),
                     String.format("%s/*", Enpoint.City.BASE),
-                    String.format("%s/story_detail/*", Enpoint.Story.BASE)
+                    String.format("%s/story_detail/*", Enpoint.Story.BASE),
+                    String.format("%s/myaccount/address", Enpoint.Auth.BASE),
+                    String.format("%s/myaccount/profile/edit_profile", Enpoint.Auth.BASE)
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.DELETE,
@@ -141,7 +145,10 @@ public class WebSecurityConfig {
                     String.format("%s/*", Enpoint.Banner.BASE),
                     String.format("%s/*", Enpoint.City.BASE),
                     String.format("%s/story_detail/*", Enpoint.Story.BASE),
-                    String.format("%s/*", Enpoint.Story.BASE)
+                    String.format("%s/*", Enpoint.Story.BASE),
+
+
+                    String.format("%s/myaccount/address", Enpoint.Auth.BASE)
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

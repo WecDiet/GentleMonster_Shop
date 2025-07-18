@@ -186,6 +186,7 @@ public class JwtTokenUtils {
     }
 
 
+    // Hàm này sẽ kiểm tra xem token có hợp lệ hay không
     public boolean isValidToken(String token){
         try {
             Jwts.parserBuilder()

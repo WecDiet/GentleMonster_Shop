@@ -11,7 +11,7 @@ public class Enpoint {
         public static final String LOGIN = "/login";
         public static final String REGISTER = "/account_register";
         public static final String CHANGE_PASSWORD = "/change_password";
-        public static final String CHANGE_USER_INFO = "/change_user-info";
+        public static final String CHANGE_USER_INFO = "/myaccount/profile/edit_profile";
         public static final String LOGIN_GOOGLE = "/login-google";
         public static final String REGISTER_GOOGLE ="/register-google";
         public static final String LOGIN_FACEBOOK = "/login-facebook";
@@ -19,12 +19,12 @@ public class Enpoint {
         public static final String RESET_PASSWORD = "/reset-password";
         public static final String REGISTER_FACEBOOK ="/register-facebook";
         public static final String LOGOUT = "/logout";
-        public static final String ME = "/account/me";
+        public static final String ME = "/myaccount/me";
         public static final String REFRESH_TOKEN = "/refreshtoken";
         public static final String UPDATE_INFO = "/update-info";
         public static final String CHANGE_AVATAR = "/avatar";
-        public static final String ADDRESS = "/account/address";
-
+        public static final String ADDRESS = "/myaccount/address";
+        public static final String PASSWORD_VERIFICATION = "/myaccount/profile/password-verification";
         // Admin
         public static final String BASE_ADMIN = API_PREFIX_ADMIN + "/auth";
         public static final String LOGIN_ADMIN = "/login";

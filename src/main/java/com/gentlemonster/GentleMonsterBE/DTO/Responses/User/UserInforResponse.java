@@ -1,5 +1,7 @@
 package com.gentlemonster.GentleMonsterBE.DTO.Responses.User;
 
+import java.util.UUID;
+
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Cloudinary.ImageResponse;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class UserInforResponse {
+    private UUID id;
     private String firstName;
     private String middleName;
     private String lastName;

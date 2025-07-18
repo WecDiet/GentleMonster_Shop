@@ -12,4 +12,9 @@ public class ChangeUserInfoRequest {
     private String middleName;
     private String lastName;
     private String phoneNumber;
+    private String gender;
+    private int day;
+    private int month;
+    private int year;
+    private String title;
 }

@@ -1,40 +1,54 @@
 package com.gentlemonster.GentleMonsterBE.Services.Auth;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.gentlemonster.GentleMonsterBE.Contants.MessageKey;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Auth.ChangePasswordRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Auth.ChangeUserInfoRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Auth.UserRegisterRequest;
+import com.gentlemonster.GentleMonsterBE.DTO.Requests.User.AddressCustomerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.APIResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.Address.AddressCustomerResponse;
 import com.gentlemonster.GentleMonsterBE.DTO.Responses.Auth.UserLoginResponse;
+import com.gentlemonster.GentleMonsterBE.DTO.Responses.User.UserInforResponse;
+import com.gentlemonster.GentleMonsterBE.Entities.Address;
 import com.gentlemonster.GentleMonsterBE.Entities.AuthToken;
+import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Entities.Role;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
 import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
+import com.gentlemonster.GentleMonsterBE.Repositories.IAddressRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IAuthRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IRoleRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ITokenRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.IUserRepository;
+import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Services.Token.TokenService;
 import com.gentlemonster.GentleMonsterBE.Utils.JwtTokenUtils;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
 import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
 
-
+import ch.qos.logback.core.model.Model;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @NoArgsConstructor
+@Slf4j
 public class AuthService implements IAuthService{
 
     @Autowired
@@ -57,6 +71,12 @@ public class AuthService implements IAuthService{
     private TokenService tokenService;
     @Autowired
     private ITokenRepository iTokenRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private CloudinaryService cloudinaryService;
+    @Autowired
+    private IAddressRepository iAddressRepository;
 
     @Override
     @Transactional
@@ -110,7 +130,8 @@ public class AuthService implements IAuthService{
                                     userRegisterRequest.getLastName()).trim()
                     )
                     .slug(slugStandardization)
-                    .username(slugStandardization + "-" + new Random().nextInt(1000)) // Tạo username duy nhất
+                    // .username(slugStandardization + "-" + new Random().nextInt(1000)) // Tạo username duy nhất
+                    .username(userRegisterRequest.getFirstName() + userRegisterRequest.getMiddleName() + userRegisterRequest.getLastName() + new Random().nextInt(1000)) // Tạo username duy nhất
                     .birthDay(dateFormat.parse(formattedDate))
                     .role(role)
                     .code(generateCode(role))
@@ -221,7 +242,6 @@ public class AuthService implements IAuthService{
         } else {
             userOptional = authRepository.findByUsername(subject);
         }
-
         if (userOptional.isEmpty()) {
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_EXIST));
         }
@@ -232,6 +252,9 @@ public class AuthService implements IAuthService{
         }
         if (!passwordEncoder.matches(changePassword.getCurrentPassword(), changePassword.getNewPassword())) {
             throw new BadCredentialsException(localizationUtil.getLocalizedMessage(MessageKey.WRONG_INPUT));
+        }
+        if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
+            throw new BadCredentialsException(localizationUtil.getLocalizedMessage(MessageKey.PASSWORD_CONFIRM_NOT_MATCH));
         }
 
         String encoderNewPassword = passwordEncoder.encode(changePassword.getNewPassword());
@@ -270,5 +293,250 @@ public class AuthService implements IAuthService{
     @Override
     public String loginFacebook(String token, String deviceToken) throws Exception {
         return "";
+    }
+
+    @Override
+    public APIResponse<List<AddressCustomerResponse>> getAllAddressByCustomer(String token) throws NotFoundException
+    {
+        String jwt = token.substring(7).trim();
+        if (jwtTokenUtils.isTokenExpired(jwt)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        List<AddressCustomerResponse> addressCustomerResponses = user.getAddresses().stream()
+                .map(address -> modelMapper.map(address, AddressCustomerResponse.class))
+                .toList();
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_GET_SUCCESS));
+        return new APIResponse<>(addressCustomerResponses, messages);
+        
+    }
+
+    @Override
+    public APIResponse<Boolean> uploadAvatarCustomer(String token, MultipartFile image) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        if (jwtTokenUtils.isTokenExpired(jwt)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        Map uploadResult = cloudinaryService.uploadMedia(image, "customers");
+        String imageUrl = (String) uploadResult.get("secure_url");
+        Media media = Media.builder()
+                .imageUrl(imageUrl)
+                .publicId((String) uploadResult.get("public_id"))
+                .referenceId(user.getId())
+                .referenceType("CUSTOMER")
+                .altText("Avatar: " + user.getFullName())
+                .type("IMAGE")
+                .build();
+        user.setImage(media);
+        iUserRepository.save(user);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_UPLOAD_AVATAR_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> verifyPassword(String token, String password) throws NotFoundException {
+        String jwtToken = token.substring(7).trim();
+        if (jwtTokenUtils.isTokenExpired(jwtToken)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }
+        String subject = jwtTokenUtils.extractSubject(jwtToken);
+        if (jwtTokenUtils.extractClaim(jwtToken, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        Optional<User> userOptional = iUserRepository.findByEmail(subject);
+        if (userOptional.isEmpty()) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_EXIST));
+        }
+
+        User user = userOptional.get();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException(localizationUtil.getLocalizedMessage(MessageKey.WRONG_INPUT));
+        }
+        ArrayList<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_GET_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public UserInforResponse getUserLoginResponse(String login) throws NotFoundException {
+        if (login == null || !login.startsWith("Bearer ")) {
+            log.error("Invalid or missing Authorization header");
+            throw new IllegalArgumentException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_INVALID));
+        }
+        // Lấy token từ chuỗi login
+        String token = login.substring(7).trim();
+        if (token == null || token.isEmpty()) {
+            log.error("Token is null or empty");
+            throw new IllegalArgumentException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_INVALID));
+        }
+        if (jwtTokenUtils.isTokenExpired(token)) {
+            log.error("Token has expired");
+            throw new IllegalArgumentException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }  
+        String subject = jwtTokenUtils.extractSubject(token);
+        log.info("Extracted subject: {}, role: {}", subject, jwtTokenUtils.extractClaim(token, claims -> claims.get("role", String.class)));
+        if (token == null || token.isEmpty()) {
+            log.error("Invalid or missing token");
+            throw new IllegalArgumentException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_INVALID));
+        }
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(token, claims -> claims.get("role", String.class)).equals("CUSTOMER")) {
+            userOptional = iUserRepository.findByEmail(subject);
+        } else {
+            userOptional = iUserRepository.findByUsername(subject);
+        }
+        UserInforResponse userResponse = modelMapper.map(userOptional, UserInforResponse.class);
+        if (userResponse == null) {
+            log.error("User not found for token: {}", token);
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        return userResponse;
+    }
+
+    @Override
+    public APIResponse<Boolean> addAddressByCustomer(String token, AddressCustomerRequest addressCustomerRequest) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        if (jwtTokenUtils.isTokenExpired(jwt)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        if (user.getAddresses().size() > 2) { // đi từ 0 -> 2 sẽ là 3 địa chỉ
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_MAXIMUM_LIMIT));            
+        }else{
+            Address addressByCustomer = Address.builder()
+                    .name(addressCustomerRequest.getName())
+                    .phoneNumber(addressCustomerRequest.getPhoneNumber())
+                    .street(addressCustomerRequest.getStreet())
+                    .ward(addressCustomerRequest.getWard())
+                    .district(addressCustomerRequest.getDistrict())
+                    .city(addressCustomerRequest.getCity())
+                    .country(addressCustomerRequest.getCountry())
+                    .isDefault(addressCustomerRequest.isDefaultAddress()) // true: địa chỉ này sẽ là địa chỉ mặc định, false: địa chỉ này sẽ không phải là địa chỉ mặc định
+                    .type(addressCustomerRequest.isType()) // true: địa chỉ này là địa chỉ nhà, false: địa chỉ này là địa chỉ văn phòng
+                    .user(user)
+                    .build();
+            iAddressRepository.save(addressByCustomer);
+            user.getAddresses().add(addressByCustomer);
+        }
+        iUserRepository.save(user);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_CREATE_ADDRESS_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> updateAddressByCustomer(String token, String addressID, AddressCustomerRequest addressCustomerRequest) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        if (jwtTokenUtils.isTokenExpired(jwt)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        Address address = iAddressRepository.findById(UUID.fromString(addressID)).orElse(null);
+        if (address == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        modelMapper.map(addressCustomerRequest, address);
+        address.setUser(user);
+        address.setModifiedDate(LocalDateTime.now());
+        iAddressRepository.save(address);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_UPDATE_ADDRESS_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> deleteAddressByCustomer(String token, String addressID) throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        if (jwtTokenUtils.isTokenExpired(jwt)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        Address address = iAddressRepository.findById(UUID.fromString(addressID)).orElse(null);
+        if (address == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        User user = userOptional.get();
+        if (!user.getAddresses().contains(address)) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_ADDRESS_NOT_FOUND));
+        }
+        iAddressRepository.delete(address);
+        user.getAddresses().remove(address);
+        iUserRepository.save(user);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_DELETE_ADDRESS_SUCCESS));
+        return new APIResponse<>(true, messages);
+    }
+
+    @Override
+    public APIResponse<Boolean> updateProfileCustomer(String token, ChangeUserInfoRequest changeUserInfoRequest)
+            throws NotFoundException {
+        String jwt = token.substring(7).trim();
+        if (jwtTokenUtils.isTokenExpired(jwt)) {
+                throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
+        }
+        String subject = jwtTokenUtils.extractSubject(jwt);
+        Optional<User> userOptional;
+        if (jwtTokenUtils.extractClaim(jwt, claims -> claims.get("email", String.class)) == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        userOptional = iUserRepository.findByEmail(subject);
+        if (userOptional.isEmpty()) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_EXIST));
+        }
+        User user = userOptional.get();
+        modelMapper.map(changeUserInfoRequest, user);
+        user.setFullName(changeUserInfoRequest.getFirstName() + " " + changeUserInfoRequest.getMiddleName() + " " + changeUserInfoRequest.getLastName());
+        String slugStandardization = vietnameseStringUtils.removeAccents(user.getFullName()).toLowerCase();
+        user.setSlug(slugStandardization);
+        String usernameStandardization = vietnameseStringUtils.removeAccentsAndSpaces(changeUserInfoRequest.getFirstName() + changeUserInfoRequest.getMiddleName() + changeUserInfoRequest.getLastName()).toLowerCase();
+        user.setUsername(usernameStandardization + new Random().nextInt(1000));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(changeUserInfoRequest.getYear(), changeUserInfoRequest.getMonth() - 1, changeUserInfoRequest.getDay());
+        Date birthday = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(birthday);
+        try {
+            user.setBirthDay(dateFormat.parse(formattedDate));
+        } catch (ParseException e) {
+            throw new RuntimeException("Invalid date format: " + formattedDate, e);
+        }
+        user.setGender(changeUserInfoRequest.getGender());
+        user.setModifiedDate(LocalDateTime.now());
+        iUserRepository.save(user);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_UPDATE_PROFILE_SUCCESS));
+        return new APIResponse<>(true, messages);
     }
 }

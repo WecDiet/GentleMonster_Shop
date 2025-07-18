@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gentlemonster.GentleMonsterBE.Contants.Enpoint;
@@ -87,8 +88,23 @@ public class AuthController {
             if (token == null || !token.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             }
-            UserInforResponse userInforResponse = userService.getUserLoginResponse(token);
+            UserInforResponse userInforResponse = authService.getUserLoginResponse(token);
             return ResponseEntity.ok(userInforResponse);
 
     }
+
+    // @PostMapping(Enpoint.Auth.PASSWORD_VERIFICATION)
+    // public ResponseEntity<APIResponse<Boolean>> verifyPassword(@RequestHeader("Authorization") String token, @RequestParam String password) throws NotFoundException {
+    // if (token == null || !token.startsWith("Bearer ")) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    //     }
+    //     try {
+    //         APIResponse<Boolean> response = authService.verifyPassword(token, password);
+    //         return ResponseEntity.ok(response);
+    //     } catch (NotFoundException e) {
+    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new APIResponse<>(null, Collections.singletonList(e.getMessage())));
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new APIResponse<>(null, Collections.singletonList(e.getMessage())));
+    //     }
+    // }
 }

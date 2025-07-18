@@ -52,6 +52,8 @@ public class MessageKey {
     public static final String USER_ADDRESS_REQUIRED = "user.address.required";
     public static final String USER_ADDRESS_EMPTY = "user.address.empty";
     public static final String USER_ADDRESS_GET_SUCCESS = "user.address.get_success";
+    public static final String PASSWORD_CONFIRM_NOT_MATCH = "user.password.confirm_not_match";
+    public static final String USER_UPDATE_PROFILE_SUCCESS = "user.update_profile_success";
 
     // PAYMENT TYPE
     public static final String PAYMENT_TYPE_CREATE_SUCCESS = "payment_type.create_success";

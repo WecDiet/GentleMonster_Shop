@@ -119,16 +119,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
-    // bảng table user sẽ join với bảng role thông qua bảng user_role với user_id và role_id là khóa ngoại của 2 bảng user và role
-    // Được quản lý bởi JPA thông qua Set<Role> roles = new HashSet<>();
-    // mối quan hệ nhiều nhièu giữa user và role thông qua bảng user_role
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = "user_role",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id")
-//    )
-//    private Set<Role> roles = new HashSet<>();
 
     @ManyToOne
     @JoinTable(
@@ -141,12 +131,6 @@ public class User implements UserDetails {
     // Lấy danh sách quyền của user
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-//        List<String> Permissions = role.getPermissions();
-//        for (String permission : Permissions) {
-//            authorityList.add(new SimpleGrantedAuthority(permission));
-//        }
-//        return authorityList;
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         return authorityList;
@@ -160,10 +144,10 @@ public class User implements UserDetails {
     )
     Set<Product> viewedProductList = new HashSet<>();
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "uniqueviews")
-    private Product product;
+    // @ManyToOne
+    // @JsonIgnore
+    // @JoinColumn(name = "uniqueviews")
+    // private Product product;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AuthToken> tokens;
