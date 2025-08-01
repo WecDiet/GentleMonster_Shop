@@ -13,4 +13,5 @@ public interface ICollaborationService {
     PagingResponse<List<CollaborationResponse>> getAllCollaboration(CollaborationRequest collaborationRequest);
     APIResponse<Boolean> editCollaboration(String collaborationID,EditCollaborationRequest editCollaborationRequest) throws NotFoundException;
     APIResponse<CollaborationResponse> getOneCollaboration(String collaborationID) throws NotFoundException;
+    
 }

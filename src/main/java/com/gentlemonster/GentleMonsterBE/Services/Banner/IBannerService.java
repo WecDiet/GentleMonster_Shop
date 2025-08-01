@@ -19,7 +19,7 @@ import java.util.List;
 public interface IBannerService {
     PagingResponse<List<BaseBannerResponse>> getAllBanners(@ModelAttribute BannerRequest bannerRequest);
     APIResponse<BannerResponse> getOneBanner(String bannerID) throws NotFoundException;
-    APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest,MultipartFile media) throws NotFoundException;
+    APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest, MultipartFile image) throws NotFoundException;
     APIResponse<Boolean> updateBanner(String bannerID, EditBannerRequest editBannerRequest) throws NotFoundException;
     APIResponse<Boolean> deleteBanner(String bannerID) throws NotFoundException;
     APIResponse<List<BannerPublicResponse>> getAllBannersPublic();

@@ -15,7 +15,10 @@ openapi:
     api-docs: api-service
     server: http://localhost:9090
     title: Gentle Monster API
-    version: 1.0.1
+    version: 1.0.0
+    enabled: true
+    swagger-ui:
+      enabled: true
 spring:
   application:
     name: GentleMonsterBE
@@ -41,14 +44,14 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
-  session:
-    cookie:
-    name: JSESSIONID
-    http-only: true
-    secure: false
-    timeout: 30m
-    persistent: true
-    tracking-modes: cookie
+    session:
+      cookie:
+      name: JSESSIONID
+      http-only: true
+      secure: false
+      timeout: 30m
+      persistent: true
+      tracking-modes: cookie
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
   api-key: ${CLOUDINARY_API_KEY}

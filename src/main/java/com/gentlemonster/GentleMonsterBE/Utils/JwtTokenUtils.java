@@ -11,6 +11,7 @@ import io.jsonwebtoken.security.Keys;
 import com.gentlemonster.GentleMonsterBE.Entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -200,4 +201,16 @@ public class JwtTokenUtils {
             return false;
         }
     }
+
+    // Hàm này sẽ kiểm tra xem token có hợp lệ hay không
+    public boolean validateToken(String token, UserDetails userDetail){
+        if (extractClaim(token, claims -> claims.get("role", String.class)).equalsIgnoreCase("CUSTOMER")){
+            String email = extractSubject(token);
+            return email.equals(userDetail.getUsername()) && !isTokenExpired(token);
+        }else{
+            String username = extractSubject(token);
+            return username.equals(userDetail.getUsername()) && !isTokenExpired(token);
+        }
+    }
+    
 }

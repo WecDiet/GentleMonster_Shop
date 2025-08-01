@@ -1,6 +1,7 @@
 package com.gentlemonster.GentleMonsterBE.Services.Banner;
 
 import com.gentlemonster.GentleMonsterBE.Contants.MessageKey;
+import com.gentlemonster.GentleMonsterBE.Entities.Slider;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Banner.AddBannerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Banner.BannerRequest;
 import com.gentlemonster.GentleMonsterBE.DTO.Requests.Banner.EditBannerRequest;
@@ -15,6 +16,7 @@ import com.gentlemonster.GentleMonsterBE.Entities.Media;
 import com.gentlemonster.GentleMonsterBE.Exception.NotFoundException;
 import com.gentlemonster.GentleMonsterBE.Repositories.IBannerRepository;
 import com.gentlemonster.GentleMonsterBE.Repositories.ICategoryRepository;
+import com.gentlemonster.GentleMonsterBE.Repositories.ISliderRepository;
 import com.gentlemonster.GentleMonsterBE.Services.Cloudinary.CloudinaryService;
 import com.gentlemonster.GentleMonsterBE.Utils.LocalizationUtils;
 import com.gentlemonster.GentleMonsterBE.Utils.ValidationUtils;
@@ -49,6 +51,8 @@ public class BannerService implements IBannerService {
     private ICategoryRepository iCategoryRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private ISliderRepository iSliderRepository;
 
     @Override
     public PagingResponse<List<BaseBannerResponse>> getAllBanners(BannerRequest bannerRequest) {
@@ -96,7 +100,7 @@ public class BannerService implements IBannerService {
     }
 
     @Override
-    public APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest, MultipartFile media) throws NotFoundException {
+    public APIResponse<Boolean> addBanner(AddBannerRequest addBannerRequest, MultipartFile image) throws NotFoundException {
         if(iBannerRepository.existsByTitle(addBannerRequest.getTitle())){
             List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_EXISTED));
             return new APIResponse<>(false, messages);
@@ -105,18 +109,20 @@ public class BannerService implements IBannerService {
         banner.setSeq(addBannerRequest.getSeq());
         String categoryStandardization = vietnameseStringUtils.removeAccents(addBannerRequest.getCategory()).toLowerCase().replaceAll("\\s+", "-").trim();
         String sliderStandardization = vietnameseStringUtils.removeAccents(addBannerRequest.getSlider()).toLowerCase().replaceAll("\\s+", "-").trim();
+        Slider slider = iSliderRepository.findByName(addBannerRequest.getSlider()).orElse(null);
+        if (slider == null) {
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
+        }
+        banner.setSlider(slider);
         banner.setLink("/" + categoryStandardization + "/" + sliderStandardization);
         Category category = iCategoryRepository.findByName(addBannerRequest.getCategory()).orElse(null);
         if (category == null) {
-            // List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         banner.setCategory(category);
-
-        if (media != null && !media.isEmpty()) {
+        if (image != null && !image.isEmpty()) {
             try {
-                Map uploadResult = cloudinaryService.uploadMedia(media, "banners");
+                Map uploadResult = cloudinaryService.uploadMedia(image, "banners");
                 String imageURL = (String) uploadResult.get("secure_url");
                 Media mediaBanner = Media.builder()
                         .imageUrl(imageURL)
@@ -144,8 +150,6 @@ public class BannerService implements IBannerService {
     public APIResponse<Boolean> updateBanner(String bannerID, EditBannerRequest editBannerRequest)throws NotFoundException {
         Banner banner = iBannerRepository.findById(UUID.fromString(bannerID)).orElse(null);
         if(banner == null) {
-            // List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.BANNER_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.BANNER_NOT_FOUND));
         }
         modelMapper.map(editBannerRequest, banner);
@@ -155,8 +159,6 @@ public class BannerService implements IBannerService {
         banner.setLink("/" + categoryStandardization + "/" + sliderStandardization);
         Category category = iCategoryRepository.findByName(editBannerRequest.getCategory()).orElse(null);
         if (category == null) {
-            // List<String> messages = List.of(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
         }
         banner.setCategory(category);

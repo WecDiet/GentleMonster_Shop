@@ -107,6 +107,13 @@
             <artifactId>cloudinary-http44</artifactId>
             <version>1.39.0</version>
         </dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

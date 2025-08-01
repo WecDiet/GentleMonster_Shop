@@ -1,23 +1,22 @@
 package com.gentlemonster.GentleMonsterBE.Configurations.Security;
 
 import com.gentlemonster.GentleMonsterBE.Contants.Enpoint;
+import com.gentlemonster.GentleMonsterBE.Contants.Enpoint.User;
+import com.gentlemonster.GentleMonsterBE.Filters.JwtTokenFilter;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -25,20 +24,27 @@ import java.util.List;
 @EnableWebMvc
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    @Autowired
+    private JwtTokenFilter jwtTokenFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.authorizeHttpRequests(request -> request
-                // .requestMatchers(
-                //         "/swagger-ui/index.html",
-                //         "/swagger-ui/**",
-                //         "/swagger-ui.html",
-                //         "/swagger/**",
-                //         "/v3/api-docs/**",
-                //         "/swagger-resources/**",
-                //         "/swagger-resources/",
-                //         "/configuration/ui",
-                //         "/configuration/security"
-                // ).permitAll()
+        httpSecurity
+        
+                .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(request -> request
+                    .requestMatchers(
+                             "/swagger-ui/index.html",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/swagger/**",
+                            "/v3/api-docs/**",
+                            "/swagger-resources/**",
+                            "/swagger-resources/",
+                            "/Configurations/ui",
+                            "/Configurations/security"
+                    ).permitAll()
 
                 .requestMatchers(HttpMethod.GET,
                     String.format("%s/*", Enpoint.API_PREFIX_ADMIN),
@@ -68,7 +74,7 @@ public class WebSecurityConfig {
                     String.format("%s/story_detail/*", Enpoint.Story.BASE),
                     String.format("%s/account/me", Enpoint.Auth.BASE_ADMIN),
                     // Shop API USER
-//                  String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
+                    String.format("%s/stores/*", Enpoint.API_PREFIX_SHOP),
                     "/us/store",
                     "/us", // Hiển thị toàn bộ banner ở trang chủ
                     String.format("%s/list/**", Enpoint.API_PREFIX_SHOP),
@@ -152,7 +158,7 @@ public class WebSecurityConfig {
                 ).permitAll()
                 .anyRequest()
                 .authenticated()
-        ).csrf(AbstractHttpConfigurer::disable);
+        );
 
         // httpSecurity.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {
         //     @Override

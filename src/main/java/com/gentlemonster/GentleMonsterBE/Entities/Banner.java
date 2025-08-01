@@ -48,6 +48,10 @@ public class Banner {
     private Category category;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "slider_id") // FK trong bảng Product
+    private Slider slider;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "media_id") // FK trong bảng Product
     private Media image;
 

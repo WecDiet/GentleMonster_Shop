@@ -389,7 +389,7 @@ public class AuthService implements IAuthService{
             throw new IllegalArgumentException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_EXPIRED));
         }  
         String subject = jwtTokenUtils.extractSubject(token);
-        log.info("Extracted subject: {}, role: {}", subject, jwtTokenUtils.extractClaim(token, claims -> claims.get("role", String.class)));
+        // log.info("Extracted subject: {}, role: {}", subject, jwtTokenUtils.extractClaim(token, claims -> claims.get("role", String.class)));
         if (token == null || token.isEmpty()) {
             log.error("Invalid or missing token");
             throw new IllegalArgumentException(localizationUtil.getLocalizedMessage(MessageKey.TOKEN_INVALID));

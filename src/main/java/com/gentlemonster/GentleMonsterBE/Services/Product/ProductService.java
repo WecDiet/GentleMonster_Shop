@@ -100,9 +100,6 @@ public class ProductService implements IProductService {
     public APIResponse<ProductResponse> getOneProduct(String productID) throws NotFoundException {
         Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
         if(product == null){
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            // return new APIResponse<>(null, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
         ProductResponse productResponse = modelMapper.map(product, ProductResponse.class);
@@ -114,9 +111,6 @@ public class ProductService implements IProductService {
     @Override
     public APIResponse<Boolean> addProduct(AddProductRequest addProductRequest) throws NotFoundException {
         if (!iWarehouseProductRepository.existsByProductName(addProductRequest.getProductName())){
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
         if (iWarehouseProductRepository.existsByPublicProductFalse()){
@@ -144,9 +138,6 @@ public class ProductService implements IProductService {
         product.setProductDetail(productDetail);
         ProductType productType = iProductTypeRepository.findByName(addProductRequest.getProductType()).orElse(null);
         if (productType == null){
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         product.setProductType(productType);
@@ -161,9 +152,6 @@ public class ProductService implements IProductService {
         // Tìm sản phẩm theo ID
         Product productEdit = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
         if (productEdit == null) {
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
         if (iWarehouseProductRepository.existsByPublicProductFalse()){
@@ -212,9 +200,6 @@ public class ProductService implements IProductService {
         // Cập nhật ProductType
         ProductType productType = iProductTypeRepository.findByName(editProductRequest.getProductType()).orElse(null);
         if (productType == null) {
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_TYPE_NOT_FOUND));
         }
         productEdit.setProductType(productType);
@@ -231,9 +216,6 @@ public class ProductService implements IProductService {
     public APIResponse<Boolean> deleteProduct(String productID) throws NotFoundException {
         Product product = iProductRepository.findById(UUID.fromString(productID)).orElse(null);
         if (product == null){
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         }
 
@@ -256,9 +238,6 @@ public class ProductService implements IProductService {
         Specification<Product> specification = ProductSpecification.getOneProductBySlugAndCode(productSlug, productCode);
         Product product = iProductRepository.findOne(specification).orElse(null);
         if (product == null) {
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
-            // return new APIResponse<>(null, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_NOT_FOUND));
         };
         ProductDetailPublicResponse productDetailPublicResponse = modelMapper.map(product, ProductDetailPublicResponse.class);
@@ -406,9 +385,6 @@ public class ProductService implements IProductService {
                 // Nếu là /collaboration/view-all → lấy toàn bộ productType của các slider hợp lệ
                 if ("view-all".equalsIgnoreCase(sliderSlug)) {
                     if (categoryCollaboration.isEmpty()) {
-                        // List<String> messages = new ArrayList<>();
-                        // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-                        // return new APIResponse<>(null, messages);
                         throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
                     }
                     Specification<Product> listProductSpecification = ProductSpecification.getListProductBySliders(categoryCollaboration);
@@ -420,9 +396,6 @@ public class ProductService implements IProductService {
                         .findFirst()
                         .orElse(null);
                     if (slider == null) {
-                        // List<String> messages = new ArrayList<>();
-                        // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-                        // return new APIResponse<>(null, messages);
                         throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
                     }
                     Specification<Product> productSpecification = ProductSpecification.getListProductBySlider(sliderSlug);
@@ -441,9 +414,6 @@ public class ProductService implements IProductService {
         // Trường hợp bình thường: kiểm tra category hợp lệ
             Category category = iCategoryRepository.findBySlug(categorySlug).orElse(null);
             if (category == null) {
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
-            // return new APIResponse<>(null, messages);
                 throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CATEGORY_NOT_FOUND));
             }
             if("view-all".equalsIgnoreCase(sliderSlug)){
@@ -452,9 +422,6 @@ public class ProductService implements IProductService {
             }else{
                 Slider slider = iSliderRepository.findBySlug(sliderSlug).orElse(null);
                 if (slider == null) {
-                    // List<String> messages = new ArrayList<>();
-                    // messages.add(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
-                    // return new APIResponse<>(null, messages);
                     throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.SLIDER_NOT_FOUND));
                 }
                 Specification<Product> specification = ProductSpecification.getListProduct(categorySlug, sliderSlug);

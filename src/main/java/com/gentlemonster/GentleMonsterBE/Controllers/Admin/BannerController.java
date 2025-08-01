@@ -48,7 +48,7 @@ public class BannerController {
     }
 
     @PostMapping(Enpoint.Banner.NEW)
-    public ResponseEntity<APIResponse<Boolean>> addBanner(@Valid @ModelAttribute AddBannerRequest addBannerRequest, @RequestPart("media") MultipartFile media,BindingResult result) throws NotFoundException {
+    public ResponseEntity<APIResponse<Boolean>> addBanner(@Valid @ModelAttribute AddBannerRequest addBannerRequest, @RequestParam("image") MultipartFile image, BindingResult result) throws NotFoundException {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -57,7 +57,7 @@ public class BannerController {
             // Creating an APIResponse with error messages
             return ResponseEntity.badRequest().body(new APIResponse<>(null, errorMessages));
         }
-        return ResponseEntity.ok(iBannerService.addBanner(addBannerRequest,media));
+        return ResponseEntity.ok(iBannerService.addBanner(addBannerRequest,image));
     }
 
     @PutMapping(Enpoint.Banner.EDIT)
