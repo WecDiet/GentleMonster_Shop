@@ -1,0 +1,21 @@
+package com.gentlemonster.DTO.Responses.User;
+
+import com.gentlemonster.DTO.Responses.Role.RoleResponse;
+import lombok.*;
+
+import java.util.Date;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class BaseUserResponse {
+    private String id;
+    private String fullName;
+    private String email;
+    private String createdDate;
+    private RoleResponse role;
+    private String image;
+    private String slug;
+}

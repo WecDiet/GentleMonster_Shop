@@ -21,7 +21,7 @@ openapi:
       enabled: true
 spring:
   application:
-    name: GentleMonsterBE
+    name: gentlemonster
   config:
     import: classpath:env.yml
   datasource:

@@ -1,0 +1,81 @@
+package com.gentlemonster.Entities;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@Table(name = "vouchers")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Voucher {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(name = "code", length = 100, nullable = false)
+    private String code;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "discount_type", nullable = false)
+    private String discountType;
+
+    @Column(name = "discount", nullable = false)
+    private BigDecimal discount;
+    
+    @Column(name = "max_discount", nullable = false)
+    private BigDecimal maxDiscount;
+
+    @Column(name = "status", nullable = false)
+    private String status; // "unused": chưa sử dụng, "used": đã sử dụng, "expired": đã hết hạn
+
+    // true = áp dụng cho tất cả sản phẩm, false = chỉ áp dụng cho sản phẩm được chỉ định
+    @Column(name = "is_global", nullable = false)
+    private boolean isGlobal;
+
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime startDate;
+
+    @Column(name = "expiration_date", nullable = false)
+    private LocalDateTime expirationDate;
+
+    @CreationTimestamp
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
+
+    @CreationTimestamp
+    @Column(name = "modified_date")
+    private LocalDateTime modifiedDate;
+
+    @ManyToMany
+    @JoinTable(
+        name = "voucher_product",
+        joinColumns = @JoinColumn(name = "voucher_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<Product> products;
+}

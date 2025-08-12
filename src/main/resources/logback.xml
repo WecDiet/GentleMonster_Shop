@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- Định nghĩa đường dẫn file log -->
+    <!-- Định nghĩa đường dẫn file log trong Docker -->
+    <property name="LOG_DIR" value="/app/logs" />
+    <property name="LOG_FILE_RUN_DOCKER" value="${LOG_DIR}/action.log" />
     <property name="LOG_FILE" value="src\main\resources\logs\action.log" />
+    <!-- <property name="LOG_FILE" value="../../logs/action.log" /> -->
 
     <!-- Appender để ghi log vào file với khả năng xoay file -->
-    <appender name="ACTION_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE}</file>
+    <appender name="ACTION_LOG_DOCKER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE_RUN_DOCKER}</file>
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/action.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory> <!-- Giữ 30 ngày log -->
             <totalSizeCap>100MB</totalSizeCap> <!-- Giới hạn tổng dung lượng -->
         </rollingPolicy>
@@ -17,17 +20,36 @@
         </encoder>
     </appender>
 
-    <!-- Logger cho package chứa Aspect (thay bằng package thực tế của bạn) -->
-    <logger name="com.gentlemonster.GentleMonsterBE.Aspect" level="INFO" additivity="false">
-        <appender-ref ref="ACTION_LOG" />
-    </logger>
 
-    <appender-ref ref="FILE" />
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
-            </encoder>
-        </appender>
+    <!-- Appender để ghi log vào file với khả năng xoay file -->
+    <appender name="ACTION_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- Logger cho package chứa Aspect -->
+    <logger name="com.gentlemonster.Aspect" level="INFO" additivity="false">
+        <appender-ref ref="ACTION_LOG" />
+        <appender-ref ref="ACTION_LOG_DOCKER" />
+    </logger>
+    
+    <!-- Appender console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
     </root>
