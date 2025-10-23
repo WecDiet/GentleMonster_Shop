@@ -23,8 +23,8 @@ public class AuthToken {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "token", length = 255) // token được tạo ra khi user đăng nhập vào hệ thống
-    private String token;
+    // @Column(name = "token", length = 255) // token được tạo ra khi user đăng nhập vào hệ thống
+    // private String token;
 
     @Column(name = "refresh_token", length = 255) // refresh token khi token hết hạn sử dụng (refresh token)
     private String refreshToken;

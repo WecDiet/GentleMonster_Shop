@@ -52,6 +52,32 @@ spring:
       timeout: 30m
       persistent: true
       tracking-modes: cookie
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      enabled: true
+      timeout: 2000
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+  # Rate limiting configuration
+  ratelimit:
+    public:
+      requests: 3
+      duration: PT1M
+    admin:
+      requests: 1000
+      duration: PT1M
+
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
   api-key: ${CLOUDINARY_API_KEY}

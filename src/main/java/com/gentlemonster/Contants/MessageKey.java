@@ -165,6 +165,9 @@ public class MessageKey {
     public static final String WAREHOUSE_PRODUCT_TYPE_QUANTITY_INVALID = "warehouse.product_type.quantity_invalid";
     public static final String WAREHOUSE_UPLOAD_MEDIA_SUCCESS = "warehouse.upload_media_success";
     public static final String WAREHOUSE_UPLOAD_MEDIA_FAILED = "warehouse.upload_media_failed";
+    public static final String WAREHOUSE_USER_NOT_FOUND = "warehouse.user.not_found";
+    public static final String WAREHOUSE_USER_MISMATCH = "warehouse.user.mismatch";
+    public static final String WAREHOUSE_USER_EXISTED = "warehouse.user.existed";
 
     // PRODUCT WAREHOUSE
     public static final String PRODUCT_WAREHOUSE_CREATE_SUCCESS = "product_warehouse.create_success";
@@ -233,5 +236,38 @@ public class MessageKey {
     public static final String TOKEN_NOT_FOUND = "token.not_found";
     public static final String TOKEN_REFRESH_SUCCESS = "token.refresh_success";
     public static final String TOKEN_REFRESH_FAILED = "token.refresh_failed";
+
+
+    // VOUCHER
+    public static final String VOUCHER_GET_SUCCESS = "voucher.get_success";
+    public static final String VOUCHER_CREATE_SUCCESS = "voucher.create_success";
+    public static final String VOUCHER_UPDATE_SUCCESS = "voucher.update_success";
+    public static final String VOUCHER_DELETE_SUCCESS = "voucher.delete_success";
+    public static final String VOUCHER_NOT_FOUND = "voucher.not_found";
+    public static final String VOUCHER_EXISTED = "voucher.existed";
+    public static final String VOUCHER_REQUIRED = "voucher.required";
+    public static final String VOUCHER_EMPTY = "voucher.empty";
+    public static final String VOUCHER_UPLOAD_MEDIA_SUCCESS = "voucher.upload_media_success";
+    public static final String VOUCHER_UPLOAD_MEDIA_FAILED = "voucher.upload_media_failed";
+    public static final String VOUCHER_CODE_EXISTS = "voucher.code_exists";
+
+
+    // NOTIFICATION
+    public static final String NOTIFICATION_GET_LIST_SUCCESS = "notification.get_list_success";
+    public static final String NOTIFICATION_NOT_FOUND = "notification.not_found";
+    public static final String NOTIFICATION_READ = "notification.read";
+    public static final String NOTIFICATION_GET_LIST_FAILED = "notification.get_list_failed";
+    public static final String NOTIFICATION_DELETE_SUCCESS = "notification.delete_success";
+    public static final String NOTIFICATION_DELETE_FAILED = "notification.delete_failed";
+    public static final String NOTIFICATION_READ_ALL_SUCCESS = "notification.read_all_success";
+
+
+    // RATELIMIT
+    public static final String RATE_LIMIT_EXCEEDED = "ratelimit.exceeded";
+    public static final String RATE_LIMIT_TRY_ERROR = "ratelimit.error";
+    public static final String RATE_LIMIT_INVALID = "ratelimit.invalid";
+    public static final String RATE_LIMIT_BLOCKED = "ratelimit.blocked";
+    public static final String RATE_LIMIT_RESET = "ratelimit.reset";
+    public static final String RATE_LIMIT_NOT_FOUND = "ratelimit.not_found";
 }
 

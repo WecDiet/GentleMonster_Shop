@@ -25,6 +25,8 @@ public class AddUserResquest extends AddressEmployeeRequest {
     @NotEmpty(message = "phoneNumber is required not empty !")
     @Size(min = 10, max = 12, message = "phoneNumber must be 10 characters")
     private String phoneNumber;
+    @NotEmpty(message = "position is required not empty !")
+    private String position;
     private int day;
     private int month;
     private int year;

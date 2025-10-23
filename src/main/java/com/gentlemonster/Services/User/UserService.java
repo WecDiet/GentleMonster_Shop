@@ -16,6 +16,7 @@ import com.gentlemonster.Entities.AuthToken;
 import com.gentlemonster.Entities.Media;
 import com.gentlemonster.Entities.Role;
 import com.gentlemonster.Entities.User;
+import com.gentlemonster.Entities.Warehouse;
 import com.gentlemonster.Exception.NotFoundException;
 import com.gentlemonster.Repositories.IAddressRepository;
 import com.gentlemonster.Repositories.IRoleRepository;
@@ -312,7 +313,13 @@ public class UserService implements IUserService {
             // // Xóa token liên quan đến người dùng
             iTokenRepository.delete(authToken);
         }
-        
+        Warehouse warehouse = user.getWarehouses().stream()
+                .filter(w -> w.getUsers() != null && w.getUsers().contains(user))
+                .findFirst()
+                .orElse(null);
+        if (warehouse != null) {
+            warehouse.getUsers().remove(user);
+        }
         iUserRepository.delete(user);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.USER_DELETE_SUCCESS));
@@ -381,14 +388,11 @@ public class UserService implements IUserService {
             case "CUSTOMER":
                 prefix = "CS";
                 break;
-            case "EMPLOYEE":
-                prefix = "EM";
+            case "WAREHOUSE":
+                prefix = "WH";
                 break;
-            case "STORAGE_MANAGER":
-                prefix = "SRM";
-                break;
-            case "STORE_MANAGER":
-                prefix = "SM";
+            case "SUBSIDIARY":
+                prefix = "SB";
                 break;
             default:
                 prefix = "NO"; // Mặc định nếu role không xác định

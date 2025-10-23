@@ -10,7 +10,6 @@ import com.gentlemonster.DTO.Responses.PagingResponse;
 import com.gentlemonster.DTO.Responses.Warehouse.WarehouseResponse;
 import com.gentlemonster.Exception.NotFoundException;
 import com.gentlemonster.Services.Warehouse.WarehouseService;
-import com.gentlemonster.Services.WarehouseProduct.WarehouseProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -76,4 +75,14 @@ public class WarehouseController {
         return ResponseEntity.ok(warehouseService.deleteWarehouse(warehouseID));
     }
 
+    @DeleteMapping(Enpoint.Warehouse.DELETE_USER)
+    public ResponseEntity<APIResponse<WarehouseResponse>> deleteUserWarehouse(@PathVariable String warehouseID, @PathVariable String userID) throws NotFoundException {
+        return ResponseEntity.ok(warehouseService.deleteUserWarehouse(warehouseID, userID));
+    }
+
+
+    @PostMapping(Enpoint.Warehouse.ADD_USER)
+    public ResponseEntity<APIResponse<WarehouseResponse>> addUserWarehouse(@PathVariable String warehouseID, @RequestParam("userid") String userID) throws NotFoundException {
+        return ResponseEntity.ok(warehouseService.addUserWarehouse(warehouseID, userID));
+    }
 }

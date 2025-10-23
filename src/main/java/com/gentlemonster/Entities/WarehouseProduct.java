@@ -1,6 +1,5 @@
 package com.gentlemonster.Entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -41,7 +40,7 @@ public class WarehouseProduct {
     private BigInteger quantity; // Số lượng ProductType trong kho
 
     @Column(name = "public_product")
-    private boolean publicProduct; // Kiểu Sản phẩm công khai =  true: công khai, false: không công khai
+    private boolean publicProduct; // Kiểu Sản phẩm công khai = true: công khai, false: không công khai
 
     @Column(name = "import_price")
     private BigInteger importPrice; // Giá nhập hàng
@@ -58,13 +57,12 @@ public class WarehouseProduct {
 
     @CreationTimestamp
     @Column(name = "modified_date")
-    private LocalDateTime  modifiedDate;
+    private LocalDateTime modifiedDate;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(
-            name = "warehouse_product_media",
-            joinColumns = @JoinColumn(name = "warehouse_product_id"),
-            inverseJoinColumns = @JoinColumn(name = "meida_id")
-    )
+    @JoinTable(name = "warehouse_product_media", joinColumns = @JoinColumn(name = "warehouse_product_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> image = new ArrayList<>();
+
+    @OneToMany(mappedBy = "warehouseProduct", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExportProduct> exportProducts = new ArrayList<>();
 }

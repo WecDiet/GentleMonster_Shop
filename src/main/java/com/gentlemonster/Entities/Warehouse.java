@@ -47,8 +47,8 @@ public class Warehouse {
     @Column(name = "country", length = 100)
     private String country; // Quốc gia
 
-//    @Column(name = "status_product")
-//    private boolean statusProduct; // Trạng thái sản phẩm
+    // @Column(name = "status_product")
+    // private boolean statusProduct; // Trạng thái sản phẩm
 
     @Column(name = "total_capacity")
     private int totalCapacity; // Dung lượng tối đa của kho
@@ -63,16 +63,12 @@ public class Warehouse {
     @Column(name = "modified_date")
     private Date modifiedDate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user; // Người quản lý kho hàng này (User)
-    
+    @ManyToMany
+    @JoinTable(name = "warehouse_user", joinColumns = @JoinColumn(name = "warehouse_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> users = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "warehouse_media",
-            joinColumns = @JoinColumn(name = "warehouse_id"),
-            inverseJoinColumns = @JoinColumn(name = "meida_id")
-    )
+    @JoinTable(name = "warehouse_media", joinColumns = @JoinColumn(name = "warehouse_id"), inverseJoinColumns = @JoinColumn(name = "meida_id"))
     private List<Media> image = new ArrayList<>();
 
 }

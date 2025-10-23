@@ -36,7 +36,7 @@ import java.util.UUID;
 
 @Service
 @NoArgsConstructor
-public class WarehouseProductService implements IWarehouseProductService{
+public class WarehouseProductService implements IWarehouseProductService {
 
     @Autowired
     private IWarehouseProductRepository warehouseProductRepository;
@@ -54,24 +54,28 @@ public class WarehouseProductService implements IWarehouseProductService{
     private CloudinaryService cloudinaryService;
 
     @Override
-    public PagingResponse<List<BaseProductWarehouseResponse>> getAllProductInWarehouse(WarehouseProductRequest warehouseProductRequest) {
+    public PagingResponse<List<BaseProductWarehouseResponse>> getAllProductInWarehouse(
+            WarehouseProductRequest warehouseProductRequest) {
         List<BaseProductWarehouseResponse> baseProductWarehouseResponses;
         List<WarehouseProduct> warehouseProducts;
         Pageable pageable;
-        if (warehouseProductRequest.getPage() == 0 && warehouseProductRequest.getLimit() == 0){
+        if (warehouseProductRequest.getPage() == 0 && warehouseProductRequest.getLimit() == 0) {
             warehouseProducts = warehouseProductRepository.findAll();
             baseProductWarehouseResponses = warehouseProducts.stream()
                     .map(warehouseProduct -> modelMapper.map(warehouseProduct, BaseProductWarehouseResponse.class))
                     .toList();
-//            baseProductWarehouseResponses = warehouseProducts.stream()
-//                    .map(warehouseProduct -> modelMapper.typeMap(WarehouseProduct.class, BaseProductWarehouseResponse.class)
-//                            .addMapping(WarehouseProduct::getImportDate, BaseProductWarehouseResponse::setImportDates)
-//                            .map(warehouseProduct))
-//                    .toList();
+            // baseProductWarehouseResponses = warehouseProducts.stream()
+            // .map(warehouseProduct -> modelMapper.typeMap(WarehouseProduct.class,
+            // BaseProductWarehouseResponse.class)
+            // .addMapping(WarehouseProduct::getImportDate,
+            // BaseProductWarehouseResponse::setImportDates)
+            // .map(warehouseProduct))
+            // .toList();
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_GET_SUCCESS));
-            return new PagingResponse<>(baseProductWarehouseResponses, messages, 1, (long) baseProductWarehouseResponses.size());
-        }else {
+            return new PagingResponse<>(baseProductWarehouseResponses, messages, 1,
+                    (long) baseProductWarehouseResponses.size());
+        } else {
             warehouseProductRequest.setPage(Math.max(warehouseProductRequest.getPage(), 1));
             pageable = PageRequest.of(warehouseProductRequest.getPage() - 1, warehouseProductRequest.getLimit());
         }
@@ -81,7 +85,7 @@ public class WarehouseProductService implements IWarehouseProductService{
                 .map(warehouseProduct -> modelMapper.map(warehouseProduct, BaseProductWarehouseResponse.class))
                 .toList();
 
-        if (baseProductWarehouseResponses.isEmpty()){
+        if (baseProductWarehouseResponses.isEmpty()) {
             List<String> messages = new ArrayList<>();
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_EMPTY));
             return new PagingResponse<>(baseProductWarehouseResponses, messages, 1, 0L);
@@ -89,13 +93,16 @@ public class WarehouseProductService implements IWarehouseProductService{
 
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_GET_SUCCESS));
-        return new PagingResponse<>(baseProductWarehouseResponses, messages, warehouseProductPage.getTotalPages(), warehouseProductPage.getTotalElements());
+        return new PagingResponse<>(baseProductWarehouseResponses, messages, warehouseProductPage.getTotalPages(),
+                warehouseProductPage.getTotalElements());
     }
 
     @Override
-    public APIResponse<Boolean> addProductToWarehouse(AddProductWarehouseRequest addProductWarehouseRequest) throws NotFoundException {
-        Warehouse warehouse = warehouseRepository.findByWarehouseName(addProductWarehouseRequest.getWareHouseName()).orElse(null);
-        if (warehouse == null){
+    public APIResponse<Boolean> addProductToWarehouse(AddProductWarehouseRequest addProductWarehouseRequest)
+            throws NotFoundException {
+        Warehouse warehouse = warehouseRepository.findByWarehouseName(addProductWarehouseRequest.getWareHouseName())
+                .orElse(null);
+        if (warehouse == null) {
             // List<String> messages = new ArrayList<>();
             // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
             // return new APIResponse<>(false, messages);
@@ -103,9 +110,11 @@ public class WarehouseProductService implements IWarehouseProductService{
         }
         WarehouseProduct warehouseProduct = modelMapper.map(addProductWarehouseRequest, WarehouseProduct.class);
         warehouseProduct.setWarehouse(warehouse);
-        warehouseProduct.setImportDate(LocalDateTime.of(addProductWarehouseRequest.getImportYear(), addProductWarehouseRequest.getImportMonth(), addProductWarehouseRequest.getImportDay(), 0, 0));
+        warehouseProduct.setImportDate(LocalDateTime.of(addProductWarehouseRequest.getImportYear(),
+                addProductWarehouseRequest.getImportMonth(), addProductWarehouseRequest.getImportDay(), 0, 0));
         warehouseProduct.setModifiedDate(LocalDateTime.now().toLocalDate().atStartOfDay());
-        BigInteger totalImportPrice = warehouseProduct.getImportPrice().multiply(BigInteger.valueOf(warehouseProduct.getQuantity().longValue()));
+        BigInteger totalImportPrice = warehouseProduct.getImportPrice()
+                .multiply(BigInteger.valueOf(warehouseProduct.getQuantity().longValue()));
         warehouseProduct.setTotalImportPrice(totalImportPrice);
         warehouseProductRepository.save(warehouseProduct);
         List<String> messages = new ArrayList<>();
@@ -114,16 +123,18 @@ public class WarehouseProductService implements IWarehouseProductService{
     }
 
     @Override
-    public APIResponse<Boolean> editProductInWarehouse(String id, EditProductWarehouseRequest editProductWarehouseRequest) throws NotFoundException {
-        Warehouse warehouse = warehouseRepository.findByWarehouseName(editProductWarehouseRequest.getWareHouseName()).orElse(null);
+    public APIResponse<Boolean> editProductInWarehouse(String id,
+            EditProductWarehouseRequest editProductWarehouseRequest) throws NotFoundException {
+        Warehouse warehouse = warehouseRepository.findByWarehouseName(editProductWarehouseRequest.getWareHouseName())
+                .orElse(null);
         WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(id)).orElse(null);
-        if (warehouse == null){
+        if (warehouse == null) {
             // List<String> messages = new ArrayList<>();
             // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
             // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
-        if (warehouseProduct == null){
+        if (warehouseProduct == null) {
             // List<String> messages = new ArrayList<>();
             // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
             // return new APIResponse<>(false, messages);
@@ -141,7 +152,7 @@ public class WarehouseProductService implements IWarehouseProductService{
     @Override
     public APIResponse<Boolean> deleteProductInWarehouse(String id) throws NotFoundException {
         WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(id)).orElse(null);
-        if (warehouseProduct == null){
+        if (warehouseProduct == null) {
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
         warehouseProductRepository.delete(warehouseProduct);
@@ -153,11 +164,13 @@ public class WarehouseProductService implements IWarehouseProductService{
     @Override
     public APIResponse<ProductWarehouseResponse> getProductInWarehouse(String id) throws NotFoundException {
         WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(id)).orElse(null);
-        if (warehouseProduct == null){
+        if (warehouseProduct == null) {
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
-//        ProductWarehouseResponse productWarehouseResponse = modelMapper.map(warehouseProduct, ProductWarehouseResponse.class);
-        ProductWarehouseResponse productWarehouseResponse = modelMapper.typeMap(WarehouseProduct.class, ProductWarehouseResponse.class)
+        // ProductWarehouseResponse productWarehouseResponse =
+        // modelMapper.map(warehouseProduct, ProductWarehouseResponse.class);
+        ProductWarehouseResponse productWarehouseResponse = modelMapper
+                .typeMap(WarehouseProduct.class, ProductWarehouseResponse.class)
                 .addMapping(WarehouseProduct::getImportDate, ProductWarehouseResponse::setImportDate)
                 .map(warehouseProduct);
         List<String> messages = new ArrayList<>();
@@ -166,27 +179,28 @@ public class WarehouseProductService implements IWarehouseProductService{
     }
 
     @Override
-    public APIResponse<Boolean> uploadMediaProductInWarehouse(String warehouseProductID, MultipartFile file) throws NotFoundException {
-        WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(warehouseProductID)).orElse(null);
-        if (warehouseProduct == null){
+    public APIResponse<Boolean> uploadMediaProductInWarehouse(String warehouseProductID, MultipartFile file)
+            throws NotFoundException {
+        WarehouseProduct warehouseProduct = warehouseProductRepository.findById(UUID.fromString(warehouseProductID))
+                .orElse(null);
+        if (warehouseProduct == null) {
             // List<String> messages = new ArrayList<>();
             // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
             // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-        }        
+        }
 
         try {
             Map uploadResult = cloudinaryService.uploadMedia(file, "warehouse_product");
             String imageUrl = (String) uploadResult.get("secure_url");
             warehouseProduct.getImage().add(Media.builder()
-                        .imageUrl(imageUrl)
-                        .publicId((String) uploadResult.get("public_id"))
-                        .altText("product photos in stock: " + warehouseProduct.getProductName())
-                        .referenceId(warehouseProduct.getId())
-                        .referenceType("WAREHOUSE_PRODUCT")
-                        .type("IMAGE")
-                        .build()
-                        );
+                    .imageUrl(imageUrl)
+                    .publicId((String) uploadResult.get("public_id"))
+                    .altText("product photos in stock: " + warehouseProduct.getProductName())
+                    .referenceId(warehouseProduct.getId())
+                    .referenceType("WAREHOUSE_PRODUCT")
+                    .type("IMAGE")
+                    .build());
             warehouseProduct.setImage(warehouseProduct.getImage());
             warehouseProductRepository.save(warehouseProduct);
             List<String> messages = new ArrayList<>();
@@ -198,5 +212,11 @@ public class WarehouseProductService implements IWarehouseProductService{
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.PRODUCT_WAREHOUSE_UPLOAD_MEDIA_FAILED));
             return new APIResponse<>(false, messages);
         }
+    }
+
+    @Override
+    public APIResponse<Boolean> exportProduct(String id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'exportProduct'");
     }
 }

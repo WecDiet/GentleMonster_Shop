@@ -163,9 +163,6 @@ public class StoreService implements IStoreService{
     public APIResponse<StoreResponse> getOneStore(String storeID) throws NotFoundException {
         Store store = iStoreRepository.findById(UUID.fromString(storeID)).orElse(null);
         if (store == null) {
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
-            // return new APIResponse<>(null, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.STORE_NOT_FOUND));
         }
         StoreResponse storeResponse = modelMapper.map(store, StoreResponse.class);
@@ -179,16 +176,10 @@ public class StoreService implements IStoreService{
         List<StorePublicResponse> storePublicResponses;
         List<Store> listStore;
         if (!iCityRepository.existsByCountrySlug(storeRequest.getCountry())){
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.COUNTRY_NOT_FOUND));
-            // return new APIResponse<>(null, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.COUNTRY_NOT_FOUND));
         }
         if (storeRequest.getCity() != null && !storeRequest.getCity().isEmpty()) {
             if (!iCityRepository.existsByName(storeRequest.getCity())) {
-                // List<String> messages = new ArrayList<>();
-                // messages.add(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
-                // return new APIResponse<>(null, messages);
                 throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.CITY_NOT_FOUND));
             }
         }

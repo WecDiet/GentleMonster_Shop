@@ -2,6 +2,7 @@ package com.gentlemonster.Entities;
 
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,4 +36,6 @@ public class UserVoucher {
     @JoinColumn(name = "voucher_id", nullable = false)
     private Voucher voucher;
 
+    @Column(name = "status", nullable = false)
+    private String status; // "unused": chưa sử dụng, "used": đã sử dụng, "expired": đã hết hạn
 }

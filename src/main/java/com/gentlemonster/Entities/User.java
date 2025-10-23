@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -54,6 +56,9 @@ public class User implements UserDetails {
 
     @Column(name = "birthday", length = 45)
     private Date birthDay;
+
+    @Column(name = "position", length = 45, nullable = true)
+    private String position;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> addresses = new ArrayList<>();
@@ -143,6 +148,15 @@ public class User implements UserDetails {
     )
     Set<Product> viewedProductList = new HashSet<>();
 
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_notifications",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "notification_id")
+    )
+    private List<Notification> notifications = new ArrayList<>();
+
     // @ManyToOne
     // @JsonIgnore
     // @JoinColumn(name = "uniqueviews")
@@ -168,6 +182,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "avatar_id") // FK trong bảng Product
     private Media image;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserVoucher> userVouchers;
+    @OneToMany(mappedBy = "user")
+    private List<UserVoucher> userVouchers = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "users")
+    private List<Warehouse> warehouses = new ArrayList<>();
 }

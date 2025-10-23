@@ -20,9 +20,9 @@ public class FirebaseConfig {
                 .build();
         FirebaseApp notificationApp;
         if (FirebaseApp.getApps().isEmpty()) {
-            notificationApp = FirebaseApp.initializeApp(firebaseOptions, "GentleMonsterBE");
+            notificationApp = FirebaseApp.initializeApp(firebaseOptions, "gentlemonster");
         } else {
-            notificationApp = FirebaseApp.getInstance("GentleMonsterBE");
+            notificationApp = FirebaseApp.getInstance("gentlemonster");
         }
         return FirebaseMessaging.getInstance(notificationApp);
     }

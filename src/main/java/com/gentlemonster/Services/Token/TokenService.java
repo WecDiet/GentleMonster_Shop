@@ -26,11 +26,10 @@ public class TokenService implements ITokenService {
     @Autowired
     private JwtTokenUtils jwtTokenUtils;
     @Override
-    public AuthToken saveToken(String token, User user, String refreshToken, String tokenType, String deviceToken,
+    public AuthToken saveToken(User user, String refreshToken, String tokenType, String deviceToken,
             String deviceName) {
             AuthToken authToken = AuthToken.builder()
                 .user(user)
-                .token(token)
                 .refreshToken(refreshToken)
                 .tokenType(tokenType)
                 .expirationDate(LocalDateTime.now().plusHours(jwtTokenUtils.getExpiration()))

@@ -18,4 +18,23 @@ public class CustomExceptionHandle {
                 .errMessage(ex.getMessage())
                 .build();
     }
+
+    @ExceptionHandler(RateLimitExceededException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorResponse handleRateLimitExceededException(RateLimitExceededException ex) {
+        return ErrorResponse.builder()
+                .errCode(HttpStatus.TOO_MANY_REQUESTS.value())
+                .errMessage(ex.getMessage())
+                .build();
+    }
+
+    // Optional: Handler cho các RuntimeException khác để tránh che lấp lỗi
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGeneralRuntimeException(RuntimeException ex) {
+        return ErrorResponse.builder()
+                .errCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .errMessage("Internal server error: " + ex.getMessage())
+                .build();
+    }
 }

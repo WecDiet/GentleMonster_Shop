@@ -15,5 +15,6 @@ public interface IProductRepository extends JpaRepository<Product, UUID>, JpaSpe
     boolean existsByProductTypeAndName(ProductType productType, String name);
     Optional<Product> findByName(String name);
     Optional<Product> findBySlug(String slug);
+    Optional<Product> findByCode(String code);
     boolean existsByCode(String code);
 }

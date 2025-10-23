@@ -47,8 +47,6 @@ public class Enpoint {
         public static final String DELETE = "/role_detail/{roleID}";
         public static final String DELETE_MANY = "/delete-many";
     }
-
-
     public static final class Category{
         public static final String BASE = API_PREFIX_ADMIN + "/categories";
         public static final String NEW = "/new";
@@ -56,7 +54,6 @@ public class Enpoint {
         public static final String DELETE = "/category_detail/{categoryID}";
         public static final String DELETE_MANY = "/delete-many";
     }
-
     public static final class Slider{
         public static final String BASE = API_PREFIX_ADMIN + "/sliders";
         public static final String ID = "/slider_detail/{sliderID}";
@@ -115,6 +112,8 @@ public class Enpoint {
         public static final String ID = "/warehouse_detail/{warehouseID}";
         public static final String SEARCH_WAREHOUSE = "/search";
         public static final String DELETE_MANY = "/delete-many";
+        public static final String DELETE_USER = "/warehouse_detail/{warehouseID}/delete-user/{userID}";
+        public static final String ADD_USER = "/warehouse_detail/{warehouseID}/add-user";
 
         public static final String GET_WAREHOUSE = "/ware_product";
         public static final String ADD_PRODUCT = "/ware_product/new";
@@ -155,4 +154,21 @@ public class Enpoint {
         public static final String MEDIA = "/story_detail/{storyID}/upload";
     }
 
+    public static final class Voucher{
+        public static final String BASE = API_PREFIX_ADMIN + "/vouchers";
+        public static final String NEW = "/new";
+        public static final String EDIT = "/voucher_detail/{voucherID}";
+        public static final String DELETE = "/voucher_detail/{voucherID}";
+        public static final String ID = "/voucher_detail/{voucherID}";
+        public static final String SEARCH_VOUCHER = "/search";
+        public static final String DELETE_MANY = "/delete-many";
+        public static final String UPLOAD_MEDIA = "/voucher_detail/{voucherID}/upload";
+    }
+
+        public static class Notification{
+        public static final String BASE = API_PREFIX_SHOP + "/notifications";
+        public static final String MARK_READ = "/{notificationId}/read";
+        public static final String DELETE_NOTIFICATION = "/{notificationId}";
+        public static final String  MARK_READ_ALL_NOTIFICATION = "/all/read";
+    }
 }

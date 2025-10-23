@@ -64,15 +64,15 @@ public class JwtTokenUtils {
             throw new InvalidParamException("User role is missing");
         }
         String subject;
-        if (user.getRole() != null && Arrays.asList("EMPLOYEE", "ADMIN", "STORE_MANAGER", "STORAGE_MANAGER")
+        if (user.getRole() != null && Arrays.asList("STAFF", "ADMIN")
             .contains(user.getRole().getName().toUpperCase())) {
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
-                throw new InvalidParamException("Username is required for EMPLOYEE, ADMIN, STORE_MANAGER, or STORAGE_MANAGER role");
+                throw new InvalidParamException("Username is required for STAFF or ADMIN role");
             }
             subject = user.getUsername(); // nếu là nhân viên thì sử dụng username làm subject
         } else {
             if (user.getEmail() == null || user.getEmail().isEmpty()) {
-                throw new InvalidParamException("Email is required for non-EMPLOYEE role");
+                throw new InvalidParamException("Email is required for non-STAFF role");
             }
             subject = user.getEmail(); // nếu không phải nhân viên thì sử dụng email làm subject
         }
@@ -100,15 +100,15 @@ public class JwtTokenUtils {
             throw new InvalidParamException("User role is missing");
         } // thêm role của user vào claims
         String subject;
-        if (user.getRole() != null && Arrays.asList("EMPLOYEE", "ADMIN", "STORE_MANAGER", "STORAGE_MANAGER")
+        if (user.getRole() != null && Arrays.asList("STAFF", "ADMIN")
             .contains(user.getRole().getName().toUpperCase())) {
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
-                throw new InvalidParamException("Username is required for EMPLOYEE, ADMIN, STORE_MANAGER, or STORAGE_MANAGER role");
+                throw new InvalidParamException("Username is required for STAFF or ADMIN role");
             }
             subject = user.getUsername(); // nếu là nhân viên thì sử dụng username làm subject
         } else {
             if (user.getEmail() == null || user.getEmail().isEmpty()) {
-                throw new InvalidParamException("Email is required for non-EMPLOYEE role");
+                throw new InvalidParamException("Email is required for non-STAFF role");
             }
             subject = user.getEmail(); // nếu không phải nhân viên thì sử dụng email làm subject
         }
@@ -187,30 +187,66 @@ public class JwtTokenUtils {
     }
 
 
-    // Hàm này sẽ kiểm tra xem token có hợp lệ hay không
-    public boolean isValidToken(String token){
+    // // Hàm này sẽ kiểm tra xem token có hợp lệ hay không
+    // public boolean isValidToken(String token){
+    //     try {
+    //         Jwts.parserBuilder()
+    //                 .setSigningKey(getSignInKey()) // set khoá bí mật để ký token
+    //                 .build() // build parser
+    //                 .parseClaimsJws(token); // parse token thành JWS
+    //         return true; // nếu token hợp lệ thì trả về true
+    //     } catch (JwtException | IllegalArgumentException e) {
+    //         // Nếu token không hợp lệ hoặc có lỗi khi parse, trả về false
+    //         System.out.println("Invalid JWT token: " + e.getMessage());
+    //         return false;
+    //     }
+    // }
+
+    // // Hàm này sẽ kiểm tra xem token có hợp lệ hay không
+    // public boolean validateToken(String token, UserDetails userDetail){
+    //     if (extractClaim(token, claims -> claims.get("role", String.class)).equalsIgnoreCase("CUSTOMER")){
+    //         String email = extractSubject(token);
+    //         return email.equals(userDetail.getUsername()) && !isTokenExpired(token);
+    //     }else{
+    //         String username = extractSubject(token);
+    //         return username.equals(userDetail.getUsername()) && !isTokenExpired(token);
+    //     }
+    // }
+    
+
+
+        // Hàm này sẽ kiểm tra xem token có hợp lệ hay không
+    public boolean isValidToken(String token, UserDetails userDetail) {
         try {
+            // Parse token để kiểm tra tính hợp lệ
             Jwts.parserBuilder()
-                    .setSigningKey(getSignInKey()) // set khoá bí mật để ký token
-                    .build() // build parser
-                    .parseClaimsJws(token); // parse token thành JWS
-            return true; // nếu token hợp lệ thì trả về true
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token);
+            
+            // Nếu userDetail được cung cấp, kiểm tra thêm subject và expiration
+            if (userDetail != null) {
+                String role = extractClaim(token, claims -> claims.get("role", String.class));
+                String subject = extractSubject(token);
+                
+                if (role != null && role.equalsIgnoreCase("CUSTOMER")) {
+                    return subject.equals(userDetail.getUsername()) && !isTokenExpired(token);
+                } else {
+                    return subject.equals(userDetail.getUsername()) && !isTokenExpired(token);
+                }
+            }
+            
+            // Nếu không có userDetail, chỉ kiểm tra token có parse được không
+            return !isTokenExpired(token);
+            
         } catch (JwtException | IllegalArgumentException e) {
-            // Nếu token không hợp lệ hoặc có lỗi khi parse, trả về false
             System.out.println("Invalid JWT token: " + e.getMessage());
             return false;
         }
     }
 
-    // Hàm này sẽ kiểm tra xem token có hợp lệ hay không
-    public boolean validateToken(String token, UserDetails userDetail){
-        if (extractClaim(token, claims -> claims.get("role", String.class)).equalsIgnoreCase("CUSTOMER")){
-            String email = extractSubject(token);
-            return email.equals(userDetail.getUsername()) && !isTokenExpired(token);
-        }else{
-            String username = extractSubject(token);
-            return username.equals(userDetail.getUsername()) && !isTokenExpired(token);
-        }
-    }
-    
+    // // Overloaded method để tương thích với code cũ
+    // public boolean isValidToken(String token) {
+    //     return isValidToken(token, null);
+    // }
 }

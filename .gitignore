@@ -34,3 +34,5 @@ build/
 env.yml
 *.log
 firebase-service-account.json
+redis-data/
+

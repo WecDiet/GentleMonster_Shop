@@ -20,6 +20,6 @@ public class WarehouseResponse {
     private String city; // Thành phố
     private String country; // Quốc gia
     private int totalCapacity; // Dung lượng tối đa của kho
-    private BaseUserWarehouse user;
+    private List<BaseUserWarehouse> users;
     private List<ImageResponse> medias;
 }

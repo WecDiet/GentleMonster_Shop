@@ -20,4 +20,6 @@ public interface IWarehouseService {
     APIResponse<Boolean> deleteWarehouse(String warehouseId) throws NotFoundException;
     APIResponse<WarehouseResponse> getWarehouseById(String warehouseId) throws NotFoundException;
     APIResponse<Boolean> handleUploadImage(String warehouseID, MultipartFile[] images) throws NotFoundException;
+    APIResponse<WarehouseResponse> deleteUserWarehouse(String warehouseId, String userId) throws NotFoundException;
+    APIResponse<WarehouseResponse> addUserWarehouse(String warehouseId, String userId) throws NotFoundException;
 }

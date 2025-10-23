@@ -1,6 +1,5 @@
 package com.gentlemonster.Services.Auth;
 
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.gentlemonster.Contants.MessageKey;
 import com.gentlemonster.DTO.Requests.Auth.ChangePasswordRequest;
 import com.gentlemonster.DTO.Requests.Auth.ChangeUserInfoRequest;
@@ -15,6 +14,7 @@ import com.gentlemonster.Entities.AuthToken;
 import com.gentlemonster.Entities.Media;
 import com.gentlemonster.Entities.Role;
 import com.gentlemonster.Entities.User;
+import com.gentlemonster.Enums.UserEnum;
 import com.gentlemonster.Exception.NotFoundException;
 import com.gentlemonster.Repositories.IAddressRepository;
 import com.gentlemonster.Repositories.IAuthRepository;
@@ -27,7 +27,6 @@ import com.gentlemonster.Utils.JwtTokenUtils;
 import com.gentlemonster.Utils.LocalizationUtils;
 import com.gentlemonster.Utils.ValidationUtils;
 
-import ch.qos.logback.core.model.Model;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,12 +76,14 @@ public class AuthService implements IAuthService{
     private CloudinaryService cloudinaryService;
     @Autowired
     private IAddressRepository iAddressRepository;
+    // @Autowired
+    // private UserEnum userEnum;
 
     @Override
     @Transactional
     public APIResponse<Boolean> createUser(UserRegisterRequest userRegisterRequest) throws Exception {
         List<String> errorMessages = new ArrayList<>();
-
+        UserEnum userEnum = UserEnum.CUSTOMER; // Mặc định là CUSTOMER
         // Kiểm tra email đã tồn tại chưa
         if (authRepository.findByEmail(userRegisterRequest.getEmail()).isPresent()) {
             errorMessages.add("Email is already exist!");
@@ -109,7 +110,7 @@ public class AuthService implements IAuthService{
             String formattedDate = dateFormat.format(birthday);
 
             // Tìm Role CUSTOMER
-            Role role = roleRepository.findByName("CUSTOMER")
+            Role role = roleRepository.findByName(userEnum.getRole())
                     .orElseThrow(() -> new NotFoundException("Role 'CUSTOMER' not found in database!"));
 
             // Mã hóa mật khẩu trước khi lưu
@@ -134,6 +135,7 @@ public class AuthService implements IAuthService{
                     .username(userRegisterRequest.getFirstName() + userRegisterRequest.getMiddleName() + userRegisterRequest.getLastName() + new Random().nextInt(1000)) // Tạo username duy nhất
                     .birthDay(dateFormat.parse(formattedDate))
                     .role(role)
+                    .position(userEnum.getPosition())
                     .code(generateCode(role))
                     .userType(3) // 1: Google, 2: Facebook, 3: Email
                     .status(true) // true: Active, false: Deactive
@@ -192,31 +194,31 @@ public class AuthService implements IAuthService{
         }else if (!existingUser.isStatus()) {
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.ACCOUNT_LOCKED));
         }
-        
+    
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         login, password,
                         existingUser.getAuthorities()
                     );
         authenticationManager.authenticate(authenticationToken);
 
-        Optional<AuthToken> existingToken = tokenService.findByToken(existingUser, tokenType, deviceToken, deviceName);
-        String accessToken;
-        String refreshToken;
+        String accessToken = jwtTokenUtils.generateToken(existingUser);
+        String refreshToken = jwtTokenUtils.generateRefreshToken(existingUser);
+        // Optional<AuthToken> existingToken = tokenService.findByToken(existingUser, tokenType, deviceToken, deviceName);
         AuthToken authToken;
-        if (existingToken.isPresent() && jwtTokenUtils.isValidToken(existingToken.get().getToken()) && jwtTokenUtils.isValidToken(existingToken.get().getRefreshToken())){
-            authToken = existingToken.get();
-            accessToken = authToken.getToken();
-            refreshToken = authToken.getRefreshToken();
+        authToken = tokenService.saveToken(existingUser, refreshToken, tokenType, deviceToken, deviceName);
+        // if (existingToken.isPresent() && jwtTokenUtils.isValidToken(existingToken.get().getToken(), existingUser) && jwtTokenUtils.isValidToken(existingToken.get().getRefreshToken(), existingUser)){
+        //     authToken = existingToken.get();
+        //     accessToken = authToken.getToken();
+        //     refreshToken = authToken.getRefreshToken();
 
-        }else{
-            if (existingToken.isPresent()) {
-                // Nếu token đã tồn tại nhưng không hợp lệ, xóa token cũ
-                iTokenRepository.delete(existingToken.get());
-            }
-            accessToken = jwtTokenUtils.generateToken(existingUser);
-            refreshToken = jwtTokenUtils.generateRefreshToken(existingUser);
-            authToken = tokenService.saveToken(accessToken, existingUser, refreshToken, tokenType, deviceToken, deviceName);
-        }
+        // }else{
+        //     if (existingToken.isPresent()) {
+        //         // Nếu token đã tồn tại nhưng không hợp lệ, xóa token cũ
+        //         iTokenRepository.delete(existingToken.get());
+        //     }
+        //     refreshToken = jwtTokenUtils.generateRefreshToken(existingUser);
+        //     authToken = tokenService.saveToken(existingUser, refreshToken, tokenType, deviceToken, deviceName);
+        // }
 
         UserLoginResponse response = UserLoginResponse.builder()
                 .token(accessToken)

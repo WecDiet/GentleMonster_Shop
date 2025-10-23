@@ -1,7 +1,6 @@
 package com.gentlemonster.Repositories.Specification;
 
 import com.gentlemonster.Entities.Product;
-import com.gentlemonster.Entities.ProductType;
 import com.gentlemonster.Entities.Slider;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -78,6 +77,18 @@ public class ProductSpecification {
                 predicate = criteriaBuilder.and(predicate,
                         criteriaBuilder.like(criteriaBuilder.lower(root.get("code")), "%" + productCode.trim().toLowerCase() + "%")
                     );
+            }
+            return predicate;
+        };
+    }
+
+    public static Specification<Product> getProductByCode(List<String> code){
+        return (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if (code != null && !code.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        root.get("code").in(code)
+                );
             }
             return predicate;
         };

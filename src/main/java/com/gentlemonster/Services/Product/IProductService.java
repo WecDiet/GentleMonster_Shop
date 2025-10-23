@@ -17,13 +17,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IProductService {
     PagingResponse<List<BaseProductResponse>> getAllProduct(ProductRequest productRequest);
+
     APIResponse<ProductResponse> getOneProduct(String productID) throws NotFoundException;
+
     APIResponse<Boolean> addProduct(AddProductRequest addProductRequest) throws NotFoundException;
+
     APIResponse<Boolean> editProduct(String productID, EditProductRequest editProductRequest) throws NotFoundException;
+
     APIResponse<Boolean> deleteProduct(String productID) throws NotFoundException;
 
-    APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String slug, String productCode) throws NotFoundException;
-    APIResponse<List<BaseProductPublicResponse>> getAllProductPublic(String categorySlug, String sliderSlug) throws NotFoundException;
+    APIResponse<ProductDetailPublicResponse> getProductDetailPublic(String slug, String productCode)
+            throws NotFoundException;
+
+    APIResponse<List<BaseProductPublicResponse>> getAllProductPublic(String categorySlug, String sliderSlug)
+            throws NotFoundException;
 
     APIResponse<Boolean> handleUploadImages(String productID, MultipartFile[] images) throws NotFoundException;
+
+    APIResponse<BaseProductResponse> searchProductByName(String name) throws NotFoundException;
 }

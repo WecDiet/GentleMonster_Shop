@@ -78,7 +78,6 @@ public class SecurityConfig {
     // AuthenticationManager là đối tượng quản lí việc xác thực người dùng, 
     // nó sẽ sử dụng AuthenticationProvider để xác thực người dùng
     // AuthenticationManager sẽ được sử dụng trong quá trình xác thực người dùng
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

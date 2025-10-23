@@ -31,4 +31,5 @@ public class UserResponse {
     private String avatar;
     private boolean status;
     private RoleResponse role;
+    private String position;
 }

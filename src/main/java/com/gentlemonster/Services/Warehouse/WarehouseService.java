@@ -49,8 +49,6 @@ public class WarehouseService implements  IWarehouseService {
     private IUserRepository iUserRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
-//    @Autowired
-//    private IRoleRepository iRoleRepository;
 
     @Override
     public PagingResponse<List<BaseWarehouseResponse>> getAllWarehouse(WarehouseRequest warehouseRequest) {
@@ -101,8 +99,8 @@ public class WarehouseService implements  IWarehouseService {
         Warehouse warehouse = modelMapper.map(addWarehouseRequest, Warehouse.class);
         warehouse.setWarehouseLocation(addWarehouseRequest.getWarehouseLocation());
         String prefixCodeUser = addWarehouseRequest.getCode().substring(0, addWarehouseRequest.getCode().indexOf("-"));
-        if (prefixCodeUser.equals("SRM")){
-            warehouse.setUser(user);
+        if (prefixCodeUser.equals("WH")){
+            warehouse.getUsers().add(user);
         }else{
             return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_WRONG_ROLE)));
         }
@@ -125,7 +123,7 @@ public class WarehouseService implements  IWarehouseService {
             return new APIResponse<>(false, messages);
         }
         modelMapper.map(editWarehouseRequest, warehouse);
-        warehouse.setUser(user);
+        warehouse.getUsers().add(user);
         iWarehouseRepository.save(warehouse);
         List<String> messages = new ArrayList<>();
         messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_UPDATE_SUCCESS));
@@ -136,9 +134,6 @@ public class WarehouseService implements  IWarehouseService {
     public APIResponse<Boolean> deleteWarehouse(String warehouseId) throws NotFoundException {
         Warehouse warehouse = iWarehouseRepository.findById(UUID.fromString(warehouseId)).orElse(null);
         if (warehouse == null){
-            // List<String> messages = new ArrayList<>();
-            // messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
-            // return new APIResponse<>(false, messages);
             throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
         }
         iWarehouseRepository.delete(warehouse);
@@ -201,5 +196,52 @@ public class WarehouseService implements  IWarehouseService {
             messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_UPLOAD_MEDIA_FAILED));
             return new APIResponse<>(false, messages);
         }
+    }
+
+    @Override
+    public APIResponse<WarehouseResponse> deleteUserWarehouse(String warehouseId, String userId)
+            throws NotFoundException {
+        Warehouse warehouse = iWarehouseRepository.findById(UUID.fromString(warehouseId)).orElse(null);
+        if (warehouse == null){
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
+        }
+        User user = iUserRepository.findById(UUID.fromString(userId)).orElse(null);
+        if (user == null){
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        if (warehouse.getUsers() == null || !warehouse.getUsers().stream().anyMatch(u -> u.getId().equals(user.getId()))){
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_USER_MISMATCH));
+        }
+        warehouse.getUsers().remove(user);
+        iWarehouseRepository.save(warehouse);
+        WarehouseResponse warehouseResponse = modelMapper.map(warehouse, WarehouseResponse.class);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_UPDATE_SUCCESS));
+        return new APIResponse<>(warehouseResponse, messages);
+    }
+
+    @Override
+    public APIResponse<WarehouseResponse> addUserWarehouse(String warehouseId, String userId) throws NotFoundException {
+        Warehouse warehouse = iWarehouseRepository.findById(UUID.fromString(warehouseId)).orElse(null);
+        if (warehouse == null){
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_NOT_FOUND));
+        }
+        User user = iUserRepository.findById(UUID.fromString(userId)).orElse(null);
+        if (user == null){
+            throw new NotFoundException(localizationUtil.getLocalizedMessage(MessageKey.USER_NOT_FOUND));
+        }
+        String prefixCodeUser = user.getCode().substring(0, user.getCode().indexOf("-"));
+        if (!prefixCodeUser.equals("WH")){
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_WRONG_ROLE)));
+        }
+        if (warehouse.getUsers() != null && warehouse.getUsers().stream().anyMatch(u -> u.getId().equals(user.getId()))){
+            return new APIResponse<>(null, List.of(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_USER_EXISTED)));
+        }
+        warehouse.getUsers().add(user);
+        iWarehouseRepository.save(warehouse);
+        WarehouseResponse warehouseResponse = modelMapper.map(warehouse, WarehouseResponse.class);
+        List<String> messages = new ArrayList<>();
+        messages.add(localizationUtil.getLocalizedMessage(MessageKey.WAREHOUSE_UPDATE_SUCCESS));
+        return new APIResponse<>(warehouseResponse, messages);
     }
 }

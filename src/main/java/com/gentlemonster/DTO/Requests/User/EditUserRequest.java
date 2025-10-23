@@ -20,6 +20,8 @@ public class EditUserRequest extends AddressEmployeeRequest {
     private String lastName;
     @NotEmpty(message = "Phone number is required")
     private String phoneNumber;
+    @NotEmpty(message = "Position is required")
+    private String position;
     private int day;
     private int month;
     private int year;

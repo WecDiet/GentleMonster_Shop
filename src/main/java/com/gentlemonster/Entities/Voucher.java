@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,6 +37,9 @@ public class Voucher {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "name", length = 100, nullable = false)
+    private String name;
+
     @Column(name = "code", length = 100, nullable = false)
     private String code;
 
@@ -42,7 +47,7 @@ public class Voucher {
     private String description;
 
     @Column(name = "discount_type", nullable = false)
-    private String discountType;
+    private String discountType; // "percentage" or "fixed" 
 
     @Column(name = "discount", nullable = false)
     private BigDecimal discount;
@@ -51,16 +56,18 @@ public class Voucher {
     private BigDecimal maxDiscount;
 
     @Column(name = "status", nullable = false)
-    private String status; // "unused": chưa sử dụng, "used": đã sử dụng, "expired": đã hết hạn
+    private boolean status;
 
     // true = áp dụng cho tất cả sản phẩm, false = chỉ áp dụng cho sản phẩm được chỉ định
     @Column(name = "is_global", nullable = false)
     private boolean isGlobal;
 
     @Column(name = "start_date", nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime startDate;
 
     @Column(name = "expiration_date", nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime expirationDate;
 
     @CreationTimestamp
